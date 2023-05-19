@@ -7,14 +7,15 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<center>
+	<div style="width:1000px;margin:auto;">
 		<h3>Login Here</h3>
-		Enter User Name
-		<input type="text">
-			Enter Password
-		<input type="password">
-		<input type="submit" value="Submit">
-	</center>
-
+		<form action="">
+			Enter User Name
+			<input type="text">
+				Enter Password
+			<input type="password">
+			<input type="submit" value="Submit">
+		</form>
+	</div>
 </body>
 </html>
