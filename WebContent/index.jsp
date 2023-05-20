@@ -9,11 +9,11 @@
 <body>
 	<div style="width:1000px;margin:auto;">
 		<h3>Login Here</h3>
-		<form action="">
+		<form action="profile/controller/Sign_in_controller.jsp" method="post">
 			Enter User Name
-			<input type="text">
+			<input type="text" name="user_name"> <br>
 				Enter Password
-			<input type="password">
+			<input type="password" name="password"><br>
 			<input type="submit" value="Submit">
 		</form>
 	</div>
