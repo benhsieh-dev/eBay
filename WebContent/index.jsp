@@ -18,7 +18,12 @@
 		</form>
 		
 		<%
-			String message = ""; 
+			String message = (String) session.getAttribute("login message"); 
+		
+			if (message != null) {
+				out.println(message); 
+				session.removeAttribute("login message");
+			}
 		%>
 	</div>
 </body>

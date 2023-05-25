@@ -23,8 +23,18 @@
 		if (flag) {
 			out.println(flag + " login success");
 		} else {
-			out.println(flag + " login failed"); 
+					
+			session.setAttribute("login message", "Login Failed, username and password are wrong"); 
+			
+			%>
+			
+				<script type="text/javascript">
+					window.location.href="http://localhost:8080/eBay/index.jsp";
+				</script>
+			
+			<%
 		} 
 	%>
+	
 </body>
 </html>
