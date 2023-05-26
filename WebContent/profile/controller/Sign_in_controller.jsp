@@ -21,7 +21,13 @@
 		boolean flag = obj_Login_Modal.check_user_name(obj_Login_Bean);
 		
 		if (flag) {
-			out.println(flag + " login success");
+			%>
+			
+			<script type="text/javascript">
+				window.location.href="http://localhost:8080/eBay/profile/view/Home.jsp";
+			</script>
+		
+		<%
 		} else {
 					
 			session.setAttribute("login message", "Login Failed, username and password are wrong"); 

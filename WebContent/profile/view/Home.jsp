@@ -9,6 +9,13 @@
 <body>
 	<center>
 		<h1>Home Page</h1>
+		
+		<table border="1">
+			<tr>
+				<td><a href="Home.jsp">Home</a></td>
+				<td><a href="My_Profile.jsp">Profile</a></td>
+			</tr>
+		</table>
 	</center>
 
 </body>

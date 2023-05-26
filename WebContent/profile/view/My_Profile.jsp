@@ -8,7 +8,13 @@
 </head>
 <body>
 	<div>
-		<h1>Home Page</h1>
+		<h1>Profile Page</h1>
+		<table border="1">
+			<tr>
+				<td><a href="Home.jsp">Home</a></td>
+				<td><a href="My_Profile.jsp">Profile</a></td>
+			</tr>
+		</table>
 	</div>
 
 </body>
