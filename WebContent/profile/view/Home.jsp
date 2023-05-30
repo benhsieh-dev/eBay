@@ -1,3 +1,4 @@
+<%@page import="bean.Login_Bean"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -7,6 +8,21 @@
 <title>Insert title here</title>
 </head>
 <body>
+
+	<%
+		Login_Bean obj_Login_Bean=(Login_Bean) session.getAttribute("user_session"); 
+
+		if(obj_Login_Bean == null) {
+			session.setAttribute("login message", "Please login first"); 
+	%>
+					
+			<script type="text/javascript">
+				window.location.href="http://localhost:8080/eBay/index.jsp";
+			</script>	
+		
+	<% 	
+		}
+	%>
 	<center>
 		<h1>Home Page</h1>
 		
