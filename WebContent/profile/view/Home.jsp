@@ -30,6 +30,8 @@
 			<tr>
 				<td><a href="Home.jsp">Home</a></td>
 				<td><a href="My_Profile.jsp">Profile</a></td>
+				<td>Welcome <%=obj_Login_Bean.getUser_name() %></td>
+				<td>Log Out</td>
 			</tr>
 		</table>
 	</center>

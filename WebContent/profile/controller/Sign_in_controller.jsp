@@ -22,7 +22,7 @@
 		
 		if (flag) {
 			
-			session.setAttribute("user_session", obj_Login_Bean.getUser_name());
+			session.setAttribute("user_session", obj_Login_Bean);
 			%>
 			
 			<script type="text/javascript">
