@@ -23,7 +23,7 @@
 	<% 	
 		}
 	%>
-	<center>
+	<div>
 		<h1>Home Page</h1>
 		
 		<table border="1">
@@ -31,10 +31,12 @@
 				<td><a href="Home.jsp">Home</a></td>
 				<td><a href="My_Profile.jsp">Profile</a></td>
 				<td>Welcome <%=obj_Login_Bean.getUser_name() %></td>
-				<td>Log Out</td>
+				<td>			
+					<a href="../controller/Sign_out_controller.jsp">Log Out</a>
+				</td>
 			</tr>
 		</table>
-	</center>
+	</div>
 
 </body>
 </html>
