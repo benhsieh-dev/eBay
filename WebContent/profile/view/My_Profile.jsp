@@ -28,11 +28,17 @@
 		<h1>Profile Page</h1>
 		<table border="1">
 			<tr>
-				<td><a href="Home.jsp">Home</a></td>
-				<td><a href="My_Profile.jsp">Profile</a></td>
+<!-- 				<td><a href="Home.jsp">Home</a></td> -->
+<!-- 				<td><a href="My_Profile.jsp">Profile</a></td> -->
+
+<!-- 				<td><a href="Home.jsp">Home</a></td> -->
+				<td><a href="http://localhost:8080/eBay/ebay.com">Home</a></td>
+<!-- 				<td><a href="My_Profile.jsp">Profile</a></td> -->
+				<td><a href="http://localhost:8080/eBay/profile">Profile</a></td>
 				<td>Welcome <%=obj_Login_Bean.getUser_name() %></td>
-				<td>Log Out</td>
-			</tr>
+				
+				<td>Welcome <%=obj_Login_Bean.getUser_name() %></td>
+				<td><a href="http://localhost:8080/eBay/signoutcontroller">Log Out</a></td>
 		</table>
 	</div>
 
