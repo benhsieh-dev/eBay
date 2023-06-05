@@ -1,4 +1,5 @@
 <%@page import="bean.Login_Bean"%>
+<%@page import="bean.common"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -6,7 +7,8 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
-	<link href="http://localhost:8080/eBay/assets/css/home.css" rel="stylesheet" />
+<!-- 	<link href="http://localhost:8080/eBay/assets/css/home.css" rel="stylesheet" /> -->
+		<link href="<%= common.url %>/assets/css/home.css" rel="stylesheet" />
 </head>
 <body>
 
