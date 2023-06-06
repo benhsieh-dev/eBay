@@ -7,7 +7,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
-<!-- 	<link href="http://localhost:8080/eBay/assets/css/home.css" rel="stylesheet" /> -->
+<!-- 	<link href="http://localhost:8080/eBay-logo/assets/css/home.css" rel="stylesheet" /> -->
 		<link href="<%= common.url %>/assets/css/home.css" rel="stylesheet" />
 </head>
 <body>
@@ -27,6 +27,9 @@
 		}
 	%>
 	<div>
+	
+	<img src="<%= common.url %>assets/img/eBay-logo.png" alt="eBay logo" width="110" height="50">
+	
 		<h1>Home Page</h1>
 		
 		<table border="1">
