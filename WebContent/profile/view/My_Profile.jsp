@@ -1,3 +1,4 @@
+<%@page import="bean.common"%>
 <%@page import="bean.Login_Bean"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
@@ -5,7 +6,8 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+	<title>Insert title here</title>
+	<link rel="icon" type="image/png" href="<%= common.url %>assets/img/favicon.png" />
 </head>
 <body>
 

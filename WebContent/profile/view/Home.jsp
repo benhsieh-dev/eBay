@@ -8,7 +8,9 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <!-- 	<link href="http://localhost:8080/eBay-logo/assets/css/home.css" rel="stylesheet" /> -->
-		<link href="<%= common.url %>/assets/css/home.css" rel="stylesheet" />
+		<link href="<%= common.url %>assets/css/home.css" rel="stylesheet" />
+<%-- 		<link rel="icon" type="image/x-icon" href="<%= common.url %>assets/img/favicon.png" /> --%>
+		<link rel="icon" type="image/png" href="<%= common.url %>assets/img/favicon.png" />
 </head>
 <body>
 
