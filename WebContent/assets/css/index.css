@@ -1,0 +1,9 @@
+@charset "UTF-8";
+h1, p {
+	text-align: center; 
+}
+
+form {
+	/* margin-left: 500px;  */
+	margin: 0 auto; 
+} 
