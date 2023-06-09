@@ -9,15 +9,15 @@
 	<link href="<%= common.url %>/assets/css/index.css" rel="stylesheet" />
 </head>
 <body>
-	<div style="width:1000px;margin:auto;">
+	<img src="<%= common.url %>assets/img/logo.png" alt="eBay logo" width="110" height="50">
+	<div class="form" style="width:1000px;margin:auto;">
 		<h1>Hello</h1>
-		<p>Sign in to eBay or create an account</p>
-		<form action="profile/controller/Sign_in_controller.jsp" method="post">
-			Enter User Name
-			<input type="text" name="user_name"> <br>
-				Enter Password
-			<input type="password" name="password"><br>
-			<input type="submit" value="Submit">
+		<p>Sign in to eBay or <a href="<%= common.url %>profile/controller/Registration_controller.jsp">create an account</a></p>
+		<form action="profile/controller/Sign_in_controller.jsp" method="post">					
+			<input type="text" name="user_name" placeholder="Email or username"> <br>
+			<input type="password" name="password" placeholder="Password"><br>		
+			<input type="submit" value="Continue" id="submit">
+<!-- 			<input type="button" value="Signin" id="signin"> -->
 		</form>
 		
 		<%

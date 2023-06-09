@@ -7,7 +7,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
-<!-- 	<link href="http://localhost:8080/eBay-logo/assets/css/home.css" rel="stylesheet" /> -->
+<!-- 	<link href="http://localhost:8080/logo/assets/css/home.css" rel="stylesheet" /> -->
 		<link href="<%= common.url %>assets/css/home.css" rel="stylesheet" />
 <%-- 		<link rel="icon" type="image/x-icon" href="<%= common.url %>assets/img/favicon.png" /> --%>
 		<link rel="icon" type="image/png" href="<%= common.url %>assets/img/favicon.png" />
@@ -30,7 +30,7 @@
 	%>
 	<div>
 	
-	<img src="<%= common.url %>assets/img/eBay-logo.png" alt="eBay logo" width="110" height="50">
+	<img src="<%= common.url %>assets/img/logo.png" alt="eBay logo" width="110" height="50">
 	
 		<h1>Home Page</h1>
 		
