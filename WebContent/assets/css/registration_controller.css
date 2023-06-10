@@ -20,17 +20,18 @@ h1 {
 	width: 17%;
 }
 
-/* input[type="radio"] {
-  margin-right: 0.8em;
-}
- */
 input[type="radio"]{
   margin: 0 10px 0 20px;
 }
 
+form {
+	width: 15%;
+	margin: 0 auto; 
+}
 
 .name-input {
 	display: flex; 
+	justify-content: space-between; 
 }
 
 body {
