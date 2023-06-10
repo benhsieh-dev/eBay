@@ -27,7 +27,11 @@
 			<input type="radio" id="business_account" name="account" value="business_account">
 			<label for="business_account">Business account</label><br>
 		</div>
-		
+		<br>
+		<br>
+		<br>
+		<br>
+		<br>
 	<form>
 		<div class="name-input">
 			<input type="text" placeholder="First name" >

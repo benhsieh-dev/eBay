@@ -24,9 +24,17 @@ input[type="radio"]{
   margin: 0 10px 0 20px;
 }
 
+input[type="text"]{
+/*   margin: 0 10px 0 20px; */
+  border-radius: 8px; 
+  border-width: thin; 
+  height: 2.8em; 
+}
+
 form {
-	width: 15%;
+	width: 15.5%;
 	margin: 0 auto; 
+	border: solid; 
 }
 
 .name-input {
