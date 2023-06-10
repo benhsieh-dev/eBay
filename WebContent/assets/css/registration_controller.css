@@ -25,16 +25,16 @@ input[type="radio"]{
 }
 
 input[type="text"]{
-/*   margin: 0 10px 0 20px; */
   border-radius: 8px; 
   border-width: thin; 
   height: 2.8em; 
+  padding-left: 0.5em; 
 }
 
 form {
-	width: 15.5%;
+	width: 16%;
 	margin: 0 auto; 
-	border: solid; 
+	/* border: solid;  */
 }
 
 .name-input {
