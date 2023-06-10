@@ -1,5 +1,14 @@
 @charset "UTF-8";
 
+a {
+	color: blue; 
+}
+
+.member-signin {
+	display: flex;
+	justify-content: flex-end; 
+}
+
 .radio-buttons {
 	display: flex;
 }

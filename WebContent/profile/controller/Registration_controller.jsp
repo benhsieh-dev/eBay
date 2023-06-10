@@ -14,10 +14,12 @@
 	
 <!-- 	Need to fix user session of the anchor tag -->
 	<a href="<%= common.url %>profile/view/Splash.jsp">
-	<img src="<%= common.url %>assets/img/logo.png" alt="logo" width="110" height="50">
-	</a>
+	<img src="<%= common.url %>assets/img/logo.png" alt="logo" width="110" height="50"></a>
 	
-	
+	<div class="member-signin">
+		<span>Already a member? <a href="<%= common.url %>profile/controller/Sign_in_controller.jsp">Sign in</a></span>	
+		
+	</div>
 		<h2>Create an account</h2>
 		<div class="radio-buttons">
 			<input type="radio" id="personal_account" name="account" value="personal_account" checked>
