@@ -4,6 +4,11 @@ a {
 	color: blue; 
 }
 
+h1 {
+	font-family: "Market Sans", Arial, sans-serif;
+	text-align: center; 
+}
+
 .member-signin {
 	display: flex;
 	justify-content: flex-end; 
@@ -11,7 +16,18 @@ a {
 
 .radio-buttons {
 	display: flex;
+	margin: 0 auto; 
+	width: 17%;
 }
+
+/* input[type="radio"] {
+  margin-right: 0.8em;
+}
+ */
+input[type="radio"]{
+  margin: 0 10px 0 20px;
+}
+
 
 .name-input {
 	display: flex; 

@@ -20,7 +20,7 @@
 		<span>Already a member? <a href="<%= common.url %>profile/controller/Sign_in_controller.jsp">Sign in</a></span>	
 		
 	</div>
-		<h2>Create an account</h2>
+		<h1>Create an account</h1>
 		<div class="radio-buttons">
 			<input type="radio" id="personal_account" name="account" value="personal_account" checked>
 			<label for="personal_account">Personal account</label><br>
