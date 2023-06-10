@@ -1,0 +1,13 @@
+@charset "UTF-8";
+
+.radio-buttons {
+	display: flex;
+}
+
+.name-input {
+	display: flex; 
+}
+
+body {
+	background-color: skyblue; 
+}
