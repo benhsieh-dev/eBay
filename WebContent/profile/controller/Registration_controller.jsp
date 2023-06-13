@@ -19,25 +19,21 @@
 			
 		</div>
 		
-	<div>
+	<div class="main-container">
+	<h1>Create an account</h1>
 	
-	
-	
-	
-	
-	
-	
-	</div>
-			<h1>Create an account</h1>
-			<div class="radio-buttons">
-				<input type="radio" id="personal_account" name="account" value="personal_account" checked>
-				<label for="personal_account">Personal account</label><br>
-				<input type="radio" id="business_account" name="account" value="business_account" class="right-radio-btn">
-				<label for="business_account">Business account</label><br>
-			</div>
-			<br>
 	<div class="container-0">
-		<div class="container-1">
+		<div class="radio-buttons">
+		<input type="radio" id="personal_account" name="account" value="personal_account" checked>
+		<label for="personal_account">Personal account</label><br>
+		<input type="radio" id="business_account" name="account" value="business_account" class="right-radio-btn">
+		<label for="business_account">Business account</label><br>
+		</div>
+	</div>
+
+			<br>
+	<div class="container-1">
+		<div class="container-2">
 			<br>
 			<br>
 			<br>
@@ -67,18 +63,25 @@
 			</form>
 		</div>
 		
-		<div class="container-2">
+		<div class="container-3">
 			<hr class="horizontal-rule">
 			<p>or</p>
 			<hr class="horizontal-rule">
 		</div>
 		
-		<div class="container-3">
+		<div class="container-4">
 			<p>Alternative sign up methods</p>
 		</div>
 	
+	
+	
+	
+	
 	</div>
-
+	
+	
+	</div>
+			
 	
 </body>
 </html>
