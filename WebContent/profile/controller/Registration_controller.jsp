@@ -8,17 +8,26 @@
 <meta charset="UTF-8">
 	<title>Register: Create a personal account</title>
 	<link rel="icon" type="image/png" href="<%= common.url %>assets/img/favicon.png" />
-	<link href="<%= common.url %>assets/css/registration_controller.css?version=51" rel="stylesheet" />
+	<link href="<%= common.url %>assets/css/registration_controller.css?version=42" rel="stylesheet" />
 </head>
 <body>
 	
-<!-- 	Need to fix user session of the anchor tag -->
 	<a href="<%= common.url %>profile/view/Splash.jsp">
 	<img src="<%= common.url %>assets/img/logo.png" alt="logo" width="110" height="50"></a>	
 		<div class="member-signin">
 			<span>Already a member? <a href="<%= common.url %>profile/controller/Sign_in_controller.jsp"><span class="signin">Sign in</span></a></span>	
 			
 		</div>
+		
+	<div>
+	
+	
+	
+	
+	
+	
+	
+	</div>
 			<h1>Create an account</h1>
 			<div class="radio-buttons">
 				<input type="radio" id="personal_account" name="account" value="personal_account" checked>
@@ -27,12 +36,12 @@
 				<label for="business_account">Business account</label><br>
 			</div>
 			<br>
-			<br>
-			<br>
-			<br>
-			<br>
-	<div class="main-container">
+	<div class="container-0">
 		<div class="container-1">
+			<br>
+			<br>
+			<br>
+			<br>
 			<form>
 				<div class="name-input">
 					<input type="text" placeholder="First name">
@@ -59,6 +68,8 @@
 		</div>
 		
 		<div class="container-2">
+			<hr class="horizontal-rule">
+			<p>or</p>
 			<hr class="horizontal-rule">
 		</div>
 		
