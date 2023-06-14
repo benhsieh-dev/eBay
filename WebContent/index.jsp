@@ -9,7 +9,9 @@
 	<link href="<%= common.url %>/assets/css/index.css" rel="stylesheet" />
 </head>
 <body>
-	<img src="<%= common.url %>assets/img/logo.png" alt="eBay logo" width="110" height="50">
+	<a href="<%= common.url %>profile/view/Splash.jsp">
+		<img src="<%= common.url %>assets/img/logo.png" alt="eBay logo" width="110" height="50">
+	</a>
 	<div class="form" style="width:1000px;margin:auto;">
 		<h1>Hello</h1>
 		<p>Sign in to eBay or <a href="<%= common.url %>profile/controller/Registration_controller.jsp">create an account</a></p>
