@@ -25,6 +25,9 @@
 	<% 	
 		}
 	%>
+	<a href="<%= common.url %>profile/view/Home.jsp">
+		<img src="<%= common.url %>assets/img/logo.png" alt="eBay logo" width="110" height="50">
+	</a>
 	
 	<div>
 		<h1>Profile Page</h1>
