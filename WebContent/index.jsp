@@ -9,7 +9,7 @@
 	<link href="<%= common.url %>/assets/css/index.css" rel="stylesheet" />
 </head>
 <body>
-	<a href="<%= common.url %>profile/view/Splash.jsp">
+	<a href="<%= common.url %>splash">
 		<img src="<%= common.url %>assets/img/logo.png" alt="eBay logo" width="110" height="50">
 	</a>
 	<div class="form" style="width:1000px;margin:auto;">
@@ -19,7 +19,6 @@
 			<input type="text" name="user_name" placeholder="Email or username"> <br>
 			<input type="password" name="password" placeholder="Password"><br>		
 			<input type="submit" value="Continue" id="submit">
-<!-- 			<input type="button" value="Signin" id="signin"> -->
 		</form>
 		
 		<%

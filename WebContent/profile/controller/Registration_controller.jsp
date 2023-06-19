@@ -12,7 +12,7 @@
 </head>
 <body>
 	
-	<a href="<%= common.url %>profile/view/Splash.jsp">
+	<a href="<%= common.url %>splash">
 	<img src="<%= common.url %>assets/img/logo.png" alt="logo" width="110" height="50"></a>	
 		<div class="member-signin">
 			<span>Already a member? <a href="<%= common.url %>profile/controller/Sign_in_controller.jsp"><span class="signin">Sign in</span></a></span>	

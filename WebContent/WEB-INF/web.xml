@@ -47,6 +47,16 @@
 	</servlet-mapping>
 
 	<servlet>
+		<servlet-name>Splash</servlet-name>
+		<jsp-file>/WEB-INF/view/Splash.jsp</jsp-file>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>Splash</servlet-name>
+		<url-pattern>/splash</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
 		<servlet-name>Sign_out_controller</servlet-name>
 		<jsp-file>/profile/controller/Sign_out_controller.jsp</jsp-file>
 	</servlet>
