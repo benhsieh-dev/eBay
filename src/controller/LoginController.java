@@ -9,7 +9,7 @@ public class LoginController {
 	@GetMapping("/login")
 	public String getLoginPage() {
 
-		return "Home";
+		return "Splash";
 	}
 
 }
