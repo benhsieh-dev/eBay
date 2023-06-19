@@ -38,7 +38,7 @@
 
 	<servlet>
 		<servlet-name>Profile</servlet-name>
-		<jsp-file>/profile/view/My_Profile.jsp</jsp-file>
+		<jsp-file>/WEB-INF/view/My_Profile.jsp</jsp-file>
 	</servlet>
 
 	<servlet-mapping>
