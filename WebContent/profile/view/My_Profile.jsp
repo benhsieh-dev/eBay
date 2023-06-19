@@ -25,7 +25,7 @@
 	<% 	
 		}
 	%>
-	<a href="<%= common.url %>profile/view/Home.jsp">
+	<a href="<%= common.url %>WEB-INF/view/Home.jsp">
 		<img src="<%= common.url %>assets/img/logo.png" alt="eBay logo" width="110" height="50">
 	</a>
 	
@@ -38,6 +38,7 @@
 
 <!-- 				<td><a href="Home.jsp">Home</a></td> -->
 				<td><a href="http://localhost:8080/eBay/ebay.com">Home</a></td>
+				
 <!-- 				<td><a href="My_Profile.jsp">Profile</a></td> -->
 				<td><a href="http://localhost:8080/eBay/profile">Profile</a></td>
 				<td>Welcome <%=obj_Login_Bean.getUser_name() %></td>

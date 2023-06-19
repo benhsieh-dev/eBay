@@ -32,7 +32,7 @@
 		%>
 		
 			<script type="text/javascript">
-				window.location.href="http://localhost:8080/eBay/profile/view/Home.jsp";
+				window.location.href="http://localhost:8080/eBay/WEB-INF/view/Home.jsp";
 			</script>
 		
 		<%
