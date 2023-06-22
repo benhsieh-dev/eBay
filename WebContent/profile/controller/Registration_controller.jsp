@@ -38,7 +38,7 @@
 			<br>
 			<br>
 			<br>
-			<form>
+			<form id="" modelAttribute="user" action="./registerprocess" method="post" >
 				<div class="name-input">
 					<input type="text" placeholder="First name">
 					<input type="text" placeholder="Last name">

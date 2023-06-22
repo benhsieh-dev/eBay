@@ -26,9 +26,7 @@
 	%>
 
 	<script type="text/javascript">
-		// 				window.location.href="http://localhost:8080/eBay/WEB-INF/view/Home.jsp";
 		window.location.href = "http://localhost:8080/eBay/ebay.com/<%=obj_Login_Bean.getUser_name()%>";
-// 		window.location.href = "http://localhost:8080/ebay.com";
 	</script>
 
 	<%
