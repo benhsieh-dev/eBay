@@ -25,7 +25,8 @@
 	<% 	
 		}
 	%>
-	<a href="<%= common.url %>WEB-INF/view/Home.jsp">
+	
+	<a href="<%= common.url %>ebay.com">
 		<img src="<%= common.url %>assets/img/logo.png" alt="eBay logo" width="110" height="50">
 	</a>
 	
