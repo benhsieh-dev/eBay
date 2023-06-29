@@ -38,7 +38,7 @@ public class User {
 	private String username;
 
 //	@NotEmpty
-	@Column(name = "username")
+	@Column(name = "password")
 	private String password;
 
 	public int getId() {
