@@ -1,15 +1,44 @@
 package model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "user")
 public class User {
 
-//	@Id
-//	@GenerationValue(strategy = GenerationType.Auto)
-//	@Column(name="id")
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "id")
 	private int id;
 
+//	@NotEmpty
+//	@Pattern(regexp="[^0-9]+")
+//	@Size(min=6,max=20)
+	@Column(name = "first_name")
 	private String firstName;
+
+//	@NotEmpty
+//	@Pattern(regexp="[^0-9]+")
+//	@Size(min=6,max=20)
+	@Column(name = "last_name")
 	private String lastName;
+
+//	@NotEmpty
+//	@Email
+	@Column(name = "email")
+	private String email;
+
+//	@NotEmpty
+	@Column(name = "username")
 	private String username;
+
+//	@NotEmpty
+	@Column(name = "username")
 	private String password;
 
 	public int getId() {
@@ -36,6 +65,14 @@ public class User {
 		this.lastName = lastName;
 	}
 
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
 	public String getUsername() {
 		return username;
 	}
@@ -54,8 +91,8 @@ public class User {
 
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", username=" + username
-				+ ", password=" + password + "]";
+		return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email
+				+ ", username=" + username + ", password=" + password + "]";
 	}
 
 }
