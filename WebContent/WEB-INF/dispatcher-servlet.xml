@@ -10,6 +10,8 @@
 	<mvc:annotation-driven />
 	
 	<context:component-scan base-package="controller"></context:component-scan>
+	<context:component-scan base-package="">"daoimpl"</context:component-scan>
+	<context:component-scan base-package="">"serviceimpl"</context:component-scan>
 	
 	<bean id="handlermapping" class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"></bean>
 	
@@ -17,4 +19,20 @@
 		<property name="prefix" value="/WEB-INF/view/" />
 		<property name="suffix" value=".jsp" />
 	</bean>
+	
+	<bean id="datasource"
+		class="org.springframework.jdbc.datasource.DriverManagerDatasource">
+		<property name="driverClassName" value="${driver.class.name}"></property>
+		<property name="url" value="${db.url}"></property>
+		<property name="username" value="${db.username}"></property>
+		<property name="password" value="${db.password}"></property>
+	</bean>
+	
+	<bean id="hibernaTetemplate" class="org.springframework.orm.hibernate4.HibernateTemplate">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+		<property name="checkWriteOperations" value="false"></property>
+		
+	</bean>
+	
+		
 </beans>

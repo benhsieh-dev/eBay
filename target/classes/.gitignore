@@ -1,9 +1,5 @@
-/bean/
-/controller/
-/dto/
-/entity/
-/modal/
 /model/
-/repository/
-/service/
-/serviceImpl/
+/dao/
+/src.dao/
+/daoimpl/
+/impl/
