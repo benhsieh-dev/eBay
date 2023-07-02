@@ -34,5 +34,37 @@
 		
 	</bean>
 	
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="datasource" ref="datasource"></property>
+		<property name="annotatedClasses">
+			<array>
+				<value>eBay.model.User</value>
+			</array>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.format_sql">true</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean 
+		class="org.springframwork.beans.factory.config.PropertyPlacehorderConfigurer">
+		<property name="locations">
+			<array>
+				<value>/WEB-INF/database.properties</value>
+			</array>
+		</property>
+	</bean>
+	
+	<bean id="messageSource"
+		class="org.springframework.contect.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="/WEB-INF/messages"></property>
+	</bean>
+				
 		
 </beans>
