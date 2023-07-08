@@ -16,7 +16,7 @@
 		<h1>Hello</h1>
 		<p>Sign in to eBay or <a href="<%= common.url %>profile/controller/Registration_controller.jsp">create an account</a></p>
 <%-- 	<p>Sign in to eBay or <a href="<%= common.url %>WEB-INF/view/Registration_controller.jsp">create an account</a></p>	 --%>
-		<form action="profile/controller/Sign_in_controller.jsp" method="post">					
+		<form action="profile/controller/Sign_in_controller.jsp" method="post">						
 			<input type="text" name="user_name" placeholder="Email or username"> <br>
 			<input type="password" name="password" placeholder="Password"><br>		
 			<input type="submit" value="Continue" id="submit">
