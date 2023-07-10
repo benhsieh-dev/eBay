@@ -10,4 +10,6 @@ public interface UserService {
 
 	void registerUser(@Valid User user);
 
+	User validateUserCredential(String email, String password);
+
 }
