@@ -7,6 +7,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
 @Entity
 @Table(name = "user")
 public class User {
@@ -16,28 +21,28 @@ public class User {
 	@Column(name = "id")
 	private int id;
 
-//	@NotEmpty
-//	@Pattern(regexp="[^0-9]+")
-//	@Size(min=6,max=20)
+	@NotEmpty
+	@Pattern(regexp = "[^0-9]+")
+	@Size(min = 6, max = 20)
 	@Column(name = "first_name")
 	private String firstName;
 
-//	@NotEmpty
-//	@Pattern(regexp="[^0-9]+")
-//	@Size(min=6,max=20)
+	@NotEmpty
+	@Pattern(regexp = "[^0-9]+")
+	@Size(min = 6, max = 20)
 	@Column(name = "last_name")
 	private String lastName;
 
-//	@NotEmpty
-//	@Email
+	@NotEmpty
+	@Email
 	@Column(name = "email")
 	private String email;
 
-//	@NotEmpty
+	@NotEmpty
 	@Column(name = "username")
 	private String username;
 
-//	@NotEmpty
+	@NotEmpty
 	@Column(name = "password")
 	private String password;
 
