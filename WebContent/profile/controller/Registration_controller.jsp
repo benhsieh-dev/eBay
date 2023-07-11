@@ -2,6 +2,8 @@
 <%@page import="modal.Login_Modal"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -38,8 +40,8 @@
 			<br>
 			<br>
 			<br>
-			<!-- <form id="" modelAttribute="user" action="./registerprocess" method="post" > -->
-			<form id="" modelAttribute="user" action="/splash" method="post" >
+			<!-- <form id="" modelAttribute="user" action="processForm" method="post" > -->
+			<form id="" modelAttribute="user" action="splash" method="post" >
 				<div class="name-input">
 					<input type="text" placeholder="First name">
 					<input type="text" placeholder="Last name">
@@ -79,6 +81,24 @@
 	
 	
 	</div>
+	
+	<%-- 	<div>
+			<form:form action="processForm" modelAttribute="user">
+				First name: <form:input path="firstName" />
+				<br><br>
+				Last name (*): <form:input path="lastName" />
+				<form:errors path="lastName" cssClass="error" />
+				<br><br>
+				Email (*): <form:input path="email" />
+				<form:errors path="email" cssClass="error" />
+				<br><br>
+				Password (*): <form:input path="password" />
+				<form:errors path="password" cssClass="error" />
+				<br><br>
+				<input type="submit" value="Submit" />
+			</form:form>
+			
+		</div> --%>
 	
 	
 	</div>
