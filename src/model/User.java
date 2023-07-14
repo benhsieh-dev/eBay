@@ -21,28 +21,28 @@ public class User {
 	@Column(name = "id")
 	private int id;
 
-	@NotEmpty
+	@NotEmpty(message = "first name can't be empty")
 	@Pattern(regexp = "[^0-9]+")
 	@Size(min = 6, max = 20)
 	@Column(name = "first_name")
 	private String firstName;
 
-	@NotEmpty
+	@NotEmpty(message = "last name can't be empty")
 	@Pattern(regexp = "[^0-9]+")
 	@Size(min = 6, max = 20)
 	@Column(name = "last_name")
 	private String lastName;
 
-	@NotEmpty
+	@NotEmpty(message = "can't be empty")
 	@Email
 	@Column(name = "email")
 	private String email;
 
-	@NotEmpty
+	@NotEmpty(message = "can't be empty")
 	@Column(name = "username")
 	private String username;
 
-	@NotEmpty
+	@NotEmpty(message = "can't be empty")
 	@Column(name = "password")
 	private String password;
 
