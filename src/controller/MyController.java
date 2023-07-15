@@ -39,15 +39,6 @@ public class MyController {
 
 	}
 
-	@RequestMapping("/processForm")
-	public String processForm(@Valid @ModelAttribute("user") User theUser, BindingResult theBindingResult) {
-		if (theBindingResult.hasErrors()) {
-			return "user-form";
-		} else {
-			return "user-confirmation";
-		}
-	}
-
 	@RequestMapping(value = "register", method = RequestMethod.GET)
 	public String registerPage(Model model) {
 		model.addAttribute("user", new User());

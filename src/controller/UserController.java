@@ -25,4 +25,13 @@ public class UserController {
 //		return "user-form";
 //	}
 
+//	@RequestMapping("/processForm")
+//	public String processForm(@Valid @ModelAttribute("user") User theUser, BindingResult theBindingResult) {
+//		if (theBindingResult.hasErrors()) {
+//			return "user-form";
+//		} else {
+//			return "user-confirmation";
+//		}
+//	}
+
 }
