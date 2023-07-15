@@ -84,6 +84,16 @@
 		<servlet-name>userform</servlet-name>
 		<url-pattern>/registration</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>products</servlet-name>
+		<jsp-file>/WEB-INF/view/product-list.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>products</servlet-name>
+		<url-pattern>/products</url-pattern>
+	</servlet-mapping>
+	
 
 	<servlet-mapping>
 		<servlet-name>Sign_out_controller</servlet-name>
