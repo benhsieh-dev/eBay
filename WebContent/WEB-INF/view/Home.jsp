@@ -30,9 +30,9 @@
 	%>
 	<div>
 	
-	<img src="<%= common.url %>assets/img/logo.png" alt="eBay logo" width="110" height="50">
+	<p>Hi <strong><%=obj_Login_Bean.getUser_name() %>!</strong></p>
 	
-		<h1>Home Page</h1>
+	<img src="<%= common.url %>assets/img/logo.png" alt="eBay logo" width="110" height="50">
 		
 		<table border="1">
 			<tr>
@@ -40,7 +40,6 @@
 				<td><a href="http://localhost:8080/eBay/ebay.com">Home</a></td>
 <!-- 				<td><a href="My_Profile.jsp">Profile</a></td> -->
 				<td><a href="http://localhost:8080/eBay/profile">Profile</a></td>
-				<td>Welcome <%=obj_Login_Bean.getUser_name() %></td>
 				<td>			
 <!-- 					<a href="../controller/Sign_out_controller.jsp">Log Out</a> -->
 					<a href="http://localhost:8080/eBay/signoutcontroller">Log Out</a>
