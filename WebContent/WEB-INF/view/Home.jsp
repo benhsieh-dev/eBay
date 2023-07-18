@@ -8,7 +8,7 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <!-- 	<link href="http://localhost:8080/logo/assets/css/home.css" rel="stylesheet" /> -->
-		<link href="<%= common.url %>assets/css/home.css" rel="stylesheet" />
+		<link href="<%= common.url %>assets/css/home.css?version=17" rel="stylesheet" />
 <%-- 		<link rel="icon" type="image/x-icon" href="<%= common.url %>assets/img/favicon.png" /> --%>
 		<link rel="icon" type="image/png" href="<%= common.url %>assets/img/favicon.png" />
 </head>
@@ -30,7 +30,24 @@
 	%>
 	<div>
 	
-	<p>Hi <strong><%=obj_Login_Bean.getUser_name() %>!</strong></p>
+	<div class="navigation-menu">
+		<div class="left-navigation">
+			<div>Hi <strong><%=obj_Login_Bean.getUser_name() %>!</strong></div>
+			<div>Daily Deals</div>
+			<div>Brand Outlet</div>
+			<div>Help & Contact</div>
+		</div>
+	
+		<div class="right-navigation">
+			<div>Sell</strong></div>
+			<div>Watchlist</div>
+			<div>My eBay</div>
+		</div>
+	</div>
+	
+	<hr>
+	
+	
 	
 	<img src="<%= common.url %>assets/img/logo.png" alt="eBay logo" width="110" height="50">
 		

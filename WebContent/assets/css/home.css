@@ -3,3 +3,14 @@
 body {
 	background-color: skyblue; 
 }
+
+.navigation-menu {
+	display: flex;
+	justify-content: space-between;
+}
+
+.left-navigation, .right-navigation {
+	display: flex;
+	width: 500px;
+	justify-content: space-evenly;
+}
