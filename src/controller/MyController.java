@@ -56,22 +56,22 @@ public class MyController {
 		return modelAndView;
 	}
 
-	@RequestMapping(value = "/loginSuccess", method = RequestMethod.POST)
-	public ModelAndView loginSuccess(@Valid @ModelAttribute("userCredential") UserCredential userCredential,
-			BindingResult bindingResult) {
-		if (bindingResult.hasErrors()) {
-			return new ModelAndView("login");
-		}
-		ModelAndView modelAndView = new ModelAndView("welcome");
-		User user = getUserService().validateUserCredential(userCredential.getEmail(), UserCredential.getPassword());
-		if (user != null) {
-			modelAndView.addObject("user", user);
-			return modelAndView;
-		} else {
-			modelAndView = new ModelAndView("notFound");
-		}
-		return modelAndView;
-	}
+//	@RequestMapping(value = "/loginSuccess", method = RequestMethod.POST)
+//	public ModelAndView loginSuccess(@Valid @ModelAttribute("userCredential") UserCredential userCredential,
+//			BindingResult bindingResult) {
+//		if (bindingResult.hasErrors()) {
+//			return new ModelAndView("login");
+//		}
+//		ModelAndView modelAndView = new ModelAndView("welcome");
+//		User user = getUserService().validateUserCredential(userCredential.getEmail(), UserCredential.getPassword());
+//		if (user != null) {
+//			modelAndView.addObject("user", user);
+//			return modelAndView;
+//		} else {
+//			modelAndView = new ModelAndView("notFound");
+//		}
+//		return modelAndView;
+//	}
 
 	@ModelAttribute
 	public void headerMessage(Model model) {
