@@ -41,6 +41,7 @@
 		<welcome-file>default.jsp</welcome-file>
 	</welcome-file-list>
 
+		
 	<servlet>
 		<servlet-name>Home</servlet-name>
 		<jsp-file>/WEB-INF/view/Home.jsp</jsp-file>
@@ -115,14 +116,6 @@
 		<url-pattern>*.png</url-pattern>
 	</servlet-mapping>
 
-<!--	<context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>/WEB-INF/dispatcher-servlet.xml</param-value>
-	</context-param>
-
-	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-	</listener>-->
 
 </web-app>
 
