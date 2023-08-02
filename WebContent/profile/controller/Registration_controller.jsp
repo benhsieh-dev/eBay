@@ -42,7 +42,6 @@
 		<div class="container-1">
 			<div class="container-2">
 				<br> <br> <br> <br>
-				<!-- <form id="" modelAttribute="user" action="processForm" method="post" > -->
 				<form id="" modelAttribute="user" action="splash" method="post">
 					<div class="name-input">
 						<input type="text" placeholder="First name"> <input
