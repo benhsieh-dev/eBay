@@ -11,6 +11,8 @@
 <body>
 	<div>
 	
+	<h3>${welcomeMessage}</h3>
+	
 	<p>Hi! <a href="<%= common.url %>index.jsp">Signin</a> or <a href="<%= common.url %>profile/controller/Registration_controller.jsp">register</a></p>
 	
 	<img src="<%= common.url %>assets/img/logo.png" alt="eBay logo" width="110" height="50">

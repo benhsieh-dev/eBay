@@ -10,8 +10,7 @@
 	<mvc:annotation-driven />
 	
 	<context:component-scan base-package="controller"></context:component-scan>
-	<context:component-scan base-package="">"daoimpl"</context:component-scan>
-	<context:component-scan base-package="">"serviceimpl"</context:component-scan>
+	<context:component-scan base-package="com.ebay.controller"></context:component-scan>
 	
 	<bean id="handlermapping" class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"></bean>
 	
