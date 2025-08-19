@@ -52,7 +52,7 @@
 	</bean>
 	
 	<bean 
-		class="org.springframwork.beans.factory.config.PropertyPlacehorderConfigurer">
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
 			<array>
 				<value>/WEB-INF/database.properties</value>
@@ -61,7 +61,7 @@
 	</bean>
 	
 	<bean id="messageSource"
-		class="org.springframework.contect.support.ReloadableResourceBundleMessageSource">
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
 		<property name="basename" value="/WEB-INF/messages"></property>
 	</bean>
 				
