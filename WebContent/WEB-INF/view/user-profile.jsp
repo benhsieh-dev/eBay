@@ -325,7 +325,7 @@
                         <a href="#" class="btn" onclick="alert('Feature coming soon!')">Sales History</a>
                     </c:if>
                     <c:if test="${user.userType == 'BUYER' || user.userType == 'BOTH'}">
-                        <a href="#" class="btn btn-secondary" onclick="alert('Feature coming soon!')">My Bids</a>
+                        <a href="/eBay/bid/my-bids" class="btn btn-secondary">My Bids</a>
                         <a href="#" class="btn btn-secondary" onclick="alert('Feature coming soon!')">Watchlist</a>
                         <a href="#" class="btn btn-secondary" onclick="alert('Feature coming soon!')">Purchase History</a>
                     </c:if>
