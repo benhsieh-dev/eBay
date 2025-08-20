@@ -240,8 +240,8 @@ CREATE INDEX idx_bids_amount ON bids(bid_amount);
 CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_users_username ON users(username);
 
--- Create admin user (update this with proper password hash)
+-- Create admin user with SHA-256 hashed password for 'admin123'
 INSERT INTO users (username, email, password_hash, first_name, last_name, user_type, account_status, email_verified) 
-VALUES ('admin', 'admin@ebay.com', 'admin123', 'Admin', 'User', 'BOTH', 'ACTIVE', TRUE);
+VALUES ('admin', 'admin@ebay.com', '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', 'Admin', 'User', 'BOTH', 'ACTIVE', TRUE);
 
 COMMIT;

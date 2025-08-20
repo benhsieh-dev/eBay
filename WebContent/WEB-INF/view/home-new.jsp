@@ -345,7 +345,7 @@
                     <c:choose>
                         <c:when test="${not empty currentUser}">
                             <c:if test="${currentUser.userType == 'SELLER' || currentUser.userType == 'BOTH'}">
-                                <a href="#" class="btn" onclick="alert('Feature coming soon!')">List an item</a>
+                                <a href="/eBay/product/create" class="btn">List an item</a>
                             </c:if>
                             <a href="#" onclick="alert('Feature coming soon!')">🛒 Cart</a>
                         </c:when>
@@ -367,8 +367,8 @@
             <div class="hero-buttons">
                 <c:choose>
                     <c:when test="${not empty currentUser}">
-                        <a href="#" class="btn" onclick="alert('Feature coming soon!')">Start Selling</a>
-                        <a href="#" class="btn btn-outline" onclick="alert('Feature coming soon!')">Browse Categories</a>
+                        <a href="/eBay/product/create" class="btn">Start Selling</a>
+                        <a href="/eBay/product/search" class="btn btn-outline">Browse Products</a>
                     </c:when>
                     <c:otherwise>
                         <a href="/eBay/user/register" class="btn">Get Started</a>
@@ -384,32 +384,32 @@
         <div class="container">
             <h2>Shop by Category</h2>
             <div class="category-grid">
-                <a href="#" class="category-card" onclick="alert('Feature coming soon!')">
+                <a href="/eBay/product/category/1" class="category-card">
                     <div class="category-icon">📱</div>
                     <h3>Electronics</h3>
                     <p>Phones, computers, and gadgets</p>
                 </a>
-                <a href="#" class="category-card" onclick="alert('Feature coming soon!')">
+                <a href="/eBay/product/category/1" class="category-card">
                     <div class="category-icon">👕</div>
                     <h3>Fashion</h3>
                     <p>Clothing, shoes, and accessories</p>
                 </a>
-                <a href="#" class="category-card" onclick="alert('Feature coming soon!')">
+                <a href="/eBay/product/category/1" class="category-card">
                     <div class="category-icon">🏠</div>
                     <h3>Home & Garden</h3>
                     <p>Furniture, decor, and tools</p>
                 </a>
-                <a href="#" class="category-card" onclick="alert('Feature coming soon!')">
+                <a href="/eBay/product/category/1" class="category-card">
                     <div class="category-icon">⚽</div>
                     <h3>Sports</h3>
                     <p>Sports equipment and outdoor gear</p>
                 </a>
-                <a href="#" class="category-card" onclick="alert('Feature coming soon!')">
+                <a href="/eBay/product/category/1" class="category-card">
                     <div class="category-icon">🚗</div>
                     <h3>Automotive</h3>
                     <p>Car parts and accessories</p>
                 </a>
-                <a href="#" class="category-card" onclick="alert('Feature coming soon!')">
+                <a href="/eBay/product/category/1" class="category-card">
                     <div class="category-icon">📚</div>
                     <h3>Books & Media</h3>
                     <p>Books, movies, and music</p>
@@ -459,7 +459,7 @@
         function performSearch() {
             const searchTerm = document.getElementById('searchInput').value;
             if (searchTerm.trim()) {
-                alert('Search functionality coming soon! You searched for: ' + searchTerm);
+                window.location.href = '/eBay/product/search?q=' + encodeURIComponent(searchTerm.trim());
             } else {
                 alert('Please enter a search term');
             }
