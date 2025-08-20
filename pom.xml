@@ -119,7 +119,10 @@
         <configuration>
           <webApp>
             <contextPath>/eBay</contextPath>
+            <resourceBase>WebContent</resourceBase>
+            <descriptor>WebContent/WEB-INF/web.xml</descriptor>
           </webApp>
+          <webAppSourceDirectory>WebContent</webAppSourceDirectory>
           <httpConnector>
             <port>8081</port>
           </httpConnector>
