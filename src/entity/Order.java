@@ -57,6 +57,10 @@ public class Order {
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
     
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private OrderStatus status = OrderStatus.PENDING;
+    
     // Relationships
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderItem> orderItems;
@@ -68,6 +72,10 @@ public class Order {
     
     public enum ShippingStatus {
         PENDING, PROCESSING, SHIPPED, DELIVERED, RETURNED
+    }
+    
+    public enum OrderStatus {
+        PENDING, PROCESSING, SHIPPED, DELIVERED, COMPLETED, CANCELLED, PENDING_SHIPMENT
     }
     
     // Constructors
@@ -124,6 +132,9 @@ public class Order {
     
     public String getNotes() { return notes; }
     public void setNotes(String notes) { this.notes = notes; }
+    
+    public OrderStatus getStatus() { return status; }
+    public void setStatus(OrderStatus status) { this.status = status; }
     
     public List<OrderItem> getOrderItems() { return orderItems; }
     public void setOrderItems(List<OrderItem> orderItems) { this.orderItems = orderItems; }

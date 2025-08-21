@@ -239,6 +239,33 @@ public class ProductService {
         return productDAO.getProductCountByCategory(categoryId);
     }
     
+    public void updateProductQuantity(Integer productId, Integer quantity, Integer userId) {
+        Product product = productDAO.findById(productId);
+        if (product == null) {
+            throw new RuntimeException("Product not found");
+        }
+        
+        if (!product.getSeller().getUserId().equals(userId)) {
+            throw new RuntimeException("You can only update your own products");
+        }
+        
+        if (quantity < 0) {
+            throw new RuntimeException("Quantity cannot be negative");
+        }
+        
+        product.setQuantityAvailable(quantity);
+        product.setUpdatedDate(new Timestamp(System.currentTimeMillis()));
+        
+        // Update status based on quantity
+        if (quantity == 0 && product.getStatus() == Product.ProductStatus.ACTIVE) {
+            product.setStatus(Product.ProductStatus.SOLD);
+        } else if (quantity > 0 && product.getStatus() == Product.ProductStatus.SOLD) {
+            product.setStatus(Product.ProductStatus.ACTIVE);
+        }
+        
+        productDAO.update(product);
+    }
+    
     // Product Image Management
     public ProductImage addProductImage(Integer productId, String imageUrl, String altText, Boolean isPrimary) {
         Product product = productDAO.findById(productId);

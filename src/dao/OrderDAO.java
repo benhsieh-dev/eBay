@@ -195,4 +195,13 @@ public class OrderDAO {
         query.setMaxResults(limit);
         return query.getResultList();
     }
+    
+    public List<Order> findBySellerAndDateRange(Integer sellerId, Timestamp startDate, Timestamp endDate) {
+        Query<Order> query = getCurrentSession().createQuery(
+            "FROM Order WHERE seller.userId = :sellerId AND orderDate BETWEEN :startDate AND :endDate ORDER BY orderDate DESC", Order.class);
+        query.setParameter("sellerId", sellerId);
+        query.setParameter("startDate", startDate);
+        query.setParameter("endDate", endDate);
+        return query.getResultList();
+    }
 }

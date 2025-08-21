@@ -196,6 +196,64 @@ public class OrderService {
         return orderDAO.findBySellerId(sellerId);
     }
     
+    public List<Order> getOrdersBySeller(Integer sellerId) {
+        return orderDAO.findBySellerId(sellerId);
+    }
+    
+    public List<Order> getOrdersBySellerAndDateRange(Integer sellerId, Timestamp startDate, Timestamp endDate) {
+        return orderDAO.findBySellerAndDateRange(sellerId, startDate, endDate);
+    }
+    
+    public void updateOrderStatus(Integer orderId, Order.OrderStatus status, Integer userId, String trackingNumber) {
+        Order order = orderDAO.findById(orderId);
+        if (order == null) {
+            throw new RuntimeException("Order not found");
+        }
+        
+        if (!order.getSeller().getUserId().equals(userId)) {
+            throw new RuntimeException("You can only update your own orders");
+        }
+        
+        order.setStatus(status);
+        
+        // Update related statuses based on order status
+        switch (status) {
+            case PROCESSING:
+                order.setPaymentStatus(Order.PaymentStatus.PAID);
+                order.setShippingStatus(Order.ShippingStatus.PROCESSING);
+                break;
+            case SHIPPED:
+                order.setShippingStatus(Order.ShippingStatus.SHIPPED);
+                if (trackingNumber != null && !trackingNumber.trim().isEmpty()) {
+                    order.setTrackingNumber(trackingNumber);
+                }
+                break;
+            case DELIVERED:
+                order.setShippingStatus(Order.ShippingStatus.DELIVERED);
+                break;
+            case COMPLETED:
+                order.setPaymentStatus(Order.PaymentStatus.PAID);
+                order.setShippingStatus(Order.ShippingStatus.DELIVERED);
+                break;
+            case CANCELLED:
+                order.setPaymentStatus(Order.PaymentStatus.FAILED);
+                // Restore product quantities
+                for (OrderItem item : order.getOrderItems()) {
+                    Product product = item.getProduct();
+                    product.setQuantityAvailable(product.getQuantityAvailable() + item.getQuantity());
+                    product.setQuantitySold(Math.max(0, product.getQuantitySold() - item.getQuantity()));
+                    
+                    if (product.getStatus() == Product.ProductStatus.SOLD && product.getQuantityAvailable() > 0) {
+                        product.setStatus(Product.ProductStatus.ACTIVE);
+                    }
+                    productDAO.update(product);
+                }
+                break;
+        }
+        
+        orderDAO.update(order);
+    }
+    
     public void updatePaymentStatus(Integer orderId, Order.PaymentStatus paymentStatus) {
         orderDAO.updatePaymentStatus(orderId, paymentStatus);
         
