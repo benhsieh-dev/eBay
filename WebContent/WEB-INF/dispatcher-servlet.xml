@@ -54,6 +54,7 @@
 				<value>entity.Order</value>
 				<value>entity.OrderItem</value>
 				<value>entity.Watchlist</value>
+				<value>entity.Payment</value>
 			</array>
 		</property>
 		<property name="hibernateProperties">
