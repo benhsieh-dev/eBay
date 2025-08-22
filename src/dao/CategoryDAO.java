@@ -18,7 +18,11 @@ public class CategoryDAO {
     private SessionFactory sessionFactory;
     
     private Session getCurrentSession() {
-        return sessionFactory.getCurrentSession();
+        try {
+            return sessionFactory.getCurrentSession();
+        } catch (Exception e) {
+            return sessionFactory.openSession();
+        }
     }
     
     public Category save(Category category) {
@@ -38,9 +42,14 @@ public class CategoryDAO {
     }
     
     public List<Category> findAll() {
-        Query<Category> query = getCurrentSession().createQuery(
-            "FROM Category ORDER BY categoryName", Category.class);
-        return query.getResultList();
+        Session session = sessionFactory.openSession();
+        try {
+            Query<Category> query = session.createQuery(
+                "FROM Category ORDER BY categoryName", Category.class);
+            return query.getResultList();
+        } finally {
+            session.close();
+        }
     }
     
     public List<Category> findTopLevelCategories() {
@@ -92,10 +101,15 @@ public class CategoryDAO {
     }
     
     public boolean existsByName(String categoryName) {
-        Query<Long> query = getCurrentSession().createQuery(
-            "SELECT COUNT(c) FROM Category c WHERE c.categoryName = :name", Long.class);
-        query.setParameter("name", categoryName);
-        return query.uniqueResult() > 0;
+        Session session = sessionFactory.openSession();
+        try {
+            Query<Long> query = session.createQuery(
+                "SELECT COUNT(c) FROM Category c WHERE c.categoryName = :name", Long.class);
+            query.setParameter("name", categoryName);
+            return query.uniqueResult() > 0;
+        } finally {
+            session.close();
+        }
     }
     
     public List<Category> getCategoryHierarchy(Integer categoryId) {

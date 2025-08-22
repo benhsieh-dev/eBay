@@ -22,7 +22,11 @@ public class ProductDAO {
     private SessionFactory sessionFactory;
     
     private Session getCurrentSession() {
-        return sessionFactory.getCurrentSession();
+        try {
+            return sessionFactory.getCurrentSession();
+        } catch (Exception e) {
+            return sessionFactory.openSession();
+        }
     }
     
     public Product save(Product product) {
@@ -223,10 +227,15 @@ public class ProductDAO {
     }
     
     public List<Product> findExpiredAuctions() {
-        Query<Product> query = getCurrentSession().createQuery(
-            "FROM Product WHERE listingType IN ('AUCTION', 'BOTH') AND status = 'ACTIVE' " +
-            "AND auctionEndTime <= CURRENT_TIMESTAMP", Product.class);
-        return query.getResultList();
+        Session session = sessionFactory.openSession();
+        try {
+            Query<Product> query = session.createQuery(
+                "FROM Product WHERE listingType IN ('AUCTION', 'BOTH') AND status = 'ACTIVE' " +
+                "AND auctionEndTime <= CURRENT_TIMESTAMP", Product.class);
+            return query.getResultList();
+        } finally {
+            session.close();
+        }
     }
     
     public void markAuctionAsEnded(Integer productId) {

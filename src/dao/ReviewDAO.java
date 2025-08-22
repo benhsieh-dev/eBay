@@ -25,7 +25,7 @@ public class ReviewDAO {
      * Save a new review
      */
     public Review save(Review review) {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
         try {
             session.save(review);
@@ -34,6 +34,8 @@ public class ReviewDAO {
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
             throw e;
+        } finally {
+            session.close();
         }
     }
     
@@ -41,7 +43,7 @@ public class ReviewDAO {
      * Update an existing review
      */
     public Review update(Review review) {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
         try {
             review.updateTimestamp();
@@ -51,6 +53,8 @@ public class ReviewDAO {
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
             throw e;
+        } finally {
+            session.close();
         }
     }
     
@@ -58,8 +62,12 @@ public class ReviewDAO {
      * Find review by ID
      */
     public Review findById(Integer reviewId) {
-        Session session = sessionFactory.getCurrentSession();
-        return session.get(Review.class, reviewId);
+        Session session = sessionFactory.openSession();
+        try {
+            return session.get(Review.class, reviewId);
+        } finally {
+            session.close();
+        }
     }
     
     /**

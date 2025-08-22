@@ -140,11 +140,16 @@ public class PaymentDAO {
     }
     
     public List<Payment> findPendingPaymentsSince(Timestamp since) {
-        Query<Payment> query = getCurrentSession().createQuery(
-            "FROM Payment WHERE (paymentStatus = 'PENDING' OR paymentStatus = 'PROCESSING') " +
-            "AND createdDate >= :since ORDER BY createdDate ASC", Payment.class);
-        query.setParameter("since", since);
-        return query.getResultList();
+        Session session = sessionFactory.openSession();
+        try {
+            Query<Payment> query = session.createQuery(
+                "FROM Payment WHERE (paymentStatus = 'PENDING' OR paymentStatus = 'PROCESSING') " +
+                "AND createdDate >= :since ORDER BY createdDate ASC", Payment.class);
+            query.setParameter("since", since);
+            return query.getResultList();
+        } finally {
+            session.close();
+        }
     }
     
     public List<Payment> findBySellerIdOrderByDate(Integer sellerId) {
