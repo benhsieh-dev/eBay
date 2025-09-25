@@ -17,5 +17,5 @@ RUN mvn clean package -DskipTests
 # Expose port
 EXPOSE 8080
 
-# Run the application
+# Run the application with environment variables
 CMD ["java", "-jar", "target/dependency/jetty-runner.jar", "--port", "8080", "target/eBay-0.0.1-SNAPSHOT.war"]

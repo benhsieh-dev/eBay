@@ -18,6 +18,7 @@
 	<context:component-scan base-package="com.ebay.controller"></context:component-scan>
 	<context:component-scan base-package="service"></context:component-scan>
 	<context:component-scan base-package="dao"></context:component-scan>
+	<context:component-scan base-package="config"></context:component-scan>
 	
 	<bean id="handlermapping" class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"></bean>
 	
@@ -26,15 +27,8 @@
 		<property name="suffix" value=".jsp" />
 	</bean>
 	
-	<!-- HikariCP DataSource for better connection pooling -->
-	<bean id="datasource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
-		<property name="driverClassName" value="com.mysql.cj.jdbc.Driver"></property>
-		<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/eBay?useSSL=false&amp;serverTimezone=UTC"></property>
-		<property name="username" value="root"></property>
-		<property name="password" value=""></property>
-		<property name="maximumPoolSize" value="20"></property>
-		<property name="minimumIdle" value="5"></property>
-	</bean>
+	<!-- DataSource configured via Java Config in DataSourceConfiguration -->
+	<!-- The @Configuration class will provide the datasource bean -->
 	
 	<!-- Updated to Hibernate 5 -->
 	<bean id="hibernateTemplate" class="org.springframework.orm.hibernate5.HibernateTemplate">
@@ -42,7 +36,7 @@
 	</bean>
 	
 	<bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
-		<property name="dataSource" ref="datasource"></property>
+		<property name="dataSource" ref="dataSource"></property>
 		<property name="annotatedClasses">
 			<array>
 				<value>entity.User</value>
@@ -59,16 +53,11 @@
 				<value>entity.Message</value>
 			</array>
 		</property>
-		<property name="hibernateProperties">
-			<props>
-				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL8Dialect</prop>
-				<prop key="hibernate.hbm2ddl.auto">update</prop>
-				<prop key="hibernate.show_sql">true</prop>
-				<prop key="hibernate.format_sql">true</prop>
-				<prop key="hibernate.current_session_context_class">org.springframework.orm.hibernate5.SpringSessionContext</prop>
-			</props>
-		</property>
+		<property name="hibernateProperties" ref="hibernateProperties"></property>
 	</bean>
+	
+	<!-- Dynamic Hibernate Properties -->
+	<bean id="hibernateProperties" class="config.HibernatePropertiesFactory" factory-method="getProperties"></bean>
 	
 	<!-- Transaction Manager -->
 	<bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
