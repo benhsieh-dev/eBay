@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: ebay-app
+    env: java
+    buildCommand: mvn clean package -DskipTests
+    startCommand: java -jar target/dependency/jetty-runner.jar --port $PORT target/*.war
+    plan: free
+    envVars:
+      - key: DB_URL
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
