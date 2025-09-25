@@ -1,31 +1,23 @@
 package controller;
 
-import entity.User;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-
-import javax.servlet.http.HttpSession;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 public class HomeController {
     
+    // Serve React app for root path
     @GetMapping("/")
-    public String home(Model model, HttpSession session) {
-        User currentUser = (User) session.getAttribute("currentUser");
-        model.addAttribute("currentUser", currentUser);
-        return "home-new";
+    public String home() {
+        return "forward:/index.html";
     }
     
-    @GetMapping("/home")
-    public String homeAlias(Model model, HttpSession session) {
-        return home(model, session);
-    }
-    
-    // Add current user to all models for navbar access
-    @ModelAttribute("currentUser")
-    public User getCurrentUser(HttpSession session) {
-        return (User) session.getAttribute("currentUser");
+    // Serve React app for all other non-API routes (React Router handles client-side routing)
+    @RequestMapping(value = {"/products", "/products/**", "/login", "/register", "/cart", "/sell", "/profile", "/profile/**"}, 
+                   method = {RequestMethod.GET})
+    public String serveReactApp() {
+        return "forward:/index.html";
     }
 }

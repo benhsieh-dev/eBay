@@ -22,15 +22,10 @@
 	
 	<bean id="handlermapping" class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"></bean>
 	
-	<bean id="viewresolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="prefix" value="/WEB-INF/view/" />
-		<property name="suffix" value=".jsp" />
-	</bean>
-	
-	<!-- DataSource configured via Java Config in DataSourceConfiguration -->
+	<!-- DataSource configured via Java Config in DatabaseConfiguration -->
 	<!-- The @Configuration class will provide the datasource bean -->
 	
-	<!-- Updated to Hibernate 5 -->
+	<!-- Updated to Hibernate 5 with better schema handling -->
 	<bean id="hibernateTemplate" class="org.springframework.orm.hibernate5.HibernateTemplate">
 		<property name="sessionFactory" ref="sessionFactory"></property>
 	</bean>

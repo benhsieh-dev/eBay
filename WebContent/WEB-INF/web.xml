@@ -3,10 +3,9 @@
 	xmlns="http://xmlns.jcp.org/xml/ns/javaee"
 	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
 	id="WebApp_ID" version="4.0">
-	<display-name>eBay</display-name>
-		
+	<display-name>eBay React Application</display-name>
 	
-	<!-- Building Login Form Application using Spring MVC -->
+	<!-- Spring MVC Dispatcher Servlet -->
 	<servlet>
 		<servlet-name>dispatcher</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
@@ -17,67 +16,12 @@
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
 	
-	
+	<!-- React App Welcome File -->
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
-		<welcome-file>index.htm</welcome-file>
-		<welcome-file>index.jsp</welcome-file>
-		<welcome-file>default.html</welcome-file>
-		<welcome-file>default.htm</welcome-file>
-		<welcome-file>default.jsp</welcome-file>
 	</welcome-file-list>
 
-		
-	<servlet>
-		<servlet-name>Home</servlet-name>
-		<jsp-file>/WEB-INF/view/Home.jsp</jsp-file>
-	</servlet>
-
-	<servlet-mapping>
-		<servlet-name>Home</servlet-name>
-		<url-pattern>/ebay.com/*</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
-		<servlet-name>Profile</servlet-name>
-		<jsp-file>/WEB-INF/view/My_Profile.jsp</jsp-file>
-	</servlet>
-
-	<servlet-mapping>
-		<servlet-name>Profile</servlet-name>
-		<url-pattern>/profile</url-pattern>
-	</servlet-mapping>
-
-	
-	<servlet>
-		<servlet-name>Sign_out_controller</servlet-name>
-		<jsp-file>/profile/controller/Sign_out_controller.jsp</jsp-file>
-	</servlet>
-	
-	<servlet>
-		<servlet-name>userform</servlet-name>
-		<jsp-file>/WEB-INF/view/user-form.jsp</jsp-file>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>userform</servlet-name>
-		<url-pattern>/registration</url-pattern>
-	</servlet-mapping>
-	
-	<servlet>
-		<servlet-name>products</servlet-name>
-		<jsp-file>/WEB-INF/view/product-list.jsp</jsp-file>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>products</servlet-name>
-		<url-pattern>/products</url-pattern>
-	</servlet-mapping>
-	
-
-	<servlet-mapping>
-		<servlet-name>Sign_out_controller</servlet-name>
-		<url-pattern>/signoutcontroller</url-pattern>
-	</servlet-mapping>
-
+	<!-- Static Resource Mappings -->
 	<servlet-mapping>
 		<servlet-name>default</servlet-name>
 		<url-pattern>*.css</url-pattern>
@@ -92,7 +36,15 @@
 		<servlet-name>default</servlet-name>
 		<url-pattern>*.png</url-pattern>
 	</servlet-mapping>
-
+	
+	<servlet-mapping>
+		<servlet-name>default</servlet-name>
+		<url-pattern>*.ico</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>default</servlet-name>
+		<url-pattern>*.json</url-pattern>
+	</servlet-mapping>
 
 </web-app>
-
