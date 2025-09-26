@@ -3,7 +3,7 @@ services:
     name: ebay-app
     env: java
     buildCommand: mvn clean package -DskipTests
-    startCommand: java -jar target/dependency/jetty-runner.jar --port $PORT target/*.war
+    startCommand: java -jar target/dependency/jetty-runner.jar --port $PORT target/eBay-0.0.1-SNAPSHOT.war
     plan: free
     envVars:
       - key: DB_URL
