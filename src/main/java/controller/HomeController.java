@@ -15,15 +15,15 @@ public class HomeController {
     }
     
     // Serve React app for all other non-API routes (React Router handles client-side routing)
-    @RequestMapping(value = {"/products", "/products/**", "/login", "/register", "/cart", "/sell", "/profile", "/profile/**"}, 
+    @RequestMapping(value = {"/products", "/products/**", "/login", "/register", "/cart", "/sell", "/profile", "/profile/**", "/about", "/contact"}, 
                    method = {RequestMethod.GET})
     public String serveReactApp() {
         return "forward:/index.html";
     }
     
-    // Health check endpoint
-    @GetMapping("/health")
-    public String health() {
-        return "forward:/health.html";
+    // Catch-all for React routes - this ensures any route not handled by API controllers serves the React app
+    @RequestMapping(value = "/{path:[^\\.]*}", method = RequestMethod.GET)
+    public String redirect() {
+        return "forward:/index.html";
     }
 }
