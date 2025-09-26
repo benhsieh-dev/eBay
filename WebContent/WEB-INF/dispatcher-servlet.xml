@@ -11,6 +11,14 @@
 
 	<mvc:annotation-driven />
 	
+	<!-- Configure static resource handling for React build files -->
+	<mvc:resources mapping="/static/**" location="/static/" />
+	<mvc:resources mapping="/assets/**" location="/assets/" />
+	<mvc:resources mapping="/*.ico" location="/" />
+	<mvc:resources mapping="/*.png" location="/" />
+	<mvc:resources mapping="/*.json" location="/" />
+	<mvc:resources mapping="/*.html" location="/" />
+	
 	<!-- Enable task scheduling -->
 	<task:annotation-driven />
 	
