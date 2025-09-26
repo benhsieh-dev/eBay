@@ -1,7 +1,9 @@
 FROM openjdk:17-jdk-slim
 
-# Install Maven
-RUN apt-get update && apt-get install -y maven
+# Install Maven and Node.js
+RUN apt-get update && apt-get install -y maven curl && \
+    curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs
 
 # Set working directory
 WORKDIR /app
@@ -10,6 +12,7 @@ WORKDIR /app
 COPY pom.xml .
 COPY src ./src
 COPY WebContent ./WebContent
+COPY frontend ./frontend
 
 # Build the application
 RUN mvn clean package -DskipTests
