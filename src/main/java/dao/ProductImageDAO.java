@@ -1,10 +1,10 @@
 package dao;
 
 import entity.ProductImage;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.query.Query;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,45 +14,53 @@ import java.util.List;
 @Transactional
 public class ProductImageDAO {
     
-    @Autowired
-    private SessionFactory sessionFactory;
-    
-    private Session getCurrentSession() {
-        return sessionFactory.getCurrentSession();
-    }
+    @PersistenceContext
+    private EntityManager entityManager;
     
     public ProductImage save(ProductImage productImage) {
-        getCurrentSession().saveOrUpdate(productImage);
+        if (productImage.getImageId() == null) {
+            entityManager.persist(productImage);
+        } else {
+            entityManager.merge(productImage);
+        }
         return productImage;
     }
     
     public ProductImage findById(Integer imageId) {
-        return getCurrentSession().get(ProductImage.class, imageId);
+        return entityManager.find(ProductImage.class, imageId);
     }
     
     public List<ProductImage> findByProductId(Integer productId) {
-        Query<ProductImage> query = getCurrentSession().createQuery(
+        TypedQuery<ProductImage> query = entityManager.createQuery(
             "FROM ProductImage WHERE product.productId = :productId ORDER BY sortOrder, uploadedDate", ProductImage.class);
         query.setParameter("productId", productId);
         return query.getResultList();
     }
     
     public ProductImage findPrimaryImageByProductId(Integer productId) {
-        Query<ProductImage> query = getCurrentSession().createQuery(
+        TypedQuery<ProductImage> query = entityManager.createQuery(
             "FROM ProductImage WHERE product.productId = :productId AND isPrimary = true", ProductImage.class);
         query.setParameter("productId", productId);
         query.setMaxResults(1);
-        return query.uniqueResult();
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
     
     public List<ProductImage> findAll() {
-        Query<ProductImage> query = getCurrentSession().createQuery(
+        TypedQuery<ProductImage> query = entityManager.createQuery(
             "FROM ProductImage ORDER BY uploadedDate DESC", ProductImage.class);
         return query.getResultList();
     }
     
     public void delete(ProductImage productImage) {
-        getCurrentSession().delete(productImage);
+        if (entityManager.contains(productImage)) {
+            entityManager.remove(productImage);
+        } else {
+            entityManager.remove(entityManager.merge(productImage));
+        }
     }
     
     public void deleteById(Integer imageId) {
@@ -63,21 +71,21 @@ public class ProductImageDAO {
     }
     
     public void deleteByProductId(Integer productId) {
-        Query query = getCurrentSession().createQuery(
-            "DELETE FROM ProductImage WHERE product.productId = :productId");
-        query.setParameter("productId", productId);
-        query.executeUpdate();
+        entityManager.createQuery(
+            "DELETE FROM ProductImage WHERE product.productId = :productId")
+            .setParameter("productId", productId)
+            .executeUpdate();
     }
     
     public ProductImage update(ProductImage productImage) {
-        return (ProductImage) getCurrentSession().merge(productImage);
+        return entityManager.merge(productImage);
     }
     
     public void clearPrimaryStatus(Integer productId) {
-        Query query = getCurrentSession().createQuery(
-            "UPDATE ProductImage SET isPrimary = false WHERE product.productId = :productId");
-        query.setParameter("productId", productId);
-        query.executeUpdate();
+        entityManager.createQuery(
+            "UPDATE ProductImage SET isPrimary = false WHERE product.productId = :productId")
+            .setParameter("productId", productId)
+            .executeUpdate();
     }
     
     public void setPrimaryImage(Integer imageId) {
@@ -93,17 +101,17 @@ public class ProductImageDAO {
     }
     
     public Long getImageCountByProductId(Integer productId) {
-        Query<Long> query = getCurrentSession().createQuery(
+        TypedQuery<Long> query = entityManager.createQuery(
             "SELECT COUNT(pi) FROM ProductImage pi WHERE pi.product.productId = :productId", Long.class);
         query.setParameter("productId", productId);
-        return query.uniqueResult();
+        return query.getSingleResult();
     }
     
     public void updateSortOrder(Integer imageId, Integer sortOrder) {
-        Query query = getCurrentSession().createQuery(
-            "UPDATE ProductImage SET sortOrder = :sortOrder WHERE imageId = :imageId");
-        query.setParameter("sortOrder", sortOrder);
-        query.setParameter("imageId", imageId);
-        query.executeUpdate();
+        entityManager.createQuery(
+            "UPDATE ProductImage SET sortOrder = :sortOrder WHERE imageId = :imageId")
+            .setParameter("sortOrder", sortOrder)
+            .setParameter("imageId", imageId)
+            .executeUpdate();
     }
 }

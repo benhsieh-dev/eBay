@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
-@Controller
+// @Controller  // Temporarily disabled
 public class ConnectionTestController {
 
     @GetMapping("/connection-test")

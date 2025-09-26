@@ -3,67 +3,53 @@ package dao;
 import entity.ReviewHelpfulness;
 import entity.Review;
 import entity.User;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.query.Query;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Repository
+@Transactional
 public class ReviewHelpfulnessDAO {
     
-    @Autowired
-    private SessionFactory sessionFactory;
+    @PersistenceContext
+    private EntityManager entityManager;
     
     /**
      * Save a helpfulness vote
      */
     public ReviewHelpfulness save(ReviewHelpfulness helpfulness) {
-        Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = session.beginTransaction();
-        try {
-            session.save(helpfulness);
-            transaction.commit();
-            return helpfulness;
-        } catch (Exception e) {
-            if (transaction != null) transaction.rollback();
-            throw e;
+        if (helpfulness.getHelpfulnessId() == null) {
+            entityManager.persist(helpfulness);
+        } else {
+            entityManager.merge(helpfulness);
         }
+        return helpfulness;
     }
     
     /**
      * Update an existing helpfulness vote
      */
     public ReviewHelpfulness update(ReviewHelpfulness helpfulness) {
-        Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = session.beginTransaction();
-        try {
-            session.update(helpfulness);
-            transaction.commit();
-            return helpfulness;
-        } catch (Exception e) {
-            if (transaction != null) transaction.rollback();
-            throw e;
-        }
+        return entityManager.merge(helpfulness);
     }
     
     /**
      * Find helpfulness vote by ID
      */
     public ReviewHelpfulness findById(Integer helpfulnessId) {
-        Session session = sessionFactory.getCurrentSession();
-        return session.get(ReviewHelpfulness.class, helpfulnessId);
+        return entityManager.find(ReviewHelpfulness.class, helpfulnessId);
     }
     
     /**
      * Find existing vote by user and review
      */
     public ReviewHelpfulness findByUserAndReview(Integer userId, Integer reviewId) {
-        Session session = sessionFactory.getCurrentSession();
-        Query<ReviewHelpfulness> query = session.createQuery(
+        TypedQuery<ReviewHelpfulness> query = entityManager.createQuery(
             "FROM ReviewHelpfulness rh WHERE rh.user.userId = :userId AND rh.review.reviewId = :reviewId", 
             ReviewHelpfulness.class);
         query.setParameter("userId", userId);
@@ -77,8 +63,7 @@ public class ReviewHelpfulnessDAO {
      * Find all helpfulness votes for a review
      */
     public List<ReviewHelpfulness> findByReview(Integer reviewId) {
-        Session session = sessionFactory.getCurrentSession();
-        Query<ReviewHelpfulness> query = session.createQuery(
+        TypedQuery<ReviewHelpfulness> query = entityManager.createQuery(
             "FROM ReviewHelpfulness rh WHERE rh.review.reviewId = :reviewId ORDER BY rh.createdAt DESC", 
             ReviewHelpfulness.class);
         query.setParameter("reviewId", reviewId);
@@ -89,53 +74,46 @@ public class ReviewHelpfulnessDAO {
      * Count helpful votes for a review
      */
     public Long countHelpfulVotes(Integer reviewId) {
-        Session session = sessionFactory.getCurrentSession();
-        Query<Long> query = session.createQuery(
+        TypedQuery<Long> query = entityManager.createQuery(
             "SELECT COUNT(rh) FROM ReviewHelpfulness rh WHERE rh.review.reviewId = :reviewId AND rh.isHelpful = true", 
             Long.class);
         query.setParameter("reviewId", reviewId);
-        return query.uniqueResult();
+        return query.getSingleResult();
     }
     
     /**
      * Count not helpful votes for a review
      */
     public Long countNotHelpfulVotes(Integer reviewId) {
-        Session session = sessionFactory.getCurrentSession();
-        Query<Long> query = session.createQuery(
+        TypedQuery<Long> query = entityManager.createQuery(
             "SELECT COUNT(rh) FROM ReviewHelpfulness rh WHERE rh.review.reviewId = :reviewId AND rh.isHelpful = false", 
             Long.class);
         query.setParameter("reviewId", reviewId);
-        return query.uniqueResult();
+        return query.getSingleResult();
     }
     
     /**
      * Get total votes for a review
      */
     public Long countTotalVotes(Integer reviewId) {
-        Session session = sessionFactory.getCurrentSession();
-        Query<Long> query = session.createQuery(
+        TypedQuery<Long> query = entityManager.createQuery(
             "SELECT COUNT(rh) FROM ReviewHelpfulness rh WHERE rh.review.reviewId = :reviewId", 
             Long.class);
         query.setParameter("reviewId", reviewId);
-        return query.uniqueResult();
+        return query.getSingleResult();
     }
     
     /**
      * Delete helpfulness vote
      */
     public void delete(Integer helpfulnessId) {
-        Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = session.beginTransaction();
-        try {
-            ReviewHelpfulness helpfulness = session.get(ReviewHelpfulness.class, helpfulnessId);
-            if (helpfulness != null) {
-                session.delete(helpfulness);
+        ReviewHelpfulness helpfulness = entityManager.find(ReviewHelpfulness.class, helpfulnessId);
+        if (helpfulness != null) {
+            if (entityManager.contains(helpfulness)) {
+                entityManager.remove(helpfulness);
+            } else {
+                entityManager.remove(entityManager.merge(helpfulness));
             }
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) transaction.rollback();
-            throw e;
         }
     }
     
@@ -143,17 +121,9 @@ public class ReviewHelpfulnessDAO {
      * Delete all votes for a review
      */
     public void deleteByReview(Integer reviewId) {
-        Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = session.beginTransaction();
-        try {
-            Query query = session.createQuery(
-                "DELETE FROM ReviewHelpfulness rh WHERE rh.review.reviewId = :reviewId");
-            query.setParameter("reviewId", reviewId);
-            query.executeUpdate();
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) transaction.rollback();
-            throw e;
-        }
+        entityManager.createQuery(
+            "DELETE FROM ReviewHelpfulness rh WHERE rh.review.reviewId = :reviewId")
+            .setParameter("reviewId", reviewId)
+            .executeUpdate();
     }
 }

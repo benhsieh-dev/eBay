@@ -3,10 +3,10 @@ package dao;
 import entity.Message;
 import entity.Conversation;
 import entity.User;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.query.Query;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,24 +17,24 @@ import java.util.List;
 @Transactional
 public class MessageDAO {
     
-    @Autowired
-    private SessionFactory sessionFactory;
-    
-    private Session getCurrentSession() {
-        return sessionFactory.getCurrentSession();
-    }
+    @PersistenceContext
+    private EntityManager entityManager;
     
     public Message save(Message message) {
-        getCurrentSession().saveOrUpdate(message);
+        if (message.getMessageId() == null) {
+            entityManager.persist(message);
+        } else {
+            entityManager.merge(message);
+        }
         return message;
     }
     
     public Message findById(Integer messageId) {
-        return getCurrentSession().get(Message.class, messageId);
+        return entityManager.find(Message.class, messageId);
     }
     
     public List<Message> findByConversation(Integer conversationId) {
-        Query<Message> query = getCurrentSession().createQuery(
+        TypedQuery<Message> query = entityManager.createQuery(
             "FROM Message m WHERE m.conversation.conversationId = :conversationId " +
             "AND m.status != 'DELETED' ORDER BY m.sentAt ASC", Message.class);
         query.setParameter("conversationId", conversationId);
@@ -42,7 +42,7 @@ public class MessageDAO {
     }
     
     public List<Message> findByConversationPaginated(Integer conversationId, int page, int pageSize) {
-        Query<Message> query = getCurrentSession().createQuery(
+        TypedQuery<Message> query = entityManager.createQuery(
             "FROM Message m WHERE m.conversation.conversationId = :conversationId " +
             "AND m.status != 'DELETED' ORDER BY m.sentAt DESC", Message.class);
         query.setParameter("conversationId", conversationId);
@@ -52,7 +52,7 @@ public class MessageDAO {
     }
     
     public Message getLatestMessageInConversation(Integer conversationId) {
-        Query<Message> query = getCurrentSession().createQuery(
+        TypedQuery<Message> query = entityManager.createQuery(
             "FROM Message m WHERE m.conversation.conversationId = :conversationId " +
             "AND m.status != 'DELETED' ORDER BY m.sentAt DESC", Message.class);
         query.setParameter("conversationId", conversationId);
@@ -62,7 +62,7 @@ public class MessageDAO {
     }
     
     public List<Message> findBySender(Integer senderId) {
-        Query<Message> query = getCurrentSession().createQuery(
+        TypedQuery<Message> query = entityManager.createQuery(
             "FROM Message m WHERE m.sender.userId = :senderId " +
             "AND m.status != 'DELETED' ORDER BY m.sentAt DESC", Message.class);
         query.setParameter("senderId", senderId);
@@ -70,7 +70,7 @@ public class MessageDAO {
     }
     
     public List<Message> findByRecipient(Integer recipientId) {
-        Query<Message> query = getCurrentSession().createQuery(
+        TypedQuery<Message> query = entityManager.createQuery(
             "FROM Message m WHERE m.recipient.userId = :recipientId " +
             "AND m.status != 'DELETED' ORDER BY m.sentAt DESC", Message.class);
         query.setParameter("recipientId", recipientId);
@@ -78,7 +78,7 @@ public class MessageDAO {
     }
     
     public List<Message> findUnreadByRecipient(Integer recipientId) {
-        Query<Message> query = getCurrentSession().createQuery(
+        TypedQuery<Message> query = entityManager.createQuery(
             "FROM Message m WHERE m.recipient.userId = :recipientId " +
             "AND m.readAt IS NULL AND m.status != 'DELETED' " +
             "ORDER BY m.sentAt ASC", Message.class);
@@ -87,7 +87,7 @@ public class MessageDAO {
     }
     
     public List<Message> findUnreadInConversation(Integer conversationId, Integer recipientId) {
-        Query<Message> query = getCurrentSession().createQuery(
+        TypedQuery<Message> query = entityManager.createQuery(
             "FROM Message m WHERE m.conversation.conversationId = :conversationId " +
             "AND m.recipient.userId = :recipientId AND m.readAt IS NULL " +
             "AND m.status != 'DELETED' ORDER BY m.sentAt ASC", Message.class);
@@ -97,25 +97,25 @@ public class MessageDAO {
     }
     
     public Long getUnreadCountForUser(Integer userId) {
-        Query<Long> query = getCurrentSession().createQuery(
+        TypedQuery<Long> query = entityManager.createQuery(
             "SELECT COUNT(m) FROM Message m WHERE m.recipient.userId = :userId " +
             "AND m.readAt IS NULL AND m.status != 'DELETED'", Long.class);
         query.setParameter("userId", userId);
-        return query.uniqueResult();
+        return query.getSingleResult();
     }
     
     public Long getUnreadCountInConversation(Integer conversationId, Integer recipientId) {
-        Query<Long> query = getCurrentSession().createQuery(
+        TypedQuery<Long> query = entityManager.createQuery(
             "SELECT COUNT(m) FROM Message m WHERE m.conversation.conversationId = :conversationId " +
             "AND m.recipient.userId = :recipientId AND m.readAt IS NULL " +
             "AND m.status != 'DELETED'", Long.class);
         query.setParameter("conversationId", conversationId);
         query.setParameter("recipientId", recipientId);
-        return query.uniqueResult();
+        return query.getSingleResult();
     }
     
     public List<Message> findByType(Message.MessageType messageType) {
-        Query<Message> query = getCurrentSession().createQuery(
+        TypedQuery<Message> query = entityManager.createQuery(
             "FROM Message m WHERE m.messageType = :messageType " +
             "AND m.status != 'DELETED' ORDER BY m.sentAt DESC", Message.class);
         query.setParameter("messageType", messageType);
@@ -123,21 +123,21 @@ public class MessageDAO {
     }
     
     public List<Message> findWithAttachments() {
-        Query<Message> query = getCurrentSession().createQuery(
+        TypedQuery<Message> query = entityManager.createQuery(
             "FROM Message m WHERE m.attachmentUrl IS NOT NULL " +
             "AND m.status != 'DELETED' ORDER BY m.sentAt DESC", Message.class);
         return query.getResultList();
     }
     
     public List<Message> findByStatus(Message.MessageStatus status) {
-        Query<Message> query = getCurrentSession().createQuery(
+        TypedQuery<Message> query = entityManager.createQuery(
             "FROM Message m WHERE m.status = :status ORDER BY m.sentAt DESC", Message.class);
         query.setParameter("status", status);
         return query.getResultList();
     }
     
     public List<Message> findByDateRange(Timestamp startDate, Timestamp endDate) {
-        Query<Message> query = getCurrentSession().createQuery(
+        TypedQuery<Message> query = entityManager.createQuery(
             "FROM Message m WHERE m.sentAt BETWEEN :startDate AND :endDate " +
             "AND m.status != 'DELETED' ORDER BY m.sentAt DESC", Message.class);
         query.setParameter("startDate", startDate);
@@ -146,7 +146,7 @@ public class MessageDAO {
     }
     
     public List<Message> searchInConversation(Integer conversationId, String searchTerm) {
-        Query<Message> query = getCurrentSession().createQuery(
+        TypedQuery<Message> query = entityManager.createQuery(
             "FROM Message m WHERE m.conversation.conversationId = :conversationId " +
             "AND LOWER(m.messageContent) LIKE LOWER(:searchTerm) " +
             "AND m.status != 'DELETED' ORDER BY m.sentAt DESC", Message.class);
@@ -156,7 +156,7 @@ public class MessageDAO {
     }
     
     public List<Message> searchByUser(Integer userId, String searchTerm) {
-        Query<Message> query = getCurrentSession().createQuery(
+        TypedQuery<Message> query = entityManager.createQuery(
             "FROM Message m WHERE (m.sender.userId = :userId OR m.recipient.userId = :userId) " +
             "AND LOWER(m.messageContent) LIKE LOWER(:searchTerm) " +
             "AND m.status != 'DELETED' ORDER BY m.sentAt DESC", Message.class);
@@ -166,7 +166,7 @@ public class MessageDAO {
     }
     
     public List<Message> findReplies(Integer messageId) {
-        Query<Message> query = getCurrentSession().createQuery(
+        TypedQuery<Message> query = entityManager.createQuery(
             "FROM Message m WHERE m.replyToMessageId = :messageId " +
             "AND m.status != 'DELETED' ORDER BY m.sentAt ASC", Message.class);
         query.setParameter("messageId", messageId);
@@ -174,7 +174,7 @@ public class MessageDAO {
     }
     
     public List<Message> findSystemMessages(Integer conversationId) {
-        Query<Message> query = getCurrentSession().createQuery(
+        TypedQuery<Message> query = entityManager.createQuery(
             "FROM Message m WHERE m.conversation.conversationId = :conversationId " +
             "AND m.isSystemMessage = true AND m.status != 'DELETED' " +
             "ORDER BY m.sentAt ASC", Message.class);
@@ -183,7 +183,7 @@ public class MessageDAO {
     }
     
     public List<Message> findRecentByUser(Integer userId, int limit) {
-        Query<Message> query = getCurrentSession().createQuery(
+        TypedQuery<Message> query = entityManager.createQuery(
             "FROM Message m WHERE (m.sender.userId = :userId OR m.recipient.userId = :userId) " +
             "AND m.status != 'DELETED' ORDER BY m.sentAt DESC", Message.class);
         query.setParameter("userId", userId);
@@ -192,7 +192,7 @@ public class MessageDAO {
     }
     
     public List<Message> findFailedMessages() {
-        Query<Message> query = getCurrentSession().createQuery(
+        TypedQuery<Message> query = entityManager.createQuery(
             "FROM Message m WHERE m.status = 'FAILED' ORDER BY m.sentAt ASC", Message.class);
         return query.getResultList();
     }
@@ -206,9 +206,9 @@ public class MessageDAO {
     }
     
     public void markConversationAsRead(Integer conversationId, Integer userId) {
-        Query<Message> query = getCurrentSession().createQuery(
+        TypedQuery<Message> query = entityManager.createQuery(
             "FROM Message m WHERE m.conversation.conversationId = :conversationId " +
-            "AND m.recipient.userId = :userId AND m.readAt IS NULL");
+            "AND m.recipient.userId = :userId AND m.readAt IS NULL", Message.class);
         query.setParameter("conversationId", conversationId);
         query.setParameter("userId", userId);
         
@@ -230,15 +230,15 @@ public class MessageDAO {
     }
     
     public Long getMessageCountInConversation(Integer conversationId) {
-        Query<Long> query = getCurrentSession().createQuery(
+        TypedQuery<Long> query = entityManager.createQuery(
             "SELECT COUNT(m) FROM Message m WHERE m.conversation.conversationId = :conversationId " +
             "AND m.status != 'DELETED'", Long.class);
         query.setParameter("conversationId", conversationId);
-        return query.uniqueResult();
+        return query.getSingleResult();
     }
     
     public List<Object[]> getMessageStatsByUser(Integer userId) {
-        Query<Object[]> query = getCurrentSession().createQuery(
+        TypedQuery<Object[]> query = entityManager.createQuery(
             "SELECT m.messageType, COUNT(m), SUM(CASE WHEN m.readAt IS NULL THEN 1 ELSE 0 END) " +
             "FROM Message m WHERE (m.sender.userId = :userId OR m.recipient.userId = :userId) " +
             "AND m.status != 'DELETED' GROUP BY m.messageType", Object[].class);
@@ -247,15 +247,15 @@ public class MessageDAO {
     }
     
     public void deleteOldMessages(Timestamp cutoffDate) {
-        Query<?> query = getCurrentSession().createQuery(
+        entityManager.createQuery(
             "UPDATE Message m SET m.status = 'DELETED' WHERE m.sentAt < :cutoffDate " +
-            "AND m.status != 'DELETED'");
-        query.setParameter("cutoffDate", cutoffDate);
-        query.executeUpdate();
+            "AND m.status != 'DELETED'")
+            .setParameter("cutoffDate", cutoffDate)
+            .executeUpdate();
     }
     
     public Message update(Message message) {
-        return (Message) getCurrentSession().merge(message);
+        return entityManager.merge(message);
     }
     
     public void delete(Message message) {
@@ -271,14 +271,14 @@ public class MessageDAO {
     }
     
     public Long getMessageCount() {
-        Query<Long> query = getCurrentSession().createQuery(
+        TypedQuery<Long> query = entityManager.createQuery(
             "SELECT COUNT(m) FROM Message m WHERE m.status != 'DELETED'", Long.class);
-        return query.uniqueResult();
+        return query.getSingleResult();
     }
     
     public Long getTotalMessageCount() {
-        Query<Long> query = getCurrentSession().createQuery(
+        TypedQuery<Long> query = entityManager.createQuery(
             "SELECT COUNT(m) FROM Message m", Long.class);
-        return query.uniqueResult();
+        return query.getSingleResult();
     }
 }

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 import jakarta.servlet.http.HttpSession;
 
-@Controller
+// @Controller  // Temporarily disabled
 public class SplashController {
     
     @GetMapping("/splash")

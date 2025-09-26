@@ -54,8 +54,9 @@ public class Message {
     @Column(name = "is_edited")
     private Boolean isEdited = false;
     
-    @Column(name = "reply_to_message_id")
-    private Integer replyToMessageId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reply_to_message_id")
+    private Message replyToMessage;
     
     @Column(name = "attachment_url", length = 500)
     private String attachmentUrl;
@@ -76,7 +77,7 @@ public class Message {
     private String metadata; // JSON for additional data
     
     // Relationships
-    @OneToMany(mappedBy = "replyToMessageId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "replyToMessage", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Message> replies;
     
     // Enums
@@ -155,8 +156,8 @@ public class Message {
     public Boolean getIsEdited() { return isEdited; }
     public void setIsEdited(Boolean isEdited) { this.isEdited = isEdited; }
     
-    public Integer getReplyToMessageId() { return replyToMessageId; }
-    public void setReplyToMessageId(Integer replyToMessageId) { this.replyToMessageId = replyToMessageId; }
+    public Message getReplyToMessage() { return replyToMessage; }
+    public void setReplyToMessage(Message replyToMessage) { this.replyToMessage = replyToMessage; }
     
     public String getAttachmentUrl() { return attachmentUrl; }
     public void setAttachmentUrl(String attachmentUrl) { this.attachmentUrl = attachmentUrl; }
@@ -178,6 +179,11 @@ public class Message {
     
     public List<Message> getReplies() { return replies; }
     public void setReplies(List<Message> replies) { this.replies = replies; }
+    
+    // Backward compatibility helper method
+    public Integer getReplyToMessageId() {
+        return replyToMessage != null ? replyToMessage.getMessageId() : null;
+    }
     
     // Utility methods
     public boolean hasAttachment() {

@@ -3,10 +3,10 @@ package dao;
 import entity.CartItem;
 import entity.Product;
 import entity.User;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.query.Query;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,62 +17,66 @@ import java.util.List;
 @Transactional
 public class CartItemDAO {
     
-    @Autowired
-    private SessionFactory sessionFactory;
-    
-    private Session getCurrentSession() {
-        return sessionFactory.getCurrentSession();
-    }
+    @PersistenceContext
+    private EntityManager entityManager;
     
     public CartItem save(CartItem cartItem) {
-        getCurrentSession().saveOrUpdate(cartItem);
+        if (cartItem.getCartId() == null) {
+            entityManager.persist(cartItem);
+        } else {
+            entityManager.merge(cartItem);
+        }
         return cartItem;
     }
     
     public CartItem findById(Integer cartId) {
-        return getCurrentSession().get(CartItem.class, cartId);
+        return entityManager.find(CartItem.class, cartId);
     }
     
     public List<CartItem> findByUserId(Integer userId) {
-        Query<CartItem> query = getCurrentSession().createQuery(
+        TypedQuery<CartItem> query = entityManager.createQuery(
             "FROM CartItem WHERE user.userId = :userId ORDER BY addedDate DESC", CartItem.class);
         query.setParameter("userId", userId);
         return query.getResultList();
     }
     
     public CartItem findByUserIdAndProductId(Integer userId, Integer productId) {
-        Query<CartItem> query = getCurrentSession().createQuery(
+        TypedQuery<CartItem> query = entityManager.createQuery(
             "FROM CartItem WHERE user.userId = :userId AND product.productId = :productId", CartItem.class);
         query.setParameter("userId", userId);
         query.setParameter("productId", productId);
-        return query.uniqueResult();
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
     
     public List<CartItem> findAll() {
-        Query<CartItem> query = getCurrentSession().createQuery(
+        TypedQuery<CartItem> query = entityManager.createQuery(
             "FROM CartItem ORDER BY addedDate DESC", CartItem.class);
         return query.getResultList();
     }
     
     public Long getCartItemCount(Integer userId) {
-        Query<Long> query = getCurrentSession().createQuery(
+        TypedQuery<Long> query = entityManager.createQuery(
             "SELECT COUNT(c) FROM CartItem c WHERE c.user.userId = :userId", Long.class);
         query.setParameter("userId", userId);
-        return query.uniqueResult();
+        return query.getSingleResult();
     }
     
     public BigDecimal getCartTotal(Integer userId) {
-        Query<BigDecimal> query = getCurrentSession().createQuery(
+        TypedQuery<BigDecimal> query = entityManager.createQuery(
             "SELECT COALESCE(SUM(c.quantity * p.currentPrice + p.shippingCost), 0) " +
             "FROM CartItem c JOIN c.product p WHERE c.user.userId = :userId " +
             "AND p.status = 'ACTIVE' AND (p.listingType = 'BUY_NOW' OR p.listingType = 'BOTH')", BigDecimal.class);
         query.setParameter("userId", userId);
-        BigDecimal total = query.uniqueResult();
+        BigDecimal total = query.getSingleResult();
         return total != null ? total : BigDecimal.ZERO;
     }
     
     public List<CartItem> findActiveCartItems(Integer userId) {
-        Query<CartItem> query = getCurrentSession().createQuery(
+        TypedQuery<CartItem> query = entityManager.createQuery(
             "FROM CartItem c WHERE c.user.userId = :userId " +
             "AND c.product.status = 'ACTIVE' " +
             "AND (c.product.listingType = 'BUY_NOW' OR c.product.listingType = 'BOTH') " +
@@ -82,7 +86,7 @@ public class CartItemDAO {
     }
     
     public List<CartItem> findInactiveCartItems(Integer userId) {
-        Query<CartItem> query = getCurrentSession().createQuery(
+        TypedQuery<CartItem> query = entityManager.createQuery(
             "FROM CartItem c WHERE c.user.userId = :userId " +
             "AND (c.product.status != 'ACTIVE' " +
             "OR c.product.listingType = 'AUCTION') " +
@@ -92,15 +96,19 @@ public class CartItemDAO {
     }
     
     public void updateQuantity(Integer cartId, Integer quantity) {
-        Query query = getCurrentSession().createQuery(
-            "UPDATE CartItem SET quantity = :quantity WHERE cartId = :cartId");
-        query.setParameter("quantity", quantity);
-        query.setParameter("cartId", cartId);
-        query.executeUpdate();
+        entityManager.createQuery(
+            "UPDATE CartItem SET quantity = :quantity WHERE cartId = :cartId")
+            .setParameter("quantity", quantity)
+            .setParameter("cartId", cartId)
+            .executeUpdate();
     }
     
     public void delete(CartItem cartItem) {
-        getCurrentSession().delete(cartItem);
+        if (entityManager.contains(cartItem)) {
+            entityManager.remove(cartItem);
+        } else {
+            entityManager.remove(entityManager.merge(cartItem));
+        }
     }
     
     public void deleteById(Integer cartId) {
@@ -111,42 +119,42 @@ public class CartItemDAO {
     }
     
     public void deleteByUserIdAndProductId(Integer userId, Integer productId) {
-        Query query = getCurrentSession().createQuery(
-            "DELETE FROM CartItem WHERE user.userId = :userId AND product.productId = :productId");
-        query.setParameter("userId", userId);
-        query.setParameter("productId", productId);
-        query.executeUpdate();
+        entityManager.createQuery(
+            "DELETE FROM CartItem WHERE user.userId = :userId AND product.productId = :productId")
+            .setParameter("userId", userId)
+            .setParameter("productId", productId)
+            .executeUpdate();
     }
     
     public void clearCart(Integer userId) {
-        Query query = getCurrentSession().createQuery(
-            "DELETE FROM CartItem WHERE user.userId = :userId");
-        query.setParameter("userId", userId);
-        query.executeUpdate();
+        entityManager.createQuery(
+            "DELETE FROM CartItem WHERE user.userId = :userId")
+            .setParameter("userId", userId)
+            .executeUpdate();
     }
     
     public void clearInactiveItems(Integer userId) {
-        Query query = getCurrentSession().createQuery(
+        entityManager.createQuery(
             "DELETE FROM CartItem c WHERE c.user.userId = :userId " +
-            "AND (c.product.status != 'ACTIVE' OR c.product.listingType = 'AUCTION')");
-        query.setParameter("userId", userId);
-        query.executeUpdate();
+            "AND (c.product.status != 'ACTIVE' OR c.product.listingType = 'AUCTION')")
+            .setParameter("userId", userId)
+            .executeUpdate();
     }
     
     public CartItem update(CartItem cartItem) {
-        return (CartItem) getCurrentSession().merge(cartItem);
+        return entityManager.merge(cartItem);
     }
     
     public boolean existsByUserIdAndProductId(Integer userId, Integer productId) {
-        Query<Long> query = getCurrentSession().createQuery(
+        TypedQuery<Long> query = entityManager.createQuery(
             "SELECT COUNT(c) FROM CartItem c WHERE c.user.userId = :userId AND c.product.productId = :productId", Long.class);
         query.setParameter("userId", userId);
         query.setParameter("productId", productId);
-        return query.uniqueResult() > 0;
+        return query.getSingleResult() > 0;
     }
     
     public List<Object[]> getCartSummary(Integer userId) {
-        Query<Object[]> query = getCurrentSession().createQuery(
+        TypedQuery<Object[]> query = entityManager.createQuery(
             "SELECT COUNT(c), SUM(c.quantity), SUM(c.quantity * p.currentPrice), SUM(p.shippingCost) " +
             "FROM CartItem c JOIN c.product p WHERE c.user.userId = :userId " +
             "AND p.status = 'ACTIVE' AND (p.listingType = 'BUY_NOW' OR p.listingType = 'BOTH')", Object[].class);
@@ -155,7 +163,7 @@ public class CartItemDAO {
     }
     
     public List<CartItem> findExpiredCartItems(Integer daysBefore) {
-        Query<CartItem> query = getCurrentSession().createQuery(
+        TypedQuery<CartItem> query = entityManager.createQuery(
             "FROM CartItem WHERE addedDate < :cutoffDate", CartItem.class);
         query.setParameter("cutoffDate", java.sql.Timestamp.valueOf(
             java.time.LocalDateTime.now().minusDays(daysBefore)));
@@ -163,10 +171,10 @@ public class CartItemDAO {
     }
     
     public void removeExpiredCartItems(Integer daysBefore) {
-        Query query = getCurrentSession().createQuery(
-            "DELETE FROM CartItem WHERE addedDate < :cutoffDate");
-        query.setParameter("cutoffDate", java.sql.Timestamp.valueOf(
-            java.time.LocalDateTime.now().minusDays(daysBefore)));
-        query.executeUpdate();
+        entityManager.createQuery(
+            "DELETE FROM CartItem WHERE addedDate < :cutoffDate")
+            .setParameter("cutoffDate", java.sql.Timestamp.valueOf(
+                java.time.LocalDateTime.now().minusDays(daysBefore)))
+            .executeUpdate();
     }
 }

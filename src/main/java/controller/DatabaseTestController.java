@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.sql.DataSource;
 import java.sql.Connection;
 
-@Controller
+// @Controller  // Temporarily disabled
 public class DatabaseTestController {
 
     @GetMapping("/db-test")

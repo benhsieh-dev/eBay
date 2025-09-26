@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Controller
+// @Controller  // Temporarily disabled
 @RequestMapping("/moderation")
 public class ModerationController {
     

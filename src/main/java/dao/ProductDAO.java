@@ -3,9 +3,10 @@ package dao;
 import entity.Product;
 import entity.Category;
 import entity.User;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.query.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,54 +19,50 @@ import java.util.List;
 @Transactional
 public class ProductDAO {
     
-    @Autowired
-    private SessionFactory sessionFactory;
-    
-    private Session getCurrentSession() {
-        try {
-            return sessionFactory.getCurrentSession();
-        } catch (Exception e) {
-            return sessionFactory.openSession();
-        }
-    }
+    @PersistenceContext
+    private EntityManager entityManager;
     
     public Product save(Product product) {
-        getCurrentSession().saveOrUpdate(product);
+        if (product.getProductId() == null) {
+            entityManager.persist(product);
+        } else {
+            entityManager.merge(product);
+        }
         return product;
     }
     
     public Product findById(Integer productId) {
-        return getCurrentSession().get(Product.class, productId);
+        return entityManager.find(Product.class, productId);
     }
     
     public List<Product> findAll() {
-        Query<Product> query = getCurrentSession().createQuery(
+        TypedQuery<Product> query = entityManager.createQuery(
             "FROM Product ORDER BY createdDate DESC", Product.class);
         return query.getResultList();
     }
     
     public List<Product> findActiveProducts() {
-        Query<Product> query = getCurrentSession().createQuery(
+        TypedQuery<Product> query = entityManager.createQuery(
             "FROM Product WHERE status = 'ACTIVE' ORDER BY createdDate DESC", Product.class);
         return query.getResultList();
     }
     
     public List<Product> findByCategory(Integer categoryId) {
-        Query<Product> query = getCurrentSession().createQuery(
+        TypedQuery<Product> query = entityManager.createQuery(
             "FROM Product WHERE category.categoryId = :categoryId AND status = 'ACTIVE' ORDER BY createdDate DESC", Product.class);
         query.setParameter("categoryId", categoryId);
         return query.getResultList();
     }
     
     public List<Product> findBySeller(Integer sellerId) {
-        Query<Product> query = getCurrentSession().createQuery(
+        TypedQuery<Product> query = entityManager.createQuery(
             "FROM Product WHERE seller.userId = :sellerId ORDER BY createdDate DESC", Product.class);
         query.setParameter("sellerId", sellerId);
         return query.getResultList();
     }
     
     public List<Product> findBySellerAndStatus(Integer sellerId, Product.ProductStatus status) {
-        Query<Product> query = getCurrentSession().createQuery(
+        TypedQuery<Product> query = entityManager.createQuery(
             "FROM Product WHERE seller.userId = :sellerId AND status = :status ORDER BY createdDate DESC", Product.class);
         query.setParameter("sellerId", sellerId);
         query.setParameter("status", status);
@@ -73,7 +70,7 @@ public class ProductDAO {
     }
     
     public List<Product> findByListingType(Product.ListingType listingType) {
-        Query<Product> query = getCurrentSession().createQuery(
+        TypedQuery<Product> query = entityManager.createQuery(
             "FROM Product WHERE listingType = :listingType AND status = 'ACTIVE' ORDER BY createdDate DESC", Product.class);
         query.setParameter("listingType", listingType);
         return query.getResultList();
@@ -81,7 +78,7 @@ public class ProductDAO {
     
     public List<Product> findAuctionsEndingSoon(int hours) {
         Timestamp cutoffTime = new Timestamp(System.currentTimeMillis() + (hours * 60 * 60 * 1000));
-        Query<Product> query = getCurrentSession().createQuery(
+        TypedQuery<Product> query = entityManager.createQuery(
             "FROM Product WHERE listingType IN ('AUCTION', 'BOTH') AND status = 'ACTIVE' " +
             "AND auctionEndTime <= :cutoff AND auctionEndTime > CURRENT_TIMESTAMP " +
             "ORDER BY auctionEndTime ASC", Product.class);
@@ -90,7 +87,7 @@ public class ProductDAO {
     }
     
     public List<Product> searchProducts(String searchTerm) {
-        Query<Product> query = getCurrentSession().createQuery(
+        TypedQuery<Product> query = entityManager.createQuery(
             "FROM Product WHERE (title LIKE :search OR description LIKE :search) " +
             "AND status = 'ACTIVE' ORDER BY createdDate DESC", Product.class);
         query.setParameter("search", "%" + searchTerm + "%");
@@ -129,7 +126,7 @@ public class ProductDAO {
         
         hql.append(" ORDER BY createdDate DESC");
         
-        Query<Product> query = getCurrentSession().createQuery(hql.toString(), Product.class);
+        TypedQuery<Product> query = entityManager.createQuery(hql.toString(), Product.class);
         
         if (searchTerm != null && !searchTerm.trim().isEmpty()) {
             query.setParameter("search", "%" + searchTerm + "%");
@@ -154,21 +151,21 @@ public class ProductDAO {
     }
     
     public List<Product> findFeaturedProducts(int limit) {
-        Query<Product> query = getCurrentSession().createQuery(
+        TypedQuery<Product> query = entityManager.createQuery(
             "FROM Product WHERE status = 'ACTIVE' ORDER BY viewCount DESC, createdDate DESC", Product.class);
         query.setMaxResults(limit);
         return query.getResultList();
     }
     
     public List<Product> findRecentProducts(int limit) {
-        Query<Product> query = getCurrentSession().createQuery(
+        TypedQuery<Product> query = entityManager.createQuery(
             "FROM Product WHERE status = 'ACTIVE' ORDER BY createdDate DESC", Product.class);
         query.setMaxResults(limit);
         return query.getResultList();
     }
     
     public List<Product> findProductsByPriceRange(BigDecimal minPrice, BigDecimal maxPrice) {
-        Query<Product> query = getCurrentSession().createQuery(
+        TypedQuery<Product> query = entityManager.createQuery(
             "FROM Product WHERE status = 'ACTIVE' AND currentPrice BETWEEN :minPrice AND :maxPrice " +
             "ORDER BY currentPrice ASC", Product.class);
         query.setParameter("minPrice", minPrice);
@@ -177,28 +174,32 @@ public class ProductDAO {
     }
     
     public void incrementViewCount(Integer productId) {
-        Query query = getCurrentSession().createQuery(
-            "UPDATE Product SET viewCount = viewCount + 1 WHERE productId = :productId");
-        query.setParameter("productId", productId);
-        query.executeUpdate();
+        entityManager.createQuery(
+            "UPDATE Product SET viewCount = viewCount + 1 WHERE productId = :productId")
+            .setParameter("productId", productId)
+            .executeUpdate();
     }
     
     public void incrementWatchCount(Integer productId) {
-        Query query = getCurrentSession().createQuery(
-            "UPDATE Product SET watchCount = watchCount + 1 WHERE productId = :productId");
-        query.setParameter("productId", productId);
-        query.executeUpdate();
+        entityManager.createQuery(
+            "UPDATE Product SET watchCount = watchCount + 1 WHERE productId = :productId")
+            .setParameter("productId", productId)
+            .executeUpdate();
     }
     
     public void decrementWatchCount(Integer productId) {
-        Query query = getCurrentSession().createQuery(
-            "UPDATE Product SET watchCount = GREATEST(0, watchCount - 1) WHERE productId = :productId");
-        query.setParameter("productId", productId);
-        query.executeUpdate();
+        entityManager.createQuery(
+            "UPDATE Product SET watchCount = GREATEST(0, watchCount - 1) WHERE productId = :productId")
+            .setParameter("productId", productId)
+            .executeUpdate();
     }
     
     public void delete(Product product) {
-        getCurrentSession().delete(product);
+        if (entityManager.contains(product)) {
+            entityManager.remove(product);
+        } else {
+            entityManager.remove(entityManager.merge(product));
+        }
     }
     
     public void deleteById(Integer productId) {
@@ -210,38 +211,33 @@ public class ProductDAO {
     
     public Product update(Product product) {
         product.setUpdatedDate(new Timestamp(System.currentTimeMillis()));
-        return (Product) getCurrentSession().merge(product);
+        return entityManager.merge(product);
     }
     
     public Long getTotalProductCount() {
-        Query<Long> query = getCurrentSession().createQuery(
+        TypedQuery<Long> query = entityManager.createQuery(
             "SELECT COUNT(p) FROM Product p WHERE p.status = 'ACTIVE'", Long.class);
-        return query.uniqueResult();
+        return query.getSingleResult();
     }
     
     public Long getProductCountByCategory(Integer categoryId) {
-        Query<Long> query = getCurrentSession().createQuery(
+        TypedQuery<Long> query = entityManager.createQuery(
             "SELECT COUNT(p) FROM Product p WHERE p.category.categoryId = :categoryId AND p.status = 'ACTIVE'", Long.class);
         query.setParameter("categoryId", categoryId);
-        return query.uniqueResult();
+        return query.getSingleResult();
     }
     
     public List<Product> findExpiredAuctions() {
-        Session session = sessionFactory.openSession();
-        try {
-            Query<Product> query = session.createQuery(
-                "FROM Product WHERE listingType IN ('AUCTION', 'BOTH') AND status = 'ACTIVE' " +
-                "AND auctionEndTime <= CURRENT_TIMESTAMP", Product.class);
-            return query.getResultList();
-        } finally {
-            session.close();
-        }
+        TypedQuery<Product> query = entityManager.createQuery(
+            "FROM Product WHERE listingType IN ('AUCTION', 'BOTH') AND status = 'ACTIVE' " +
+            "AND auctionEndTime <= CURRENT_TIMESTAMP", Product.class);
+        return query.getResultList();
     }
     
     public void markAuctionAsEnded(Integer productId) {
-        Query query = getCurrentSession().createQuery(
-            "UPDATE Product SET status = 'ENDED' WHERE productId = :productId");
-        query.setParameter("productId", productId);
-        query.executeUpdate();
+        entityManager.createQuery(
+            "UPDATE Product SET status = 'ENDED' WHERE productId = :productId")
+            .setParameter("productId", productId)
+            .executeUpdate();
     }
 }

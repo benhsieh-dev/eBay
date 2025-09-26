@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
-@Controller
+// @Controller  // Temporarily disabled
 @RequestMapping("/user")
 public class UserController {
     

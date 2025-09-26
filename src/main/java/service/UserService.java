@@ -49,18 +49,25 @@ public class UserService {
     }
     
     public User authenticateUser(String usernameOrEmail, String password) {
+        System.out.println("🔍 Authenticating user: " + usernameOrEmail);
         User user = userDAO.findByUsernameOrEmail(usernameOrEmail);
         
         if (user == null) {
+            System.out.println("❌ User not found: " + usernameOrEmail);
             return null; // User not found
         }
         
+        System.out.println("✅ User found: " + user.getUsername() + ", Status: " + user.getAccountStatus());
+        
         if (user.getAccountStatus() != User.AccountStatus.ACTIVE) {
+            System.out.println("❌ Account not active: " + user.getAccountStatus());
             throw new RuntimeException("Account is not active");
         }
         
         String hashedPassword = hashPassword(password);
+        System.out.println("🔐 Password hash comparison - Input: " + hashedPassword + ", Stored: " + user.getPasswordHash());
         if (!hashedPassword.equals(user.getPasswordHash())) {
+            System.out.println("❌ Password mismatch");
             return null; // Invalid password
         }
         

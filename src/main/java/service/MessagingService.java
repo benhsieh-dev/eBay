@@ -235,7 +235,7 @@ public class MessagingService {
         
         Message reply = sendMessage(originalMessage.getConversation().getConversationId(), 
                                   senderId, content);
-        reply.setReplyToMessageId(originalMessageId);
+        reply.setReplyToMessage(originalMessage);
         
         return messageDAO.update(reply);
     }

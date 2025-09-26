@@ -39,7 +39,7 @@ const Register: React.FC = () => {
     if (username.length < 3) return;
     
     try {
-      const response = await axios.get(`/api/users/check-username?username=${username}`);
+      const response = await axios.get(`/api/user/check-username?username=${username}`);
       setUsernameAvailable(response.data.available);
     } catch (err) {
       setUsernameAvailable(null);
@@ -50,7 +50,7 @@ const Register: React.FC = () => {
     if (!email.includes('@')) return;
     
     try {
-      const response = await axios.get(`/api/users/check-email?email=${email}`);
+      const response = await axios.get(`/api/user/check-email?email=${email}`);
       setEmailAvailable(response.data.available);
     } catch (err) {
       setEmailAvailable(null);
@@ -88,7 +88,7 @@ const Register: React.FC = () => {
     }
 
     try {
-      const response = await axios.post('/api/users/register', formData, {
+      const response = await axios.post('/api/user/register', formData, {
         withCredentials: true
       });
 

@@ -29,7 +29,7 @@ const Login: React.FC = () => {
     setError('');
 
     try {
-      const response = await axios.post('/api/users/login', formData, {
+      const response = await axios.post('/api/user/login', formData, {
         withCredentials: true
       });
 
@@ -42,15 +42,48 @@ const Login: React.FC = () => {
         setError(response.data.error || 'Login failed');
       }
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Login failed. Please try again.');
+      console.error('Login error:', err);
+      console.error('Response:', err.response?.data);
+      setError(err.response?.data?.error || err.response?.data?.message || 'Login failed. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
+  const handleDemoLogin = () => {
+    setFormData({
+      usernameOrEmail: 'demo_user',
+      password: 'demo123'
+    });
+    setError('');
+  };
+
   return (
     <div style={{ maxWidth: '400px', margin: '50px auto', padding: '20px' }}>
       <h2>Login to eBay</h2>
+      
+      {/* Demo Login Button */}
+      <div style={{ marginBottom: '20px', textAlign: 'center' }}>
+        <button
+          type="button"
+          onClick={handleDemoLogin}
+          style={{
+            padding: '10px 20px',
+            backgroundColor: '#28a745',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            fontSize: '14px',
+            cursor: 'pointer',
+            marginBottom: '10px'
+          }}
+        >
+          🎯 Fill Demo Credentials (demo_user/demo123)
+        </button>
+        <div style={{ fontSize: '12px', color: '#666' }}>
+          Click above to auto-fill demo user credentials
+        </div>
+      </div>
       
       {error && (
         <div style={{ color: 'red', marginBottom: '15px', padding: '10px', backgroundColor: '#ffe6e6', borderRadius: '4px' }}>

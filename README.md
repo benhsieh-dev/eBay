@@ -14,9 +14,10 @@ Users can auction and purchase items online
 - Spring Boot
 
 ## Demo User
+Demo Login: username=demo, password=demo123
 
 ## Run Locally
-mvn jetty:run
+mvn spring-boot:run
 npm start
 
 ## Future Considerations

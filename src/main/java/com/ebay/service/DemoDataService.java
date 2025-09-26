@@ -25,8 +25,8 @@ public class DemoDataService {
                 categoryService.initializeDefaultCategories();
                 
                 // Create demo user if it doesn't exist
-                if (userService.getUserByUsername("demo") == null) {
-                    User demoUser = new User("demo", "demo@test.com", "demo123", "Demo", "User");
+                if (userService.getUserByUsername("demo_user") == null) {
+                    User demoUser = new User("demo_user", "demo@test.com", "demo123", "Demo", "User");
                     demoUser.setUserType(User.UserType.BOTH);
                     demoUser.setEmailVerified(true);
                     demoUser.setPhone("555-0123");
@@ -34,7 +34,7 @@ public class DemoDataService {
                     demoUser.setState("CA");
                     demoUser.setCountry("USA");
                     userService.registerUser(demoUser);
-                    System.out.println("✅ Demo user created - Username: demo, Password: demo123");
+                    System.out.println("✅ Demo user created - Username: demo_user, Password: demo123");
                 }
                 
                 System.out.println("✅ Spring Boot application initialization completed successfully");
