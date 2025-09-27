@@ -50,9 +50,9 @@ const Login: React.FC = () => {
     }
   };
 
-  const handleDemoLogin = () => {
+  const handleDemoLogin = (username: string) => {
     setFormData({
-      usernameOrEmail: 'demo_user',
+      usernameOrEmail: username,
       password: 'demo123'
     });
     setError('');
@@ -62,26 +62,67 @@ const Login: React.FC = () => {
     <div style={{ maxWidth: '400px', margin: '50px auto', padding: '20px' }}>
       <h2>Login to eBay</h2>
       
-      {/* Demo Login Button */}
+      {/* Demo Login Buttons */}
       <div style={{ marginBottom: '20px', textAlign: 'center' }}>
-        <button
-          type="button"
-          onClick={handleDemoLogin}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: '#28a745',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            fontSize: '14px',
-            cursor: 'pointer',
-            marginBottom: '10px'
-          }}
-        >
-          🎯 Fill Demo Credentials (demo_user/demo123)
-        </button>
-        <div style={{ fontSize: '12px', color: '#666' }}>
-          Click above to auto-fill demo user credentials
+        <div style={{ marginBottom: '15px' }}>
+          <h4 style={{ margin: '0 0 10px 0', color: '#333' }}>Demo Accounts</h4>
+          <div style={{ fontSize: '12px', color: '#666', marginBottom: '10px' }}>
+            Perfect for testing auctions: Any user can list items AND bid on others' items!
+          </div>
+        </div>
+        
+        <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <button
+            type="button"
+            onClick={() => handleDemoLogin('demo_user_1')}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: '#28a745',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              fontSize: '13px',
+              cursor: 'pointer'
+            }}
+          >
+            👩 Alice (demo_user_1)
+          </button>
+          
+          <button
+            type="button"
+            onClick={() => handleDemoLogin('demo_user_2')}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: '#007bff',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              fontSize: '13px',
+              cursor: 'pointer'
+            }}
+          >
+            👨 Bob (demo_user_2)
+          </button>
+          
+          <button
+            type="button"
+            onClick={() => handleDemoLogin('demo_user')}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: '#6c757d',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              fontSize: '13px',
+              cursor: 'pointer'
+            }}
+          >
+            👨‍💼 Charlie (demo_user)
+          </button>
+        </div>
+        
+        <div style={{ fontSize: '11px', color: '#999', marginTop: '8px' }}>
+          All accounts use password: demo123
         </div>
       </div>
       

@@ -24,17 +24,42 @@ public class DemoDataService {
                 // Initialize default categories
                 categoryService.initializeDefaultCategories();
                 
-                // Create demo user if it doesn't exist
+                // Create demo users if they don't exist
+                if (userService.getUserByUsername("demo_user_1") == null) {
+                    User demoUser1 = new User("demo_user_1", "demo1@test.com", "demo123", "Alice", "Demo");
+                    demoUser1.setUserType(User.UserType.BOTH);
+                    demoUser1.setEmailVerified(true);
+                    demoUser1.setPhone("555-0101");
+                    demoUser1.setCity("San Francisco");
+                    demoUser1.setState("CA");
+                    demoUser1.setCountry("USA");
+                    userService.registerUser(demoUser1);
+                    System.out.println("✅ Demo User 1 created - Username: demo_user_1, Password: demo123");
+                }
+                
+                if (userService.getUserByUsername("demo_user_2") == null) {
+                    User demoUser2 = new User("demo_user_2", "demo2@test.com", "demo123", "Bob", "Demo");
+                    demoUser2.setUserType(User.UserType.BOTH);
+                    demoUser2.setEmailVerified(true);
+                    demoUser2.setPhone("555-0202");
+                    demoUser2.setCity("Los Angeles");
+                    demoUser2.setState("CA");
+                    demoUser2.setCountry("USA");
+                    userService.registerUser(demoUser2);
+                    System.out.println("✅ Demo User 2 created - Username: demo_user_2, Password: demo123");
+                }
+                
+                // Create third demo user for backward compatibility
                 if (userService.getUserByUsername("demo_user") == null) {
-                    User demoUser = new User("demo_user", "demo@test.com", "demo123", "Demo", "User");
+                    User demoUser = new User("demo_user", "demo@test.com", "demo123", "Charlie", "Demo");
                     demoUser.setUserType(User.UserType.BOTH);
                     demoUser.setEmailVerified(true);
-                    demoUser.setPhone("555-0123");
-                    demoUser.setCity("Demo City");
-                    demoUser.setState("CA");
+                    demoUser.setPhone("555-0303");
+                    demoUser.setCity("Seattle");
+                    demoUser.setState("WA");
                     demoUser.setCountry("USA");
                     userService.registerUser(demoUser);
-                    System.out.println("✅ Demo user created - Username: demo_user, Password: demo123");
+                    System.out.println("✅ Demo User 3 created - Username: demo_user, Password: demo123");
                 }
                 
                 System.out.println("✅ Spring Boot application initialization completed successfully");

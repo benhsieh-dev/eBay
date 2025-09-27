@@ -3,6 +3,8 @@ package service;
 import entity.Payment;
 import entity.Order;
 import entity.User;
+import event.BidPlacedEvent;
+import event.AuctionEvent;
 import dao.PaymentDAO;
 import dao.OrderDAO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -341,5 +343,47 @@ public class WebhookNotificationService {
         trackingInfo.put("successRate", totalPayments > 0 ? (completedPayments * 100.0) / totalPayments : 0);
         
         return trackingInfo;
+    }
+    
+    /**
+     * Send webhook notification for bid placed event
+     */
+    @Async
+    public void sendBidPlacedWebhook(BidPlacedEvent event) {
+        try {
+            // Log the bid event for external webhook systems
+            System.out.println("📢 Bid Placed Webhook: " + 
+                "Product " + event.getProductId() + 
+                " - Bidder " + event.getBidderUsername() + 
+                " - Amount $" + event.getBidAmount());
+            
+            // TODO: Implement actual webhook delivery to external systems
+            // This could be used to notify external analytics systems,
+            // mobile apps, or third-party integrations
+            
+        } catch (Exception e) {
+            System.err.println("Error sending bid placed webhook: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Send webhook notification for auction event
+     */
+    @Async
+    public void sendAuctionEventWebhook(AuctionEvent event) {
+        try {
+            // Log the auction event for external webhook systems
+            System.out.println("🎯 Auction Event Webhook: " + 
+                "Product " + event.getProductId() + 
+                " - Event " + event.getEventType() + 
+                " - Price $" + event.getCurrentPrice());
+            
+            // TODO: Implement actual webhook delivery to external systems
+            // This could be used to notify external analytics systems,
+            // mobile apps, or third-party integrations
+            
+        } catch (Exception e) {
+            System.err.println("Error sending auction event webhook: " + e.getMessage());
+        }
     }
 }

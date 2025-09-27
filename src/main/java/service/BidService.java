@@ -5,12 +5,16 @@ import dao.ProductDAO;
 import entity.Bid;
 import entity.Product;
 import entity.User;
+import event.BidPlacedEvent;
+import event.AuctionEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @Service
@@ -22,6 +26,9 @@ public class BidService {
     
     @Autowired
     private ProductDAO productDAO;
+    
+    @Autowired
+    private EventPublisherService eventPublisherService;
     
     public Bid placeBid(Integer productId, Integer bidderId, BigDecimal bidAmount, Bid.BidType bidType, BigDecimal maxProxyAmount) {
         // Get the product and validate
@@ -66,6 +73,9 @@ public class BidService {
         // Update product current price
         updateProductCurrentPrice(productId);
         
+        // Publish bid placed event to Kafka
+        publishBidPlacedEvent(bid, product);
+        
         return bid;
     }
     
@@ -102,6 +112,10 @@ public class BidService {
         // End the auction immediately
         product.setStatus(Product.ProductStatus.SOLD);
         productDAO.update(product);
+        
+        // Publish buy now event
+        publishBidPlacedEvent(bid, product);
+        publishAuctionEvent(product, AuctionEvent.AuctionEventType.BUY_NOW_ACTIVATED, bid);
         
         return bid;
     }
@@ -173,6 +187,9 @@ public class BidService {
             }
             
             productDAO.update(product);
+            
+            // Publish auction ended event
+            publishAuctionEvent(product, AuctionEvent.AuctionEventType.AUCTION_ENDED, winningBid);
         }
     }
     
@@ -287,5 +304,84 @@ public class BidService {
         public BigDecimal getMinBid() { return minBid; }
         public BigDecimal getMaxBid() { return maxBid; }
         public BigDecimal getAvgBid() { return avgBid; }
+    }
+    
+    /**
+     * Publish bid placed event to Kafka
+     */
+    private void publishBidPlacedEvent(Bid bid, Product product) {
+        try {
+            // Get previous highest bid for comparison
+            Bid previousHighestBid = bidDAO.findHighestBidForProduct(product.getProductId());
+            BigDecimal previousAmount = (previousHighestBid != null && !previousHighestBid.getBidId().equals(bid.getBidId())) 
+                ? previousHighestBid.getBidAmount() : BigDecimal.ZERO;
+            
+            // Convert timestamps to LocalDateTime
+            LocalDateTime auctionEndTime = product.getAuctionEndTime() != null 
+                ? product.getAuctionEndTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()
+                : null;
+            
+            // Create and publish the event
+            BidPlacedEvent event = new BidPlacedEvent(
+                bid.getBidId().longValue(),
+                product.getProductId().longValue(),
+                product.getTitle(),
+                bid.getBidder().getUserId().longValue(),
+                bid.getBidder().getUsername(),
+                bid.getBidAmount(),
+                previousAmount,
+                bid.getBidType().toString(),
+                bid.getIsWinningBid() != null ? bid.getIsWinningBid() : false,
+                auctionEndTime
+            );
+            
+            eventPublisherService.publishBidPlacedEvent(event);
+            
+        } catch (Exception e) {
+            // Log error but don't fail the bid placement
+            System.err.println("Failed to publish bid placed event: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Publish auction event to Kafka
+     */
+    private void publishAuctionEvent(Product product, AuctionEvent.AuctionEventType eventType, Bid winningBid) {
+        try {
+            LocalDateTime startTime = product.getAuctionStartTime() != null 
+                ? product.getAuctionStartTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()
+                : null;
+                
+            LocalDateTime endTime = product.getAuctionEndTime() != null 
+                ? product.getAuctionEndTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()
+                : null;
+            
+            AuctionEvent event = new AuctionEvent(
+                product.getProductId().longValue(),
+                product.getTitle(),
+                product.getSeller().getUserId().longValue(),
+                product.getSeller().getUsername(),
+                eventType,
+                product.getCurrentPrice(),
+                startTime,
+                endTime
+            );
+            
+            // Set additional fields if available
+            event.setReservePrice(product.getReservePrice());
+            event.setBuyNowPrice(product.getBuyNowPrice());
+            event.setTotalBids(getBidCount(product.getProductId()).intValue());
+            
+            if (winningBid != null) {
+                event.setCurrentWinnerId(winningBid.getBidder().getUserId().longValue());
+                event.setCurrentWinnerUsername(winningBid.getBidder().getUsername());
+            }
+            
+            eventPublisherService.publishAuctionEvent(event);
+            
+        } catch (Exception e) {
+            // Log error but don't fail the operation
+            System.err.println("Failed to publish auction event: " + e.getMessage());
+        }
     }
 }
