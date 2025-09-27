@@ -4,12 +4,14 @@ import api from '../services/api';
 import './Home.css';
 
 interface Product {
-  id: number;
+  productId: number;
   title: string;
-  price: number;
+  currentPrice: number;
   imageUrl?: string;
   description: string;
-  category: string;
+  category?: {
+    categoryName: string;
+  };
 }
 
 const Home: React.FC = () => {
@@ -21,32 +23,36 @@ const Home: React.FC = () => {
     const fetchFeaturedProducts = async () => {
       try {
         const response = await api.get('/products/featured');
-        setFeaturedProducts(response.data);
+        if (response.data.success) {
+          setFeaturedProducts(response.data.products);
+        } else {
+          throw new Error(response.data.error || 'Failed to fetch featured products');
+        }
       } catch (err) {
         console.error('Error fetching featured products:', err);
         setError('Failed to load featured products');
         // Set some mock data for now
         setFeaturedProducts([
           {
-            id: 1,
+            productId: 1,
             title: 'iPhone 14 Pro',
-            price: 999,
+            currentPrice: 999,
             description: 'Latest iPhone with advanced camera system',
-            category: 'Electronics'
+            category: { categoryName: 'Electronics' }
           },
           {
-            id: 2,
+            productId: 2,
             title: 'Nike Air Jordan 1',
-            price: 179,
+            currentPrice: 179,
             description: 'Classic basketball sneakers',
-            category: 'Fashion'
+            category: { categoryName: 'Fashion' }
           },
           {
-            id: 3,
+            productId: 3,
             title: 'MacBook Pro M3',
-            price: 1999,
+            currentPrice: 1999,
             description: 'Powerful laptop for professionals',
-            category: 'Electronics'
+            category: { categoryName: 'Electronics' }
           }
         ]);
       } finally {
@@ -109,8 +115,8 @@ const Home: React.FC = () => {
         <div className="products-grid">
           {featuredProducts.map(product => (
             <Link 
-              key={product.id} 
-              to={`/products/${product.id}`} 
+              key={product.productId} 
+              to={`/products/${product.productId}`} 
               className="product-card"
             >
               <div className="product-image">
@@ -122,9 +128,9 @@ const Home: React.FC = () => {
               </div>
               <div className="product-info">
                 <h3>{product.title}</h3>
-                <p className="product-price">${product.price.toFixed(2)}</p>
+                <p className="product-price">${product.currentPrice.toFixed(2)}</p>
                 <p className="product-description">{product.description}</p>
-                <span className="product-category">{product.category}</span>
+                <span className="product-category">{product.category?.categoryName || 'Uncategorized'}</span>
               </div>
             </Link>
           ))}

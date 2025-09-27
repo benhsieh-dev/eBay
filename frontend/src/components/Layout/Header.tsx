@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../services/api';
 import './Header.css';
 
 interface User {
@@ -22,7 +22,7 @@ const Header: React.FC = () => {
 
   const checkAuthStatus = async () => {
     try {
-      const response = await axios.get('/api/user/current', {
+      const response = await api.get('/user/current', {
         withCredentials: true
       });
       
@@ -39,7 +39,7 @@ const Header: React.FC = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post('/api/user/logout', {}, {
+      await api.post('/user/logout', {}, {
         withCredentials: true
       });
       setCurrentUser(null);

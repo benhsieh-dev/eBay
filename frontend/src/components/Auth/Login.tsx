@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../services/api';
 
 interface LoginFormData {
   usernameOrEmail: string;
@@ -29,7 +29,7 @@ const Login: React.FC = () => {
     setError('');
 
     try {
-      const response = await axios.post('/api/user/login', formData, {
+      const response = await api.post('/user/login', formData, {
         withCredentials: true
       });
 

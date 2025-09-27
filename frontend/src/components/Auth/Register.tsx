@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../services/api';
 
 interface RegisterFormData {
   username: string;
@@ -39,7 +39,7 @@ const Register: React.FC = () => {
     if (username.length < 3) return;
     
     try {
-      const response = await axios.get(`/api/user/check-username?username=${username}`);
+      const response = await api.get(`/user/check-username?username=${username}`);
       setUsernameAvailable(response.data.available);
     } catch (err) {
       setUsernameAvailable(null);
@@ -50,7 +50,7 @@ const Register: React.FC = () => {
     if (!email.includes('@')) return;
     
     try {
-      const response = await axios.get(`/api/user/check-email?email=${email}`);
+      const response = await api.get(`/user/check-email?email=${email}`);
       setEmailAvailable(response.data.available);
     } catch (err) {
       setEmailAvailable(null);
@@ -88,7 +88,7 @@ const Register: React.FC = () => {
     }
 
     try {
-      const response = await axios.post('/api/user/register', formData, {
+      const response = await api.post('/user/register', formData, {
         withCredentials: true
       });
 

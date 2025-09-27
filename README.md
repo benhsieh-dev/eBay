@@ -8,8 +8,10 @@ Users can auction and purchase items online
 - HTML
 - JavaScript
 - JDK 17
+- Kafka
 - Maven
 - PostgreSQL
+- React JS
 - Render
 - Spring Boot
 

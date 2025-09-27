@@ -22,7 +22,9 @@ public class DemoDataService {
         return args -> {
             try {
                 // Initialize default categories
+                System.out.println("🔄 Initializing default categories...");
                 categoryService.initializeDefaultCategories();
+                System.out.println("✅ Default categories initialized");
                 
                 // Create demo users if they don't exist
                 if (userService.getUserByUsername("demo_user_1") == null) {

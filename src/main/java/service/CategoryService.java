@@ -199,6 +199,12 @@ public class CategoryService {
         Category books = new Category("Books & Media", "Books, movies, music, and games");
         books = categoryDAO.save(books);
         
+        Category collectibles = new Category("Collectibles", "Antiques, coins, stamps, trading cards, and vintage items");
+        collectibles = categoryDAO.save(collectibles);
+        
+        Category toys = new Category("Toys & Hobbies", "Action figures, dolls, plush toys, model kits, and hobby supplies");
+        toys = categoryDAO.save(toys);
+        
         // Create subcategories for Electronics
         categoryDAO.save(new Category("Smartphones", "Mobile phones and accessories", electronics));
         categoryDAO.save(new Category("Laptops", "Laptop computers and accessories", electronics));

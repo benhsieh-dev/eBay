@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 
 interface Product {
   productId: number;
@@ -41,7 +41,7 @@ const ProductList: React.FC = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get('/api/products/categories');
+      const response = await api.get('/products/categories');
       if (response.data.success) {
         setCategories(response.data.categories);
       }
@@ -65,7 +65,7 @@ const ProductList: React.FC = () => {
         params.append('sort', sortBy);
       }
 
-      const response = await axios.get(`/api/products?${params}`);
+      const response = await api.get(`/products?${params}`);
       
       if (response.data.success) {
         setProducts(response.data.products);
@@ -90,7 +90,7 @@ const ProductList: React.FC = () => {
 
     setLoading(true);
     try {
-      const response = await axios.get(`/api/products/search?query=${encodeURIComponent(searchQuery)}&page=${currentPage}&size=${pageSize}`);
+      const response = await api.get(`/products/search?query=${encodeURIComponent(searchQuery)}&page=${currentPage}&size=${pageSize}`);
       
       if (response.data.success) {
         setProducts(response.data.products);

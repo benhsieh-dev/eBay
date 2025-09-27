@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import ProductList from './components/Products/ProductList';
+import CreateProduct from './components/Products/CreateProduct';
 import './App.css';
 
 function App() {
@@ -20,7 +21,7 @@ function App() {
             <Route path="/cart" element={<div style={{padding: '40px', textAlign: 'center'}}>Cart - Coming Soon</div>} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/sell" element={<div style={{padding: '40px', textAlign: 'center'}}>Sell - Coming Soon</div>} />
+            <Route path="/sell" element={<CreateProduct />} />
           </Routes>
         </main>
       </div>
