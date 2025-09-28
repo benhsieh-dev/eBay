@@ -35,9 +35,12 @@ public class UserApiController {
             session.setAttribute("userId", registeredUser.getUserId());
             session.setAttribute("username", registeredUser.getUsername());
             
+            // Create safe user DTO for JSON response
+            Map<String, Object> userDto = createSafeUserDto(registeredUser);
+            
             response.put("success", true);
             response.put("message", "Registration successful! Welcome to eBay!");
-            response.put("user", registeredUser);
+            response.put("user", userDto);
             
             return ResponseEntity.ok(response);
             
@@ -67,9 +70,12 @@ public class UserApiController {
                 session.setAttribute("username", user.getUsername());
                 session.setAttribute("userType", user.getUserType());
                 
+                // Create safe user DTO for JSON response
+                Map<String, Object> userDto = createSafeUserDto(user);
+                
                 response.put("success", true);
                 response.put("message", "Login successful");
-                response.put("user", user);
+                response.put("user", userDto);
                 
                 return ResponseEntity.ok(response);
                 
@@ -112,7 +118,7 @@ public class UserApiController {
         User user = userService.getUserById(currentUser.getUserId());
         
         response.put("success", true);
-        response.put("user", user);
+        response.put("user", createSafeUserDto(user));
         
         return ResponseEntity.ok(response);
     }
@@ -146,7 +152,7 @@ public class UserApiController {
             
             response.put("success", true);
             response.put("message", "Profile updated successfully!");
-            response.put("user", updatedUser);
+            response.put("user", createSafeUserDto(updatedUser));
             
             return ResponseEntity.ok(response);
             
@@ -237,8 +243,26 @@ public class UserApiController {
         
         response.put("success", true);
         response.put("authenticated", true);
-        response.put("user", currentUser);
+        response.put("user", createSafeUserDto(currentUser));
         
         return ResponseEntity.ok(response);
+    }
+    
+    // Helper method to create safe user DTO without circular references
+    private Map<String, Object> createSafeUserDto(User user) {
+        Map<String, Object> userDto = new HashMap<>();
+        userDto.put("userId", user.getUserId());
+        userDto.put("username", user.getUsername());
+        userDto.put("email", user.getEmail());
+        userDto.put("firstName", user.getFirstName());
+        userDto.put("lastName", user.getLastName());
+        userDto.put("userType", user.getUserType());
+        userDto.put("accountStatus", user.getAccountStatus());
+        userDto.put("emailVerified", user.getEmailVerified());
+        userDto.put("phone", user.getPhone());
+        userDto.put("city", user.getCity());
+        userDto.put("state", user.getState());
+        userDto.put("country", user.getCountry());
+        return userDto;
     }
 }
