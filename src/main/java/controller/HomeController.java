@@ -31,7 +31,16 @@ public class HomeController {
     public String home(HttpServletResponse response) throws IOException {
         response.setContentType(MediaType.TEXT_HTML_VALUE);
         ClassPathResource resource = new ClassPathResource("static/index.html");
-        return StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
+        if (resource.exists()) {
+            return StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
+        } else {
+            // Fallback HTML when React build is not available
+            return "<!DOCTYPE html><html><head><title>eBay Marketplace</title></head><body>" +
+                   "<h1>eBay Marketplace</h1>" +
+                   "<p>React frontend is not available. API endpoints are working at /api/*</p>" +
+                   "<p>Try: <a href='/health'>/health</a> or <a href='/api/products'>/api/products</a></p>" +
+                   "</body></html>";
+        }
     }
     
     // Serve React app for all other non-API routes (React Router handles client-side routing)
