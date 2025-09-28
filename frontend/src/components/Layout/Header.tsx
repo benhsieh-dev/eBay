@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import './Header.css';
 
@@ -15,6 +15,8 @@ interface User {
 const Header: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     checkAuthStatus();
@@ -49,6 +51,14 @@ const Header: React.FC = () => {
     }
   };
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery(''); // Clear search after navigating
+    }
+  };
+
   return (
     <header className="header">
       <div className="header-container">
@@ -67,18 +77,20 @@ const Header: React.FC = () => {
         </div>
         
         <div className="header-center">
-          <div className="search-bar">
+          <form onSubmit={handleSearch} className="search-bar">
             <input 
               type="text" 
               placeholder="Search for anything"
               className="search-input"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <button className="search-button">
+            <button type="submit" className="search-button">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                 <path d="M21 21l-4.35-4.35M19 11A8 8 0 1 1 3 11a8 8 0 0 1 16 0z" stroke="currentColor" strokeWidth="2" fill="none"/>
               </svg>
             </button>
-          </div>
+          </form>
         </div>
         
         <div className="header-right">

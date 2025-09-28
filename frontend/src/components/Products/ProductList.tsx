@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import api from '../../services/api';
 
 interface Product {
@@ -37,12 +38,22 @@ const ProductList: React.FC = () => {
   const [sortBy, setSortBy] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
+  const [searchParams] = useSearchParams();
 
   const pageSize = 12;
 
   useEffect(() => {
     fetchCategories();
   }, []);
+
+  // Handle search from URL parameters
+  useEffect(() => {
+    const searchFromUrl = searchParams.get('search');
+    if (searchFromUrl) {
+      setSearchQuery(searchFromUrl);
+      setCurrentPage(0); // Reset to first page when coming from URL
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (searchQuery.trim()) {
