@@ -16,12 +16,9 @@ Users can auction and purchase items online
 - Spring Boot
 
 ## Demo Users
-**Demo Accounts (all have full marketplace access):**
-- **Alice Demo**: username=demo_user_1, password=demo123
+- **Alice Demo**: username=_1, password=demo123
 - **Bob Demo**: username=demo_user_2, password=demo123  
 - **Charlie Demo**: username=demo_user, password=demo123
-
-*Perfect for testing auctions: Any user can list items AND bid on others' items!*
 
 ## Run Locally
 
