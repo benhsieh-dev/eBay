@@ -9,7 +9,6 @@ services:
     image: redis:alpine
     ports:
       - "6379:6379"
-
   kafka-ui:
     image: provectuslabs/kafka-ui
     ports:
