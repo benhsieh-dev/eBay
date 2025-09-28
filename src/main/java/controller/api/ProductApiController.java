@@ -488,13 +488,6 @@ public class ProductApiController {
                 return ResponseEntity.status(403).body(errorResponse);
             }
             
-            // Create upload directory if it doesn't exist
-            String uploadDir = "uploads/products/" + productId;
-            Path uploadPath = Paths.get(uploadDir);
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
-            }
-            
             List<String> imageUrls = new ArrayList<>();
             
             // Process each uploaded file
@@ -509,29 +502,32 @@ public class ProductApiController {
                         return ResponseEntity.badRequest().body(errorResponse);
                     }
                     
-                    // Generate unique filename
+                    // Validate file size (max 10MB)
+                    if (file.getSize() > 10 * 1024 * 1024) {
+                        Map<String, Object> errorResponse = new HashMap<>();
+                        errorResponse.put("success", false);
+                        errorResponse.put("error", "File size must be less than 10MB");
+                        return ResponseEntity.badRequest().body(errorResponse);
+                    }
+                    
+                    // Get image data as byte array
+                    byte[] imageData = file.getBytes();
                     String originalFilename = file.getOriginalFilename();
-                    String fileExtension = originalFilename != null && originalFilename.contains(".") 
-                        ? originalFilename.substring(originalFilename.lastIndexOf("."))
-                        : ".jpg";
-                    String uniqueFilename = UUID.randomUUID().toString() + fileExtension;
                     
-                    // Save file
-                    Path filePath = uploadPath.resolve(uniqueFilename);
-                    Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-                    
-                    // Create image URL (relative to static resources)
-                    String imageUrl = "/uploads/products/" + productId + "/" + uniqueFilename;
-                    imageUrls.add(imageUrl);
-                    
-                    // Save ProductImage to database through ProductService
-                    Boolean isPrimary = imageUrls.size() == 1; // First image is primary
-                    ProductImage savedImage = productService.addProductImage(
+                    // Save ProductImage to database as BLOB
+                    Boolean isPrimary = imageUrls.size() == 0; // First image is primary
+                    ProductImage savedImage = productService.addProductImageBlob(
                         productId, 
-                        imageUrl, 
+                        imageData,
+                        contentType,
+                        originalFilename,
                         product.getTitle(), 
                         isPrimary
                     );
+                    
+                    // Add the API endpoint URL to response
+                    String imageUrl = "/api/images/" + savedImage.getImageId();
+                    imageUrls.add(imageUrl);
                 }
             }
             

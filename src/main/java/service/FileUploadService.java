@@ -21,7 +21,7 @@ import java.util.UUID;
 @Service
 public class FileUploadService {
     
-    private static final String UPLOAD_DIR = "uploads/messages/";
+    private static final String UPLOAD_DIR = "src/main/resources/static/uploads/messages/";
     private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
     private static final List<String> ALLOWED_IMAGE_TYPES = Arrays.asList(
         "image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"
@@ -64,7 +64,7 @@ public class FileUploadService {
         result.put("success", true);
         result.put("filename", uniqueFilename);
         result.put("originalName", originalFilename);
-        result.put("url", "/" + UPLOAD_DIR + uniqueFilename);
+        result.put("url", "/uploads/messages/" + uniqueFilename);
         result.put("type", file.getContentType());
         result.put("size", file.getSize());
         result.put("isImage", isImageFile(file.getContentType()));
@@ -203,7 +203,7 @@ public class FileUploadService {
     public String generateThumbnail(String filename, int width, int height) {
         // In production, this would generate actual thumbnails using libraries like ImageIO, Thumbnailator, etc.
         // For now, return the original image URL
-        return "/" + UPLOAD_DIR + filename;
+        return "/uploads/messages/" + filename;
     }
     
     /**

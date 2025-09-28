@@ -289,6 +289,29 @@ public class ProductService {
         return productImageDAO.save(productImage);
     }
     
+    public ProductImage addProductImageBlob(Integer productId, byte[] imageData, String contentType, 
+                                           String originalFilename, String altText, Boolean isPrimary) {
+        Product product = productDAO.findById(productId);
+        if (product == null) {
+            throw new RuntimeException("Product not found");
+        }
+        
+        ProductImage productImage = new ProductImage(product, imageData, contentType, originalFilename, altText);
+        
+        // If this is set as primary or no images exist yet, make it primary
+        Long imageCount = productImageDAO.getImageCountByProductId(productId);
+        if (Boolean.TRUE.equals(isPrimary) || imageCount == 0) {
+            // Clear existing primary status
+            productImageDAO.clearPrimaryStatus(productId);
+            productImage.setIsPrimary(true);
+        }
+        
+        // Set sort order
+        productImage.setSortOrder(imageCount.intValue());
+        
+        return productImageDAO.save(productImage);
+    }
+    
     public List<ProductImage> getProductImages(Integer productId) {
         return productImageDAO.findByProductId(productId);
     }
@@ -300,10 +323,14 @@ public class ProductService {
             return images.stream()
                 .filter(img -> Boolean.TRUE.equals(img.getIsPrimary()))
                 .findFirst()
-                .map(ProductImage::getImageUrl)
-                .orElse(images.get(0).getImageUrl());
+                .map(ProductImage::getEffectiveImageUrl)
+                .orElse(images.get(0).getEffectiveImageUrl());
         }
         return null;
+    }
+    
+    public ProductImage getProductImageById(Integer imageId) {
+        return productImageDAO.findById(imageId);
     }
     
     public ProductImage getPrimaryProductImage(Integer productId) {
