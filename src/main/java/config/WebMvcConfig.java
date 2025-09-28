@@ -22,9 +22,4 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .setCachePeriod(31536000); // 1 year cache for static assets
     }
 
-    @Override
-    public void addViewControllers(ViewControllerRegistry registry) {
-        // Fallback to index.html for React Router
-        registry.addViewController("/").setViewName("forward:/index.html");
-    }
 }
