@@ -524,16 +524,14 @@ public class ProductApiController {
                     String imageUrl = "/uploads/products/" + productId + "/" + uniqueFilename;
                     imageUrls.add(imageUrl);
                     
-                    // Create ProductImage entity and save to database
-                    ProductImage productImage = new ProductImage();
-                    productImage.setProduct(product);
-                    productImage.setImageUrl(imageUrl);
-                    productImage.setAltText(product.getTitle());
-                    productImage.setSortOrder(imageUrls.size());
-                    productImage.setIsPrimary(imageUrls.size() == 1); // First image is primary
-                    
-                    // Save through ProductService (assuming it has image management)
-                    // productService.addProductImage(productImage);
+                    // Save ProductImage to database through ProductService
+                    Boolean isPrimary = imageUrls.size() == 1; // First image is primary
+                    ProductImage savedImage = productService.addProductImage(
+                        productId, 
+                        imageUrl, 
+                        product.getTitle(), 
+                        isPrimary
+                    );
                 }
             }
             
@@ -733,9 +731,9 @@ public class ProductApiController {
             productDTO.put("seller", sellerInfo);
         }
         
-        // Add image URL if available (simplified for now)
-        // TODO: Implement proper image handling with ProductImage entities
-        productDTO.put("imageUrl", null);
+        // Add primary image URL if available
+        String primaryImageUrl = productService.getPrimaryImageUrl(product.getProductId());
+        productDTO.put("imageUrl", primaryImageUrl);
         
         return productDTO;
     }

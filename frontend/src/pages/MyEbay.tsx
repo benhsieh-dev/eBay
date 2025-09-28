@@ -108,6 +108,7 @@ const MyEbay: React.FC = () => {
 
   const totalPages = Math.ceil(totalCount / pageSize);
 
+
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
@@ -474,6 +475,7 @@ const MyEbay: React.FC = () => {
           </p>
         </div>
       )}
+
     </div>
   );
 };

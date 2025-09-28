@@ -29,18 +29,43 @@ interface Product {
   };
 }
 
+interface User {
+  userId: number;
+  username: string;
+  firstName?: string;
+  lastName?: string;
+}
+
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [showImageUpload, setShowImageUpload] = useState(false);
+  const [uploadingImages, setUploadingImages] = useState(false);
 
   useEffect(() => {
     if (id) {
       fetchProduct(parseInt(id));
     }
+    checkAuthStatus();
   }, [id]);
+
+  const checkAuthStatus = async () => {
+    try {
+      const response = await api.get('/user/current', {
+        withCredentials: true
+      });
+      
+      if (response.data.success && response.data.authenticated) {
+        setCurrentUser(response.data.user);
+      }
+    } catch (error) {
+      setCurrentUser(null);
+    }
+  };
 
   const fetchProduct = async (productId: number) => {
     setLoading(true);
@@ -82,6 +107,41 @@ const ProductDetail: React.FC = () => {
     if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ${minutes} minute${minutes > 1 ? 's' : ''}`;
     return `${minutes} minute${minutes > 1 ? 's' : ''}`;
   };
+
+  const handleImageUpload = async (files: FileList | null) => {
+    if (!files || files.length === 0 || !product) return;
+
+    setUploadingImages(true);
+    try {
+      const formData = new FormData();
+      Array.from(files).forEach(file => {
+        formData.append('images', file);
+      });
+
+      const response = await api.post(`/products/${product.productId}/images`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        withCredentials: true
+      });
+
+      if (response.data.success) {
+        // Refresh the product to show updated images
+        fetchProduct(product.productId);
+        setShowImageUpload(false);
+        alert('Images uploaded successfully!');
+      } else {
+        alert(response.data.error || 'Failed to upload images');
+      }
+    } catch (err: any) {
+      alert('Failed to upload images. Please try again.');
+      console.error('Image upload error:', err);
+    } finally {
+      setUploadingImages(false);
+    }
+  };
+
+  const isOwner = currentUser && product?.seller && currentUser.userId === product.seller.userId;
 
   if (loading) {
     return (
@@ -160,32 +220,128 @@ const ProductDetail: React.FC = () => {
         alignItems: 'start'
       }}>
         {/* Product Image */}
-        <div style={{
-          backgroundColor: '#f8f9fa',
-          borderRadius: '8px',
-          padding: '20px',
-          textAlign: 'center',
-          minHeight: '400px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
-          {product.imageUrl ? (
-            <img
-              src={product.imageUrl}
-              alt={product.title}
-              style={{
-                maxWidth: '100%',
-                maxHeight: '500px',
-                objectFit: 'contain'
-              }}
-            />
-          ) : (
-            <div style={{ 
-              color: '#666',
-              fontSize: '18px'
+        <div>
+          <div style={{
+            backgroundColor: '#f8f9fa',
+            borderRadius: '8px',
+            padding: '20px',
+            textAlign: 'center',
+            minHeight: '400px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            {product.imageUrl ? (
+              <img
+                src={product.imageUrl}
+                alt={product.title}
+                style={{
+                  maxWidth: '100%',
+                  maxHeight: '500px',
+                  objectFit: 'contain'
+                }}
+              />
+            ) : (
+              <div style={{ 
+                color: '#666',
+                fontSize: '18px'
+              }}>
+                No Image Available
+              </div>
+            )}
+          </div>
+
+          {/* Image Management for Sellers */}
+          {isOwner && (
+            <div style={{
+              marginTop: '20px',
+              padding: '20px',
+              backgroundColor: '#e3f2fd',
+              borderRadius: '8px',
+              border: '2px dashed #0066cc'
             }}>
-              No Image Available
+              <h4 style={{ 
+                margin: '0 0 16px 0', 
+                color: '#0066cc',
+                fontSize: '16px'
+              }}>
+                Manage Your Listing Images
+              </h4>
+              <p style={{ 
+                margin: '0 0 16px 0', 
+                fontSize: '14px',
+                color: '#666'
+              }}>
+                {product.imageUrl 
+                  ? 'Add more images to showcase your item better.'
+                  : 'Add images to make your listing more attractive to buyers.'}
+              </p>
+              
+              {!showImageUpload ? (
+                <button
+                  onClick={() => setShowImageUpload(true)}
+                  style={{
+                    padding: '12px 24px',
+                    backgroundColor: product.imageUrl ? '#28a745' : '#ffc107',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    fontSize: '14px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  {product.imageUrl ? '📷 Add More Images' : '📷 Add Images'}
+                </button>
+              ) : (
+                <div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={(e) => handleImageUpload(e.target.files)}
+                    disabled={uploadingImages}
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      border: '2px dashed #0066cc',
+                      borderRadius: '4px',
+                      backgroundColor: uploadingImages ? '#f5f5f5' : '#ffffff',
+                      cursor: uploadingImages ? 'not-allowed' : 'pointer',
+                      marginBottom: '12px'
+                    }}
+                  />
+                  
+                  {uploadingImages && (
+                    <div style={{
+                      textAlign: 'center',
+                      padding: '12px',
+                      color: '#666',
+                      fontSize: '14px'
+                    }}>
+                      📤 Uploading images...
+                    </div>
+                  )}
+                  
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button
+                      onClick={() => setShowImageUpload(false)}
+                      disabled={uploadingImages}
+                      style={{
+                        padding: '8px 16px',
+                        border: '1px solid #ddd',
+                        backgroundColor: 'white',
+                        borderRadius: '4px',
+                        cursor: uploadingImages ? 'not-allowed' : 'pointer',
+                        color: uploadingImages ? '#999' : '#666',
+                        fontSize: '14px'
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

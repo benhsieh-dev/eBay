@@ -293,6 +293,19 @@ public class ProductService {
         return productImageDAO.findByProductId(productId);
     }
     
+    public String getPrimaryImageUrl(Integer productId) {
+        List<ProductImage> images = productImageDAO.findByProductId(productId);
+        if (images != null && !images.isEmpty()) {
+            // Find primary image or use first image as fallback
+            return images.stream()
+                .filter(img -> Boolean.TRUE.equals(img.getIsPrimary()))
+                .findFirst()
+                .map(ProductImage::getImageUrl)
+                .orElse(images.get(0).getImageUrl());
+        }
+        return null;
+    }
+    
     public ProductImage getPrimaryProductImage(Integer productId) {
         return productImageDAO.findPrimaryImageByProductId(productId);
     }

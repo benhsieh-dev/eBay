@@ -52,7 +52,8 @@ public class DemoDataService {
                 }
                 
                 // Create third demo user for backward compatibility
-                if (userService.getUserByUsername("demo_user") == null) {
+                User existingDemoUser = userService.getUserByUsername("demo_user");
+                if (existingDemoUser == null) {
                     User demoUser = new User("demo_user", "demo@test.com", "demo123", "Charlie", "Demo");
                     demoUser.setUserType(User.UserType.BOTH);
                     demoUser.setEmailVerified(true);
@@ -62,6 +63,18 @@ public class DemoDataService {
                     demoUser.setCountry("USA");
                     userService.registerUser(demoUser);
                     System.out.println("✅ Demo User 3 created - Username: demo_user, Password: demo123");
+                } else {
+                    // Fix existing demo user data if it has incorrect names
+                    if (!"Charlie".equals(existingDemoUser.getFirstName()) || !"Demo".equals(existingDemoUser.getLastName())) {
+                        existingDemoUser.setFirstName("Charlie");
+                        existingDemoUser.setLastName("Demo");
+                        existingDemoUser.setCity("Seattle");
+                        existingDemoUser.setState("WA");
+                        existingDemoUser.setCountry("USA");
+                        existingDemoUser.setPhone("555-0303");
+                        userService.updateUser(existingDemoUser);
+                        System.out.println("✅ Demo User data updated - Username: demo_user, Name corrected to Charlie Demo");
+                    }
                 }
                 
                 System.out.println("✅ Spring Boot application initialization completed successfully");

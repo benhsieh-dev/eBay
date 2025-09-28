@@ -22,5 +22,9 @@ public class WebConfiguration implements WebMvcConfigurer {
                 
         registry.addResourceHandler("/profile/**")
                 .addResourceLocations("/profile/");
+                
+        // Serve uploaded product images
+        registry.addResourceHandler("/uploads/**")
+                .addResourceLocations("file:uploads/");
     }
 }
