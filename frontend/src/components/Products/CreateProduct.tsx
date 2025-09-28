@@ -179,12 +179,12 @@ const CreateProduct: React.FC = () => {
           } catch (imageError: any) {
             // Product was created but image upload failed
             setError(`Product created successfully, but image upload failed: ${imageError.message}`);
-            setTimeout(() => navigate('/products'), 3000); // Navigate after showing error
+            setTimeout(() => navigate('/my-ebay'), 3000); // Navigate after showing error
             return;
           }
         }
         
-        navigate('/products');
+        navigate('/my-ebay');
       } else {
         setError(response.data.error || 'Failed to create product');
       }
@@ -575,7 +575,7 @@ const CreateProduct: React.FC = () => {
           
           <button
             type="button"
-            onClick={() => navigate('/products')}
+            onClick={() => navigate('/my-ebay')}
             style={{
               padding: '12px 40px',
               backgroundColor: '#6c757d',

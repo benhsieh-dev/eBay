@@ -93,7 +93,7 @@ const Header: React.FC = () => {
             ) : currentUser ? (
               // Logged in user options
               <>
-                <Link to="/profile">My eBay</Link>
+                <Link to="/my-ebay">My eBay</Link>
                 <button
                   onClick={handleLogout}
                   style={{

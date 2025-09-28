@@ -13,6 +13,12 @@ interface Product {
   listingType: 'AUCTION' | 'BUY_NOW' | 'AUCTION_WITH_BUY_NOW';
   status: string;
   sellerId: number;
+  seller?: {
+    userId: number;
+    username: string;
+    firstName?: string;
+    lastName?: string;
+  };
 }
 
 interface Category {
@@ -32,12 +38,19 @@ const ProductList: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
 
-  const pageSize = 20;
+  const pageSize = 12;
 
   useEffect(() => {
     fetchCategories();
-    fetchProducts();
-  }, [currentPage, selectedCategory, sortBy]);
+  }, []);
+
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      handleSearchInternal();
+    } else {
+      fetchProducts();
+    }
+  }, [currentPage, selectedCategory, sortBy, searchQuery]);
 
   const fetchCategories = async () => {
     try {
@@ -81,13 +94,7 @@ const ProductList: React.FC = () => {
     }
   };
 
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!searchQuery.trim()) {
-      fetchProducts();
-      return;
-    }
-
+  const handleSearchInternal = async () => {
     setLoading(true);
     try {
       const response = await api.get(`/products/search?query=${encodeURIComponent(searchQuery)}&page=${currentPage}&size=${pageSize}`);
@@ -104,6 +111,16 @@ const ProductList: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCurrentPage(0); // Reset to first page when searching
+    if (!searchQuery.trim()) {
+      fetchProducts();
+      return;
+    }
+    handleSearchInternal();
   };
 
   const formatPrice = (price: number) => {
@@ -266,6 +283,14 @@ const ProductList: React.FC = () => {
               <div style={{ fontSize: '12px', color: '#666', marginBottom: '8px' }}>
                 Condition: {product.condition}
               </div>
+              
+              {product.seller && (
+                <div style={{ fontSize: '12px', color: '#666', marginBottom: '8px' }}>
+                  Seller: {product.seller.firstName && product.seller.lastName 
+                    ? `${product.seller.firstName} ${product.seller.lastName}` 
+                    : product.seller.username}
+                </div>
+              )}
               
               {product.listingType === 'AUCTION' && product.endTime && (
                 <div style={{ fontSize: '12px', color: '#d32f2f', fontWeight: 'bold' }}>

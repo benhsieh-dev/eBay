@@ -119,12 +119,25 @@ public class ProductApiController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable Integer id) {
+    public ResponseEntity<Map<String, Object>> getProductById(@PathVariable Integer id) {
         try {
             Product product = productService.getProductById(id);
-            return product != null ? ResponseEntity.ok(product) : ResponseEntity.notFound().build();
+            if (product != null) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", true);
+                response.put("product", convertToSafeDTO(product));
+                return ResponseEntity.ok(response);
+            } else {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("success", false);
+                errorResponse.put("error", "Product not found");
+                return ResponseEntity.status(404).body(errorResponse);
+            }
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Failed to fetch product");
+            return ResponseEntity.internalServerError().body(errorResponse);
         }
     }
 
@@ -168,6 +181,49 @@ public class ProductApiController {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
             errorResponse.put("error", "Search failed");
+            return ResponseEntity.ok(errorResponse);
+        }
+    }
+
+    @GetMapping("/my-listings")
+    public ResponseEntity<Map<String, Object>> getUserProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            HttpSession session) {
+        try {
+            // Get current user from session
+            Integer userId = (Integer) session.getAttribute("userId");
+            if (userId == null) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("success", false);
+                errorResponse.put("error", "User not logged in");
+                return ResponseEntity.status(401).body(errorResponse);
+            }
+            
+            List<Product> userProducts = productService.getProductsBySeller(userId);
+            
+            long totalCount = userProducts.size();
+            
+            // Apply pagination
+            int startIndex = page * size;
+            int endIndex = Math.min(startIndex + size, userProducts.size());
+            List<Product> paginatedProducts = userProducts.subList(startIndex, endIndex);
+            
+            // Convert to safe DTOs
+            List<Map<String, Object>> productDTOs = paginatedProducts.stream()
+                .map(this::convertToSafeDTO)
+                .toList();
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("products", productDTOs);
+            response.put("totalCount", totalCount);
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Failed to fetch user products");
             return ResponseEntity.ok(errorResponse);
         }
     }
@@ -669,6 +725,12 @@ public class ProductApiController {
         // Seller info safely (minimal)
         if (product.getSeller() != null) {
             productDTO.put("sellerId", product.getSeller().getUserId());
+            Map<String, Object> sellerInfo = new HashMap<>();
+            sellerInfo.put("userId", product.getSeller().getUserId());
+            sellerInfo.put("username", product.getSeller().getUsername());
+            sellerInfo.put("firstName", product.getSeller().getFirstName());
+            sellerInfo.put("lastName", product.getSeller().getLastName());
+            productDTO.put("seller", sellerInfo);
         }
         
         // Add image URL if available (simplified for now)
