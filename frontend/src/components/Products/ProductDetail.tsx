@@ -7,11 +7,14 @@ interface Product {
   title: string;
   description: string;
   currentPrice: number;
+  startingPrice: number;
   buyNowPrice?: number;
+  reservePrice?: number;
   imageUrl?: string;
   endTime?: string;
+  startTime?: string;
   condition: string;
-  listingType: 'AUCTION' | 'BUY_NOW' | 'AUCTION_WITH_BUY_NOW';
+  listingType: 'AUCTION' | 'BUY_NOW' | 'BOTH';
   status: string;
   sellerId: number;
   createdDate: string;
@@ -26,6 +29,55 @@ interface Product {
     username: string;
     firstName?: string;
     lastName?: string;
+  };
+}
+
+interface BidInfo {
+  currentPrice: number;
+  startingPrice: number;
+  buyNowPrice?: number;
+  reservePrice?: number;
+  highestBidAmount: number;
+  bidCount: number;
+  minNextBid: number;
+  timeRemaining: string;
+  timeRemainingMillis: number;
+  isAuctionActive: boolean;
+  isAuctionEnded: boolean;
+  isBuyNowAvailable: boolean;
+  isAuction: boolean;
+  listingType: string;
+  status: string;
+  userHasBid: boolean;
+  userIsWinning: boolean;
+  userLastBid?: {
+    bidId: number;
+    bidAmount: number;
+    bidTime: string;
+    isWinningBid: boolean;
+  };
+  winningBidder?: string;
+  finalPrice?: number;
+}
+
+interface Bid {
+  bidId: number;
+  bidAmount: number;
+  bidTime: string;
+  bidType: string;
+  bidStatus: string;
+  isWinningBid: boolean;
+  bidder: {
+    userId: number;
+    username: string;
+  };
+  product: {
+    productId: number;
+    title: string;
+    currentPrice: number;
+    status: string;
+    isAuctionActive: boolean;
+    timeRemaining: string;
   };
 }
 
@@ -45,6 +97,15 @@ const ProductDetail: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [showImageUpload, setShowImageUpload] = useState(false);
   const [uploadingImages, setUploadingImages] = useState(false);
+  const [bidInfo, setBidInfo] = useState<BidInfo | null>(null);
+  const [showBidModal, setShowBidModal] = useState(false);
+  const [bidAmount, setBidAmount] = useState('');
+  const [maxProxyAmount, setMaxProxyAmount] = useState('');
+  const [useProxyBidding, setUseProxyBidding] = useState(false);
+  const [placingBid, setPlacingBid] = useState(false);
+  const [showBidHistory, setShowBidHistory] = useState(false);
+  const [bidHistory, setBidHistory] = useState<Bid[]>([]);
+  const [loadingBidHistory, setLoadingBidHistory] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -140,6 +201,175 @@ const ProductDetail: React.FC = () => {
       setUploadingImages(false);
     }
   };
+
+  const fetchBidInfo = async (productId: number) => {
+    try {
+      const response = await api.get(`/bids/product/${productId}/info`, {
+        withCredentials: true
+      });
+      if (response.data.success) {
+        setBidInfo(response.data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch bid info:', err);
+    }
+  };
+
+  const fetchBidHistory = async (productId: number) => {
+    setLoadingBidHistory(true);
+    try {
+      const response = await api.get(`/bids/history/${productId}`, {
+        withCredentials: true
+      });
+      if (response.data.success) {
+        setBidHistory(response.data.bids);
+      }
+    } catch (err) {
+      console.error('Failed to fetch bid history:', err);
+    } finally {
+      setLoadingBidHistory(false);
+    }
+  };
+
+  const handlePlaceBid = async () => {
+    if (!product || !currentUser || !bidAmount) return;
+
+    if (!currentUser) {
+      alert('Please log in to place a bid.');
+      return;
+    }
+
+    if (isOwner) {
+      alert('You cannot bid on your own item.');
+      return;
+    }
+
+    const bidAmountNum = parseFloat(bidAmount);
+    if (isNaN(bidAmountNum) || bidAmountNum <= 0) {
+      alert('Please enter a valid bid amount.');
+      return;
+    }
+
+    if (useProxyBidding && maxProxyAmount) {
+      const maxProxyAmountNum = parseFloat(maxProxyAmount);
+      if (isNaN(maxProxyAmountNum) || maxProxyAmountNum < bidAmountNum) {
+        alert('Maximum proxy amount must be greater than or equal to bid amount.');
+        return;
+      }
+    }
+
+    setPlacingBid(true);
+    try {
+      const bidRequest = {
+        productId: product.productId,
+        bidAmount: bidAmountNum,
+        bidType: useProxyBidding ? 'PROXY' : 'REGULAR',
+        maxProxyAmount: useProxyBidding && maxProxyAmount ? parseFloat(maxProxyAmount) : null
+      };
+
+      const response = await api.post('/bids/place', bidRequest, {
+        withCredentials: true
+      });
+
+      if (response.data.success) {
+        alert(response.data.message);
+        setShowBidModal(false);
+        setBidAmount('');
+        setMaxProxyAmount('');
+        setUseProxyBidding(false);
+        // Refresh product and bid info
+        fetchProduct(product.productId);
+        fetchBidInfo(product.productId);
+      } else {
+        alert(response.data.error || 'Failed to place bid');
+      }
+    } catch (err: any) {
+      alert(err.response?.data?.error || 'Failed to place bid. Please try again.');
+      console.error('Bid placement error:', err);
+    } finally {
+      setPlacingBid(false);
+    }
+  };
+
+  const handleBuyNow = async () => {
+    if (!product || !currentUser) return;
+
+    if (!currentUser) {
+      alert('Please log in to buy this item.');
+      return;
+    }
+
+    if (isOwner) {
+      alert('You cannot buy your own item.');
+      return;
+    }
+
+    if (window.confirm(`Are you sure you want to buy this item for ${formatPrice(product.buyNowPrice || product.currentPrice)}?`)) {
+      setPlacingBid(true);
+      try {
+        const response = await api.post('/bids/buy-now', {
+          productId: product.productId
+        }, {
+          withCredentials: true
+        });
+
+        if (response.data.success) {
+          alert(response.data.message);
+          if (response.data.redirect) {
+            navigate(response.data.redirect);
+          } else {
+            // Refresh product info
+            fetchProduct(product.productId);
+            fetchBidInfo(product.productId);
+          }
+        } else {
+          alert(response.data.error || 'Failed to complete purchase');
+        }
+      } catch (err: any) {
+        alert(err.response?.data?.error || 'Failed to complete purchase. Please try again.');
+        console.error('Buy now error:', err);
+      } finally {
+        setPlacingBid(false);
+      }
+    }
+  };
+
+  const openBidModal = () => {
+    if (!currentUser) {
+      alert('Please log in to place a bid.');
+      return;
+    }
+    
+    if (isOwner) {
+      alert('You cannot bid on your own item.');
+      return;
+    }
+
+    // Fetch current bid info when opening modal
+    fetchBidInfo(product!.productId);
+    setShowBidModal(true);
+  };
+
+  const openBidHistory = () => {
+    if (product) {
+      fetchBidHistory(product.productId);
+      setShowBidHistory(true);
+    }
+  };
+
+  // Auto-refresh bid info for auctions
+  useEffect(() => {
+    if (product && (product.listingType === 'AUCTION' || product.listingType === 'BOTH') && product.status === 'ACTIVE') {
+      fetchBidInfo(product.productId);
+      
+      // Set up auto-refresh every 30 seconds for active auctions
+      const interval = setInterval(() => {
+        fetchBidInfo(product.productId);
+      }, 30000);
+
+      return () => clearInterval(interval);
+    }
+  }, [product]);
 
   const isOwner = currentUser && product?.seller && currentUser.userId === product.seller.userId;
 
@@ -380,10 +610,62 @@ const ProductDetail: React.FC = () => {
               color: '#0066cc',
               marginBottom: '8px'
             }}>
-              {formatPrice(product.currentPrice)}
+              {formatPrice(bidInfo?.currentPrice || product.currentPrice)}
             </div>
 
-            {product.buyNowPrice && product.buyNowPrice !== product.currentPrice && (
+            {/* Bid Information for Auctions */}
+            {(product.listingType === 'AUCTION' || product.listingType === 'BOTH') && bidInfo && (
+              <div style={{ marginBottom: '12px' }}>
+                <div style={{ fontSize: '14px', color: '#666', marginBottom: '4px' }}>
+                  {bidInfo.bidCount > 0 ? (
+                    <>
+                      {bidInfo.bidCount} bid{bidInfo.bidCount > 1 ? 's' : ''} • 
+                      Minimum bid: {formatPrice(bidInfo.minNextBid)}
+                    </>
+                  ) : (
+                    <>Starting bid: {formatPrice(bidInfo.startingPrice)}</>
+                  )}
+                </div>
+                
+                {bidInfo.userHasBid && (
+                  <div style={{ 
+                    fontSize: '14px', 
+                    color: bidInfo.userIsWinning ? '#2e7d32' : '#f57c00',
+                    fontWeight: 'bold'
+                  }}>
+                    {bidInfo.userIsWinning ? '🎉 You are winning this auction!' : '⚠️ You have been outbid'}
+                  </div>
+                )}
+
+                {bidInfo.isAuctionEnded && bidInfo.winningBidder && (
+                  <div style={{ 
+                    fontSize: '14px', 
+                    color: '#666',
+                    fontWeight: 'bold'
+                  }}>
+                    Winner: {bidInfo.winningBidder} • Final price: {formatPrice(bidInfo.finalPrice || bidInfo.currentPrice)}
+                  </div>
+                )}
+
+                <button
+                  onClick={openBidHistory}
+                  style={{
+                    marginTop: '8px',
+                    padding: '4px 8px',
+                    background: 'none',
+                    border: 'none',
+                    color: '#0066cc',
+                    cursor: 'pointer',
+                    fontSize: '12px',
+                    textDecoration: 'underline'
+                  }}
+                >
+                  View bid history ({bidInfo.bidCount})
+                </button>
+              </div>
+            )}
+
+            {product.buyNowPrice && product.buyNowPrice !== (bidInfo?.currentPrice || product.currentPrice) && (
               <div style={{ 
                 fontSize: '18px', 
                 color: '#666',
@@ -430,26 +712,28 @@ const ProductDetail: React.FC = () => {
             gap: '12px',
             marginBottom: '30px'
           }}>
-            {product.listingType === 'BUY_NOW' || product.buyNowPrice ? (
+            {!isOwner && (product.listingType === 'BUY_NOW' || product.buyNowPrice) && product.status === 'ACTIVE' && (
               <button
                 style={{
                   flex: 1,
                   padding: '16px',
-                  backgroundColor: '#0066cc',
+                  backgroundColor: placingBid ? '#999' : '#0066cc',
                   color: 'white',
                   border: 'none',
                   borderRadius: '8px',
                   fontSize: '16px',
                   fontWeight: 'bold',
-                  cursor: 'pointer'
+                  cursor: placingBid ? 'not-allowed' : 'pointer'
                 }}
-                onClick={() => alert('Buy It Now functionality coming soon!')}
+                onClick={handleBuyNow}
+                disabled={placingBid}
               >
-                Buy It Now
+                {placingBid ? 'Processing...' : 'Buy It Now'}
               </button>
-            ) : null}
+            )}
 
-            {product.listingType === 'AUCTION' && product.status === 'ACTIVE' && (
+            {!isOwner && (product.listingType === 'AUCTION' || product.listingType === 'BOTH') && 
+             product.status === 'ACTIVE' && bidInfo?.isAuctionActive && (
               <button
                 style={{
                   flex: 1,
@@ -462,26 +746,46 @@ const ProductDetail: React.FC = () => {
                   fontWeight: 'bold',
                   cursor: 'pointer'
                 }}
-                onClick={() => alert('Bidding functionality coming soon!')}
+                onClick={openBidModal}
               >
                 Place Bid
               </button>
             )}
 
-            <button
-              style={{
-                padding: '16px 24px',
-                backgroundColor: '#f8f9fa',
-                color: '#333',
-                border: '1px solid #dee2e6',
+            {!isOwner && product.status === 'ACTIVE' && (
+              <button
+                style={{
+                  padding: '16px 24px',
+                  backgroundColor: '#f8f9fa',
+                  color: '#333',
+                  border: '1px solid #dee2e6',
+                  borderRadius: '8px',
+                  fontSize: '16px',
+                  cursor: 'pointer'
+                }}
+                onClick={() => alert('Add to watchlist functionality coming soon!')}
+              >
+                Add to Watchlist
+              </button>
+            )}
+
+            {isOwner && (
+              <div style={{
+                flex: 1,
+                padding: '16px',
+                backgroundColor: '#e3f2fd',
                 borderRadius: '8px',
-                fontSize: '16px',
-                cursor: 'pointer'
-              }}
-              onClick={() => alert('Add to watchlist functionality coming soon!')}
-            >
-              Add to Watchlist
-            </button>
+                border: '2px dashed #0066cc',
+                textAlign: 'center'
+              }}>
+                <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#0066cc', marginBottom: '4px' }}>
+                  Your Listing
+                </div>
+                <div style={{ fontSize: '14px', color: '#666' }}>
+                  {product.status === 'ACTIVE' ? 'Currently active and accepting bids' : `Status: ${product.status}`}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Seller Information */}
@@ -522,6 +826,268 @@ const ProductDetail: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Bid Modal */}
+      {showBidModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '8px',
+            padding: '24px',
+            maxWidth: '500px',
+            width: '90%',
+            maxHeight: '80vh',
+            overflow: 'auto'
+          }}>
+            <h2 style={{ fontSize: '24px', marginBottom: '20px', textAlign: 'center' }}>
+              Place Your Bid
+            </h2>
+
+            <div style={{ marginBottom: '20px', textAlign: 'center' }}>
+              <div style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '8px' }}>
+                {product?.title}
+              </div>
+              {bidInfo && (
+                <div style={{ fontSize: '14px', color: '#666' }}>
+                  Current price: {formatPrice(bidInfo.currentPrice)} • 
+                  Minimum bid: {formatPrice(bidInfo.minNextBid)}
+                </div>
+              )}
+            </div>
+
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+                Your bid amount:
+              </label>
+              <input
+                type="number"
+                value={bidAmount}
+                onChange={(e) => setBidAmount(e.target.value)}
+                placeholder={bidInfo ? `Minimum: ${bidInfo.minNextBid}` : 'Enter bid amount'}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  fontSize: '16px'
+                }}
+              />
+            </div>
+
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
+                <input
+                  type="checkbox"
+                  checked={useProxyBidding}
+                  onChange={(e) => setUseProxyBidding(e.target.checked)}
+                  style={{ marginRight: '8px' }}
+                />
+                Use proxy bidding (automatic bidding up to a maximum amount)
+              </label>
+
+              {useProxyBidding && (
+                <div>
+                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+                    Maximum bid amount:
+                  </label>
+                  <input
+                    type="number"
+                    value={maxProxyAmount}
+                    onChange={(e) => setMaxProxyAmount(e.target.value)}
+                    placeholder="Maximum amount you're willing to bid"
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      border: '1px solid #ddd',
+                      borderRadius: '4px',
+                      fontSize: '16px'
+                    }}
+                  />
+                  <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
+                    The system will automatically bid for you up to this amount to help you win the auction.
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => setShowBidModal(false)}
+                disabled={placingBid}
+                style={{
+                  padding: '12px 24px',
+                  border: '1px solid #ddd',
+                  backgroundColor: 'white',
+                  borderRadius: '4px',
+                  cursor: placingBid ? 'not-allowed' : 'pointer',
+                  fontSize: '16px',
+                  color: placingBid ? '#999' : '#666'
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handlePlaceBid}
+                disabled={placingBid || !bidAmount}
+                style={{
+                  padding: '12px 24px',
+                  backgroundColor: placingBid || !bidAmount ? '#999' : '#2e7d32',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: placingBid || !bidAmount ? 'not-allowed' : 'pointer',
+                  fontSize: '16px',
+                  fontWeight: 'bold'
+                }}
+              >
+                {placingBid ? 'Placing Bid...' : 'Place Bid'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bid History Modal */}
+      {showBidHistory && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '8px',
+            padding: '24px',
+            maxWidth: '700px',
+            width: '90%',
+            maxHeight: '80vh',
+            overflow: 'auto'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h2 style={{ fontSize: '24px', margin: 0 }}>
+                Bid History
+              </h2>
+              <button
+                onClick={() => setShowBidHistory(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '24px',
+                  cursor: 'pointer',
+                  color: '#666'
+                }}
+              >
+                ×
+              </button>
+            </div>
+
+            <div style={{ marginBottom: '20px', textAlign: 'center' }}>
+              <div style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '8px' }}>
+                {product?.title}
+              </div>
+              {bidInfo && (
+                <div style={{ fontSize: '14px', color: '#666' }}>
+                  Total bids: {bidInfo.bidCount} • 
+                  Current price: {formatPrice(bidInfo.currentPrice)}
+                </div>
+              )}
+            </div>
+
+            {loadingBidHistory ? (
+              <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+                Loading bid history...
+              </div>
+            ) : bidHistory.length > 0 ? (
+              <div style={{ border: '1px solid #ddd', borderRadius: '4px' }}>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr 1fr 2fr',
+                  gap: '12px',
+                  padding: '16px',
+                  backgroundColor: '#f8f9fa',
+                  borderBottom: '1px solid #ddd',
+                  fontWeight: 'bold',
+                  fontSize: '14px'
+                }}>
+                  <div>Bidder</div>
+                  <div>Amount</div>
+                  <div>Status</div>
+                  <div>Time</div>
+                </div>
+                {bidHistory.map((bid, index) => (
+                  <div
+                    key={bid.bidId}
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr 1fr 1fr 2fr',
+                      gap: '12px',
+                      padding: '16px',
+                      borderBottom: index < bidHistory.length - 1 ? '1px solid #eee' : 'none',
+                      backgroundColor: bid.isWinningBid ? '#e8f5e8' : 'white'
+                    }}
+                  >
+                    <div style={{ fontSize: '14px' }}>
+                      {bid.bidder.username}
+                    </div>
+                    <div style={{ fontSize: '14px', fontWeight: 'bold' }}>
+                      {formatPrice(bid.bidAmount)}
+                    </div>
+                    <div style={{
+                      fontSize: '12px',
+                      color: bid.isWinningBid ? '#2e7d32' : '#666',
+                      fontWeight: bid.isWinningBid ? 'bold' : 'normal'
+                    }}>
+                      {bid.isWinningBid ? '🏆 Winning' : bid.bidStatus}
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#666' }}>
+                      {new Date(bid.bidTime).toLocaleDateString()} {new Date(bid.bidTime).toLocaleTimeString()}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+                No bids have been placed yet.
+              </div>
+            )}
+
+            <div style={{ marginTop: '20px', textAlign: 'center' }}>
+              <button
+                onClick={() => setShowBidHistory(false)}
+                style={{
+                  padding: '12px 24px',
+                  backgroundColor: '#0066cc',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '16px'
+                }}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

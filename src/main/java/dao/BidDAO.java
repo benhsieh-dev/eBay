@@ -95,7 +95,8 @@ public class BidDAO {
         TypedQuery<BigDecimal> query = entityManager.createQuery(
             "SELECT COALESCE(MAX(b.bidAmount), p.startingPrice) FROM Product p " +
             "LEFT JOIN Bid b ON b.product.productId = p.productId " +
-            "WHERE p.productId = :productId", BigDecimal.class);
+            "WHERE p.productId = :productId " +
+            "GROUP BY p.startingPrice", BigDecimal.class);
         query.setParameter("productId", productId);
         BigDecimal currentHigh = query.getSingleResult();
         

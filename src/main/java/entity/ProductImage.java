@@ -19,8 +19,7 @@ public class ProductImage {
     @Column(name = "image_url")
     private String imageUrl; // Keep for backward compatibility, but will be null for BLOB storage
     
-    @Lob
-    @Column(name = "image_data", columnDefinition = "BYTEA")
+    @Column(name = "image_data", columnDefinition = "bytea")
     private byte[] imageData; // Store actual image data as BLOB
     
     @Column(name = "content_type", length = 100)
@@ -64,6 +63,8 @@ public class ProductImage {
         this.originalFilename = originalFilename;
         this.fileSize = (long) imageData.length;
         this.altText = altText;
+        // Set placeholder URL for BLOB storage to satisfy NOT NULL constraint
+        this.imageUrl = "BLOB_STORAGE";
     }
     
     // Getters and Setters

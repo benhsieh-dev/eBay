@@ -8,11 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -514,7 +516,7 @@ public class ProductApiController {
                     byte[] imageData = file.getBytes();
                     String originalFilename = file.getOriginalFilename();
                     
-                    // Save ProductImage to database as BLOB
+                    // Save ProductImage to database as BLOB (for render deployment)
                     Boolean isPrimary = imageUrls.size() == 0; // First image is primary
                     ProductImage savedImage = productService.addProductImageBlob(
                         productId, 
