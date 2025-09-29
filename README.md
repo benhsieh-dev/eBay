@@ -109,8 +109,4 @@ Deployment Architecture:
 
 ## Future Considerations
 
-- Session management
-- CRUD operations
 - Security framework integration (Spring Security)
-- RESTful API endpoints
-- Frontend modernization (React/Angular integration)
