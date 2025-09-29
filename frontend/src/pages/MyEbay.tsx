@@ -17,8 +17,29 @@ interface Product {
   createdDate: string;
 }
 
+interface WatchlistItem {
+  watchlistId: number;
+  addedDate: string;
+  product: {
+    productId: number;
+    name: string;
+    description: string;
+    currentPrice: number;
+    buyItNowPrice?: number;
+    status: string;
+    endTime?: string;
+    seller: {
+      userId: number;
+      username: string;
+      firstName?: string;
+      lastName?: string;
+    };
+  };
+}
+
 const MyEbay: React.FC = () => {
   const [myListings, setMyListings] = useState<Product[]>([]);
+  const [watchlist, setWatchlist] = useState<WatchlistItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
@@ -29,8 +50,12 @@ const MyEbay: React.FC = () => {
   const pageSize = 10;
 
   useEffect(() => {
-    fetchMyListings();
-  }, [currentPage]);
+    if (activeTab === 'selling') {
+      fetchMyListings();
+    } else if (activeTab === 'watching') {
+      fetchWatchlist();
+    }
+  }, [currentPage, activeTab]);
 
   const fetchMyListings = async () => {
     setLoading(true);
@@ -60,6 +85,51 @@ const MyEbay: React.FC = () => {
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchWatchlist = async () => {
+    setLoading(true);
+    try {
+      const response = await api.get('/watchlist/user', {
+        withCredentials: true
+      });
+      
+      if (response.data.success) {
+        setWatchlist(response.data.watchlist);
+        setTotalCount(response.data.count);
+        setError('');
+      } else {
+        setError(response.data.error || 'Failed to fetch your watchlist');
+      }
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        setError('Please log in to view your watchlist');
+        navigate('/login');
+      } else {
+        setError('Failed to fetch your watchlist. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const removeFromWatchlist = async (productId: number) => {
+    try {
+      const response = await api.post('/watchlist/toggle', {
+        productId: productId
+      }, {
+        withCredentials: true
+      });
+
+      if (response.data.success) {
+        // Refresh watchlist
+        fetchWatchlist();
+      } else {
+        alert(response.data.error || 'Failed to remove from watchlist');
+      }
+    } catch (err: any) {
+      alert(err.response?.data?.error || 'Failed to remove from watchlist. Please try again.');
     }
   };
 
@@ -461,19 +531,192 @@ const MyEbay: React.FC = () => {
       )}
 
       {activeTab === 'watching' && (
-        <div style={{ 
-          textAlign: 'center', 
-          padding: '60px 20px',
-          backgroundColor: 'white',
-          borderRadius: '8px',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-        }}>
-          <div style={{ fontSize: '24px', marginBottom: '16px' }}>👀</div>
-          <h3 style={{ color: '#666', marginBottom: '16px' }}>Watchlist Coming Soon</h3>
-          <p style={{ color: '#666' }}>
-            Keep track of items you're interested in bidding on or buying.
-          </p>
-        </div>
+        <>
+          {/* Watchlist Summary */}
+          <div style={{ 
+            backgroundColor: '#f8f9fa', 
+            padding: '20px', 
+            borderRadius: '8px', 
+            textAlign: 'center',
+            border: '1px solid #dee2e6',
+            marginBottom: '30px'
+          }}>
+            <h3 style={{ margin: '0 0 10px 0', color: '#0066cc' }}>My Watchlist</h3>
+            <p style={{ margin: 0, fontSize: '24px', fontWeight: 'bold' }}>{totalCount} items</p>
+          </div>
+
+          {/* Error Message */}
+          {error && (
+            <div style={{ 
+              color: 'red', 
+              marginBottom: '20px', 
+              padding: '15px', 
+              backgroundColor: '#ffe6e6', 
+              borderRadius: '4px',
+              border: '1px solid #ffcccc'
+            }}>
+              {error}
+            </div>
+          )}
+
+          {/* Loading */}
+          {loading && (
+            <div style={{ textAlign: 'center', padding: '40px' }}>
+              <div style={{ fontSize: '18px', color: '#666' }}>Loading your watchlist...</div>
+            </div>
+          )}
+
+          {/* Watchlist Table */}
+          {!loading && watchlist.length > 0 && (
+            <div style={{ backgroundColor: 'white', borderRadius: '8px', overflow: 'hidden', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ backgroundColor: '#f8f9fa', borderBottom: '2px solid #dee2e6' }}>
+                      <th style={{ padding: '15px', textAlign: 'left', fontWeight: 'bold', color: '#495057' }}>Item</th>
+                      <th style={{ padding: '15px', textAlign: 'left', fontWeight: 'bold', color: '#495057' }}>Current Price</th>
+                      <th style={{ padding: '15px', textAlign: 'left', fontWeight: 'bold', color: '#495057' }}>Seller</th>
+                      <th style={{ padding: '15px', textAlign: 'left', fontWeight: 'bold', color: '#495057' }}>Status</th>
+                      <th style={{ padding: '15px', textAlign: 'left', fontWeight: 'bold', color: '#495057' }}>Time Remaining</th>
+                      <th style={{ padding: '15px', textAlign: 'left', fontWeight: 'bold', color: '#495057' }}>Added</th>
+                      <th style={{ padding: '15px', textAlign: 'center', fontWeight: 'bold', color: '#495057' }}>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {watchlist.map((item, index) => (
+                      <tr 
+                        key={item.watchlistId}
+                        style={{ 
+                          borderBottom: '1px solid #dee2e6',
+                          backgroundColor: index % 2 === 0 ? '#ffffff' : '#f8f9fa'
+                        }}
+                      >
+                        <td style={{ padding: '15px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <div style={{ 
+                              width: '60px', 
+                              height: '60px', 
+                              backgroundColor: '#f0f0f0', 
+                              borderRadius: '4px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              flexShrink: 0
+                            }}>
+                              <span style={{ color: '#666', fontSize: '12px' }}>No Image</span>
+                            </div>
+                            <div>
+                              <div 
+                                style={{ fontWeight: 'bold', marginBottom: '4px', lineHeight: 1.4, cursor: 'pointer', color: '#0066cc' }}
+                                onClick={() => navigate(`/products/${item.product.productId}`)}
+                              >
+                                {item.product.name}
+                              </div>
+                              <div style={{ fontSize: '12px', color: '#666' }}>
+                                {item.product.description?.substring(0, 60)}...
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td style={{ padding: '15px' }}>
+                          <div style={{ fontWeight: 'bold', color: '#0066cc' }}>
+                            {formatPrice(item.product.currentPrice)}
+                          </div>
+                          {item.product.buyItNowPrice && item.product.buyItNowPrice !== item.product.currentPrice && (
+                            <div style={{ fontSize: '12px', color: '#666' }}>
+                              Buy Now: {formatPrice(item.product.buyItNowPrice)}
+                            </div>
+                          )}
+                        </td>
+                        <td style={{ padding: '15px' }}>
+                          <div style={{ fontSize: '14px' }}>
+                            {item.product.seller.firstName && item.product.seller.lastName 
+                              ? `${item.product.seller.firstName} ${item.product.seller.lastName}`
+                              : item.product.seller.username}
+                          </div>
+                        </td>
+                        <td style={{ padding: '15px' }}>
+                          <span style={{ 
+                            fontWeight: 'bold',
+                            color: getStatusColor(item.product.status)
+                          }}>
+                            {item.product.status}
+                          </span>
+                        </td>
+                        <td style={{ padding: '15px' }}>
+                          {item.product.endTime ? (
+                            <span style={{ 
+                              fontSize: '14px',
+                              color: item.product.status === 'ACTIVE' ? '#d32f2f' : '#666'
+                            }}>
+                              {formatTimeRemaining(item.product.endTime)}
+                            </span>
+                          ) : (
+                            <span style={{ fontSize: '14px', color: '#666' }}>N/A</span>
+                          )}
+                        </td>
+                        <td style={{ padding: '15px', fontSize: '14px', color: '#666' }}>
+                          {formatDate(item.addedDate)}
+                        </td>
+                        <td style={{ padding: '15px', textAlign: 'center' }}>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removeFromWatchlist(item.product.productId);
+                            }}
+                            style={{
+                              padding: '6px 12px',
+                              backgroundColor: '#dc3545',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '4px',
+                              fontSize: '12px',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            Remove
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* No Watchlist Items */}
+          {!loading && watchlist.length === 0 && !error && (
+            <div style={{ 
+              textAlign: 'center', 
+              padding: '60px 20px',
+              backgroundColor: 'white',
+              borderRadius: '8px',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+            }}>
+              <div style={{ fontSize: '24px', marginBottom: '16px' }}>👀</div>
+              <h3 style={{ color: '#666', marginBottom: '16px' }}>Your watchlist is empty</h3>
+              <p style={{ color: '#666', marginBottom: '24px' }}>
+                Start adding items you're interested in by clicking "Add to Watchlist" on product pages.
+              </p>
+              <button
+                onClick={() => navigate('/products')}
+                style={{
+                  padding: '12px 24px',
+                  backgroundColor: '#0066cc',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  fontSize: '16px',
+                  cursor: 'pointer',
+                  fontWeight: 'bold'
+                }}
+              >
+                Browse Products
+              </button>
+            </div>
+          )}
+        </>
       )}
 
     </div>

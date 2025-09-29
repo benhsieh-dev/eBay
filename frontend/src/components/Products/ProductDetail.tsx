@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 
@@ -106,6 +106,9 @@ const ProductDetail: React.FC = () => {
   const [showBidHistory, setShowBidHistory] = useState(false);
   const [bidHistory, setBidHistory] = useState<Bid[]>([]);
   const [loadingBidHistory, setLoadingBidHistory] = useState(false);
+  const [isInWatchlist, setIsInWatchlist] = useState(false);
+  const [watchlistLoading, setWatchlistLoading] = useState(false);
+  const [watchersCount, setWatchersCount] = useState(0);
 
   useEffect(() => {
     if (id) {
@@ -357,6 +360,37 @@ const ProductDetail: React.FC = () => {
     }
   };
 
+  const checkWatchlistStatus = useCallback(async (productId: number) => {
+    if (!currentUser) {
+      setIsInWatchlist(false);
+      return;
+    }
+
+    try {
+      const response = await api.get(`/watchlist/check/${productId}`, {
+        withCredentials: true
+      });
+      
+      setIsInWatchlist(response.data.inWatchlist || false);
+    } catch (error) {
+      console.error('Failed to check watchlist status:', error);
+      setIsInWatchlist(false);
+    }
+  }, [currentUser]);
+
+  const fetchWatchersCount = useCallback(async (productId: number) => {
+    try {
+      const response = await api.get(`/watchlist/watchers/${productId}`, {
+        withCredentials: true
+      });
+      
+      setWatchersCount(response.data.watchersCount || 0);
+    } catch (error) {
+      console.error('Failed to fetch watchers count:', error);
+      setWatchersCount(0);
+    }
+  }, []);
+
   // Auto-refresh bid info for auctions
   useEffect(() => {
     if (product && (product.listingType === 'AUCTION' || product.listingType === 'BOTH') && product.status === 'ACTIVE') {
@@ -370,6 +404,56 @@ const ProductDetail: React.FC = () => {
       return () => clearInterval(interval);
     }
   }, [product]);
+
+  // Check watchlist status and watchers count
+  useEffect(() => {
+    if (product) {
+      checkWatchlistStatus(product.productId);
+      fetchWatchersCount(product.productId);
+    }
+  }, [product, currentUser, checkWatchlistStatus, fetchWatchersCount]);
+
+  const handleToggleWatchlist = async () => {
+    if (!currentUser) {
+      alert('Please log in to add items to your watchlist.');
+      return;
+    }
+
+    if (isOwner) {
+      alert('You cannot add your own item to watchlist.');
+      return;
+    }
+
+    setWatchlistLoading(true);
+    try {
+      const response = await api.post('/watchlist/toggle', {
+        productId: product?.productId
+      }, {
+        withCredentials: true
+      });
+
+      if (response.data.success) {
+        setIsInWatchlist(response.data.inWatchlist);
+        // Refresh watchers count
+        if (product) {
+          fetchWatchersCount(product.productId);
+        }
+        
+        // Show success message
+        const message = response.data.inWatchlist 
+          ? 'Item added to your watchlist!' 
+          : 'Item removed from your watchlist!';
+        alert(message);
+      } else {
+        alert(response.data.error || 'Failed to update watchlist');
+      }
+    } catch (err: any) {
+      alert(err.response?.data?.error || 'Failed to update watchlist. Please try again.');
+      console.error('Watchlist toggle error:', err);
+    } finally {
+      setWatchlistLoading(false);
+    }
+  };
 
   const isOwner = currentUser && product?.seller && currentUser.userId === product.seller.userId;
 
@@ -752,20 +836,30 @@ const ProductDetail: React.FC = () => {
               </button>
             )}
 
-            {!isOwner && product.status === 'ACTIVE' && (
+            {!isOwner && (
               <button
                 style={{
                   padding: '16px 24px',
-                  backgroundColor: '#f8f9fa',
-                  color: '#333',
-                  border: '1px solid #dee2e6',
+                  backgroundColor: watchlistLoading ? '#999' : (isInWatchlist ? '#dc3545' : '#f8f9fa'),
+                  color: watchlistLoading ? 'white' : (isInWatchlist ? 'white' : '#333'),
+                  border: isInWatchlist ? 'none' : '1px solid #dee2e6',
                   borderRadius: '8px',
                   fontSize: '16px',
-                  cursor: 'pointer'
+                  cursor: watchlistLoading ? 'not-allowed' : 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
                 }}
-                onClick={() => alert('Add to watchlist functionality coming soon!')}
+                onClick={handleToggleWatchlist}
+                disabled={watchlistLoading}
               >
-                Add to Watchlist
+                {watchlistLoading ? (
+                  <>Processing...</>
+                ) : isInWatchlist ? (
+                  <>Remove from Watchlist</>
+                ) : (
+                  <>Add to Watchlist</>
+                )}
               </button>
             )}
 
@@ -787,6 +881,26 @@ const ProductDetail: React.FC = () => {
               </div>
             )}
           </div>
+
+          {/* Watchlist Information */}
+          {watchersCount > 0 && (
+            <div style={{ marginBottom: '20px' }}>
+              <div style={{ 
+                backgroundColor: '#fff3e0',
+                padding: '16px',
+                borderRadius: '8px',
+                border: '1px solid #ffcc80',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                <span style={{ fontSize: '18px' }}>👀</span>
+                <div style={{ fontSize: '14px', color: '#e65100' }}>
+                  <strong>{watchersCount}</strong> {watchersCount === 1 ? 'person is' : 'people are'} watching this item
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Seller Information */}
           {product.seller && (
