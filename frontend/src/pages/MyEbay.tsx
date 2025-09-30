@@ -37,14 +37,33 @@ interface WatchlistItem {
   };
 }
 
+interface BidItem {
+  bidId: number;
+  bidAmount: number;
+  bidTime: string;
+  bidType: string;
+  bidStatus: string;
+  isWinningBid: boolean;
+  maxProxyAmount?: number;
+  product: {
+    productId: number;
+    title: string;
+    currentPrice: number;
+    status: string;
+    isAuctionActive: boolean;
+    timeRemaining: string;
+  };
+}
+
 const MyEbay: React.FC = () => {
   const [myListings, setMyListings] = useState<Product[]>([]);
   const [watchlist, setWatchlist] = useState<WatchlistItem[]>([]);
+  const [myBids, setMyBids] = useState<BidItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
-  const [activeTab, setActiveTab] = useState<'selling' | 'buying' | 'watching'>('selling');
+  const [activeTab, setActiveTab] = useState<'selling' | 'buying' | 'watching' | 'bidding'>('selling');
   const navigate = useNavigate();
 
   const pageSize = 10;
@@ -54,8 +73,10 @@ const MyEbay: React.FC = () => {
       fetchMyListings();
     } else if (activeTab === 'watching') {
       fetchWatchlist();
+    } else if (activeTab === 'bidding') {
+      fetchMyBids();
     }
-  }, [currentPage, activeTab]);
+  }, [currentPage, activeTab]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchMyListings = async () => {
     setLoading(true);
@@ -108,6 +129,32 @@ const MyEbay: React.FC = () => {
         navigate('/login');
       } else {
         setError('Failed to fetch your watchlist. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchMyBids = async () => {
+    setLoading(true);
+    try {
+      const response = await api.get('/bids/my-bids', {
+        withCredentials: true
+      });
+      
+      if (response.data.success) {
+        setMyBids(response.data.userBids);
+        setTotalCount(response.data.userBids.length);
+        setError('');
+      } else {
+        setError(response.data.error || 'Failed to fetch your bids');
+      }
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        setError('Please log in to view your bids');
+        navigate('/login');
+      } else {
+        setError('Failed to fetch your bids. Please try again.');
       }
     } finally {
       setLoading(false);
@@ -173,6 +220,28 @@ const MyEbay: React.FC = () => {
       case 'ENDED': return '#d32f2f';
       case 'CANCELLED': return '#757575';
       default: return '#666';
+    }
+  };
+
+  const getBidStatusColor = (bidStatus: string, isWinning: boolean) => {
+    if (isWinning) return '#2e7d32'; // Green for winning
+    switch (bidStatus) {
+      case 'ACTIVE': return '#1976d2'; // Blue for active
+      case 'OUTBID': return '#f57c00'; // Orange for outbid
+      case 'WON': return '#2e7d32'; // Green for won
+      case 'LOST': return '#d32f2f'; // Red for lost
+      default: return '#666';
+    }
+  };
+
+  const getBidStatusText = (bidStatus: string, isWinning: boolean) => {
+    if (isWinning && bidStatus === 'ACTIVE') return 'Winning';
+    switch (bidStatus) {
+      case 'ACTIVE': return 'Outbid';
+      case 'OUTBID': return 'Outbid';
+      case 'WON': return 'Won';
+      case 'LOST': return 'Lost';
+      default: return bidStatus;
     }
   };
 
@@ -253,6 +322,22 @@ const MyEbay: React.FC = () => {
             }}
           >
             Watching
+          </button>
+          <button
+            onClick={() => setActiveTab('bidding')}
+            style={{
+              padding: '12px 24px',
+              border: 'none',
+              backgroundColor: 'transparent',
+              cursor: 'pointer',
+              fontSize: '16px',
+              fontWeight: activeTab === 'bidding' ? 'bold' : 'normal',
+              color: activeTab === 'bidding' ? '#0066cc' : '#666',
+              borderBottom: activeTab === 'bidding' ? '2px solid #0066cc' : '2px solid transparent',
+              marginBottom: '-2px'
+            }}
+          >
+            Bids & Offers
           </button>
         </div>
       </div>
@@ -713,6 +798,173 @@ const MyEbay: React.FC = () => {
                 }}
               >
                 Browse Products
+              </button>
+            </div>
+          )}
+        </>
+      )}
+
+      {activeTab === 'bidding' && (
+        <>
+          {/* Bidding Summary */}
+          <div style={{ 
+            backgroundColor: '#f8f9fa', 
+            padding: '20px', 
+            borderRadius: '8px', 
+            textAlign: 'center',
+            border: '1px solid #dee2e6',
+            marginBottom: '30px'
+          }}>
+            <h3 style={{ margin: '0 0 10px 0', color: '#0066cc' }}>My Bids & Offers</h3>
+            <p style={{ margin: 0, fontSize: '24px', fontWeight: 'bold' }}>{totalCount} bids placed</p>
+          </div>
+
+          {/* Error Message */}
+          {error && (
+            <div style={{ 
+              color: 'red', 
+              marginBottom: '20px', 
+              padding: '15px', 
+              backgroundColor: '#ffe6e6', 
+              borderRadius: '4px',
+              border: '1px solid #ffcccc'
+            }}>
+              {error}
+            </div>
+          )}
+
+          {/* Loading */}
+          {loading && (
+            <div style={{ textAlign: 'center', padding: '40px' }}>
+              <div style={{ fontSize: '18px', color: '#666' }}>Loading your bids...</div>
+            </div>
+          )}
+
+          {/* Bids Table */}
+          {!loading && myBids.length > 0 && (
+            <div style={{ backgroundColor: 'white', borderRadius: '8px', overflow: 'hidden', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ backgroundColor: '#f8f9fa', borderBottom: '2px solid #dee2e6' }}>
+                      <th style={{ padding: '15px', textAlign: 'left', fontWeight: 'bold', color: '#495057' }}>Item</th>
+                      <th style={{ padding: '15px', textAlign: 'left', fontWeight: 'bold', color: '#495057' }}>Your Bid</th>
+                      <th style={{ padding: '15px', textAlign: 'left', fontWeight: 'bold', color: '#495057' }}>Current Price</th>
+                      <th style={{ padding: '15px', textAlign: 'left', fontWeight: 'bold', color: '#495057' }}>Status</th>
+                      <th style={{ padding: '15px', textAlign: 'left', fontWeight: 'bold', color: '#495057' }}>Time Remaining</th>
+                      <th style={{ padding: '15px', textAlign: 'left', fontWeight: 'bold', color: '#495057' }}>Bid Time</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {myBids.map((bid, index) => (
+                      <tr 
+                        key={bid.bidId}
+                        style={{ 
+                          borderBottom: '1px solid #dee2e6',
+                          backgroundColor: index % 2 === 0 ? '#ffffff' : '#f8f9fa'
+                        }}
+                      >
+                        <td style={{ padding: '15px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <div style={{ 
+                              width: '60px', 
+                              height: '60px', 
+                              backgroundColor: '#f0f0f0', 
+                              borderRadius: '4px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              flexShrink: 0
+                            }}>
+                              <span style={{ color: '#666', fontSize: '12px' }}>No Image</span>
+                            </div>
+                            <div>
+                              <div 
+                                style={{ fontWeight: 'bold', marginBottom: '4px', lineHeight: 1.4, cursor: 'pointer', color: '#0066cc' }}
+                                onClick={() => navigate(`/products/${bid.product.productId}`)}
+                              >
+                                {bid.product.title}
+                              </div>
+                              <div style={{ fontSize: '12px', color: '#666' }}>
+                                Bid Type: {bid.bidType}
+                                {bid.maxProxyAmount && (
+                                  <span> (Max: {formatPrice(bid.maxProxyAmount)})</span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td style={{ padding: '15px' }}>
+                          <div style={{ fontWeight: 'bold', color: '#0066cc' }}>
+                            {formatPrice(bid.bidAmount)}
+                          </div>
+                        </td>
+                        <td style={{ padding: '15px' }}>
+                          <div style={{ fontWeight: 'bold' }}>
+                            {formatPrice(bid.product.currentPrice)}
+                          </div>
+                        </td>
+                        <td style={{ padding: '15px' }}>
+                          <span style={{ 
+                            fontWeight: 'bold',
+                            color: getBidStatusColor(bid.bidStatus, bid.isWinningBid)
+                          }}>
+                            {getBidStatusText(bid.bidStatus, bid.isWinningBid)}
+                          </span>
+                        </td>
+                        <td style={{ padding: '15px' }}>
+                          {bid.product.isAuctionActive ? (
+                            <span style={{ 
+                              fontSize: '14px',
+                              color: '#d32f2f'
+                            }}>
+                              {bid.product.timeRemaining}
+                            </span>
+                          ) : (
+                            <span style={{ fontSize: '14px', color: '#666' }}>
+                              {bid.product.status === 'SOLD' ? 'Ended' : 'N/A'}
+                            </span>
+                          )}
+                        </td>
+                        <td style={{ padding: '15px', fontSize: '14px', color: '#666' }}>
+                          {formatDate(bid.bidTime)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* No Bids */}
+          {!loading && myBids.length === 0 && !error && (
+            <div style={{ 
+              textAlign: 'center', 
+              padding: '60px 20px',
+              backgroundColor: 'white',
+              borderRadius: '8px',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+            }}>
+              <div style={{ fontSize: '24px', marginBottom: '16px' }}>🏷️</div>
+              <h3 style={{ color: '#666', marginBottom: '16px' }}>No bids yet</h3>
+              <p style={{ color: '#666', marginBottom: '24px' }}>
+                You haven't placed any bids yet. Start bidding on items you're interested in!
+              </p>
+              <button
+                onClick={() => navigate('/products')}
+                style={{
+                  padding: '12px 24px',
+                  backgroundColor: '#0066cc',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  fontSize: '16px',
+                  cursor: 'pointer',
+                  fontWeight: 'bold'
+                }}
+              >
+                Browse Auctions
               </button>
             </div>
           )}
