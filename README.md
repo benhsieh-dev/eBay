@@ -29,6 +29,11 @@ docker-compose up
 
 # Terminal 2: Start Spring Boot
 mvn spring-boot:run
+./start.sh
+
+# Micro service statup
+cd notification-service
+source ../.env && mvn spring-boot:run
 
 # Terminal 3: Start React frontend
 npm start
@@ -52,3 +57,11 @@ Port summary:
 ## Future Considerations
 
 - Security framework integration (Spring Security)
+
+## Notifications micro service
+Implementation plan:
+1. Create new Spring Boot project: notification-service
+2. Move Kafka consumers: Copy EventConsumerService
+3. Add notification logic: Email templates, SMS integration
+4. Separate database: Small notification tables
+5. Test independently: Run alongside main app

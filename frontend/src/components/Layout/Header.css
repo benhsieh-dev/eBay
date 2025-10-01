@@ -28,8 +28,8 @@
 }
 
 .logo-img {
-  width: 40px;
-  height: 40px;
+  width: 100px;
+  height: 50px;
 }
 
 .header-center {
@@ -95,6 +95,17 @@
 
 .register-btn:hover {
   background: #0056b3 !important;
+}
+
+.logout-btn {
+    background: none;      /* remove button background */
+    border: none;          /* remove default border */
+    color: #0066cc;        /* eBay blue */
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: underline;  /* optional to look like a link */
+    padding: 0;            /* remove extra padding if any */
+    outline: none;         /* remove focus outline */
 }
 
 @media (max-width: 768px) {

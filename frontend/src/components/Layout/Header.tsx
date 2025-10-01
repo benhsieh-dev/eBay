@@ -63,17 +63,16 @@ const Header: React.FC = () => {
     <header className="header">
       <div className="header-container">
         <div className="header-left">
+            {/* Show welcome message when logged in */}
+            {currentUser && (
+                <div className="welcome-message" style={{ marginLeft: '20px', color: '#333', fontSize: '14px' }}>
+                    Hi {currentUser.firstName || currentUser.username}!
+                </div>
+            )}
           <Link to="/" className="logo">
             <img src="/logo.png" alt="eBay" className="logo-img" />
-            eBay
           </Link>
-          
-          {/* Show welcome message when logged in */}
-          {currentUser && (
-            <div className="welcome-message" style={{ marginLeft: '20px', color: '#333', fontSize: '14px' }}>
-              Hi {currentUser.firstName || currentUser.username}!
-            </div>
-          )}
+
         </div>
         
         <div className="header-center">
@@ -107,15 +106,8 @@ const Header: React.FC = () => {
               <>
                 <Link to="/my-ebay">My eBay</Link>
                 <button
+                  className="logout-btn"
                   onClick={handleLogout}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: '#0066cc',
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    textDecoration: 'underline'
-                  }}
                 >
                   Logout
                 </button>

@@ -72,3 +72,8 @@ uploads/
 src/main/resources/static/asset-manifest.json
 src/main/resources/static/index.html
 src/main/resources/static/static/
+
+# macOS system file
+.DS_Store
+.AppleDouble
+.LSOverride
