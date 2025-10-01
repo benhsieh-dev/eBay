@@ -280,9 +280,13 @@ const ProductDetail: React.FC = () => {
         setBidAmount('');
         setMaxProxyAmount('');
         setUseProxyBidding(false);
-        // Refresh product and bid info
-        fetchProduct(product.productId);
-        fetchBidInfo(product.productId);
+        try {
+            // Refresh product and bid info
+            await fetchProduct(product.productId);
+            await fetchBidInfo(product.productId);
+        } catch (refreshError) {
+            console.error('Failed to refresh product and bid info:', refreshError);
+        }
       } else {
         alert(response.data.error || 'Failed to place bid');
       }
