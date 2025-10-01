@@ -8,6 +8,7 @@ import ProductList from './components/Products/ProductList';
 import CreateProduct from './components/Products/CreateProduct';
 import ProductDetail from './components/Products/ProductDetail';
 import MyEbay from './pages/MyEbay';
+import GraphQLTest from './pages/GraphQLTest';
 import './App.css';
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/sell" element={<CreateProduct />} />
             <Route path="/my-ebay" element={<MyEbay />} />
+            <Route path="/graphql-test" element={<GraphQLTest />} />
           </Routes>
         </main>
       </div>

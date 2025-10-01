@@ -1,0 +1,40 @@
+type Query {
+  products(limit: Int, category: String): [Product]
+  product(id: ID!): Product
+}
+
+type Mutation {
+  placeBid(productId: ID!, price: Float!): BidResult
+}
+
+type Product {
+  productId: ID!
+  title: String!
+  currentPrice: Float!
+  startingPrice: Float
+  buyNowPrice: Float
+  description: String
+  conditionType: String
+  listingType: String
+  bidCount: Int
+  seller: Seller
+  category: Category
+}
+
+type Seller {
+  userId: ID!
+  username: String!
+  firstName: String
+  lastName: String
+}
+
+type Category {
+  categoryId: ID!
+  categoryName: String!
+}
+
+type BidResult {
+  success: Boolean!
+  message: String
+  bidId: String
+}

@@ -45,11 +45,17 @@ docker-compose down
 ```
 
 Port summary:
-- Kafka: 9092
-- Kafka web dashboard: 8081
-- Redis: 6379
-- Spring Boot: 8080 
-- React: 3000 
+
+| Port | Service              | Status         |
+|------|----------------------|----------------|
+| 3000 | React Dev            | Optional       |
+| 5432 | PostgreSQL           | Production DB  |
+| 6379 | Redis                | Cache          |
+| 6543 | Supabase Pooler      | Alternative DB |
+| 8080 | Main Spring Boot     | Core App       |
+| 8081 | Kafka UI             | Monitoring     |
+| 8082 | Notification Service | Microservice   |
+| 9092 | Kafka Broker         | Message Queue  |
 
 ## Docker Maintenance
 - docker system prune -af
