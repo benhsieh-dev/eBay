@@ -5,11 +5,13 @@ Users can auction and purchase items online
 
 - CSS
 - Docker
+- GraphQL
 - HTML
 - JavaScript
 - JDK 17
 - Kafka
 - Maven
+- Node JS
 - PostgreSQL
 - React JS
 - Render
@@ -30,6 +32,9 @@ docker-compose up
 # Terminal 2: Start Spring Boot
 mvn spring-boot:run
 ./start.sh
+
+## GraphQL Playground
+http://localhost:8080/graphql
 
 # Micro service statup
 cd notification-service
@@ -59,15 +64,9 @@ Port summary:
 
 ## Docker Maintenance
 - docker system prune -af
-- 
+
 ## Future Considerations
 
 - Security framework integration (Spring Security)
 
-## Notifications micro service
-Implementation plan:
-1. Create new Spring Boot project: notification-service
-2. Move Kafka consumers: Copy EventConsumerService
-3. Add notification logic: Email templates, SMS integration
-4. Separate database: Small notification tables
-5. Test independently: Run alongside main app
+

@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import api from '../../services/api';
 
 interface Product {
@@ -193,12 +196,12 @@ const ProductDetail: React.FC = () => {
         // Refresh the product to show updated images
         fetchProduct(product.productId);
         setShowImageUpload(false);
-        alert('Images uploaded successfully!');
+        toast.success('Images uploaded successfully!');
       } else {
-        alert(response.data.error || 'Failed to upload images');
+        toast.error(response.data.error || 'Failed to upload images');
       }
     } catch (err: any) {
-      alert('Failed to upload images. Please try again.');
+      toast.error('Failed to upload images. Please try again.');
       console.error('Image upload error:', err);
     } finally {
       setUploadingImages(false);
