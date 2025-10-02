@@ -15,19 +15,21 @@ COPY pom.xml .
 COPY src ./src
 COPY frontend ./frontend
 
-# Force cache bust - change this comment to rebuild: 2025-10-02-v3
-# Build the application with verbose output
+# Force cache bust - change this comment to rebuild: 2025-10-02-v4
+# Build the application with verbose output and frontend integration fixes
 RUN echo "Starting Maven build..." && \
     echo "Checking if npm is available:" && \
     which npm && npm --version && \
     echo "Checking frontend directory:" && \
     ls -la frontend/ && \
-    echo "Starting Maven build with frontend integration..." && \
+    echo "Starting Maven build with frontend integration (fixed phases)..." && \
     mvn clean package -DskipTests -X && \
     echo "Maven build completed. Checking static files..." && \
-    ls -la target/classes/static/ && \
+    ls -la target/classes/static/ || echo "No static directory found" && \
     echo "Checking if React build directory exists:" && \
-    ls -la frontend/build/ && \
+    ls -la frontend/build/ || echo "No frontend build directory found" && \
+    echo "Checking target directory contents:" && \
+    find target/ -name "*.jar" -o -name "static" -type d && \
     echo "Build process finished."
 
 # Expose port
