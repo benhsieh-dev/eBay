@@ -15,12 +15,19 @@ COPY pom.xml .
 COPY src ./src
 COPY frontend ./frontend
 
-# Force cache bust - change this comment to rebuild: 2025-10-02-v2
+# Force cache bust - change this comment to rebuild: 2025-10-02-v3
 # Build the application with verbose output
 RUN echo "Starting Maven build..." && \
+    echo "Checking if npm is available:" && \
+    which npm && npm --version && \
+    echo "Checking frontend directory:" && \
+    ls -la frontend/ && \
+    echo "Starting Maven build with frontend integration..." && \
     mvn clean package -DskipTests -X && \
     echo "Maven build completed. Checking static files..." && \
     ls -la target/classes/static/ && \
+    echo "Checking if React build directory exists:" && \
+    ls -la frontend/build/ && \
     echo "Build process finished."
 
 # Expose port
