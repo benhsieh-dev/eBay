@@ -81,3 +81,6 @@ uploads/
 # Process ID files (runtime process tracking)
 app.pid
 *.pid
+
+# Render build logs
+render-logs.txt
