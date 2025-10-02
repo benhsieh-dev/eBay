@@ -9,7 +9,7 @@ import CreateProduct from './components/Products/CreateProduct';
 import ProductDetail from './components/Products/ProductDetail';
 import MyEbay from './pages/MyEbay';
 import GraphQLTest from './pages/GraphQLTest';
-import {toast, ToastContainer} from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
 
