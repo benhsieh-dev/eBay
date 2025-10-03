@@ -1,0 +1,58 @@
+# AWS Lightsail Container Service Deployment Configuration
+# Deploy eBay marketplace application to Lightsail containers
+
+# Service Configuration
+serviceName: "ebay-marketplace"
+power: "micro"  # $10/month - 0.25 vCPU, 1GB RAM
+scale: 1        # Number of container instances
+
+# Container Configuration
+containers:
+  app:
+    image: "ebay-marketplace:latest"  # Will be built locally and pushed
+    ports:
+      8080: "HTTP"
+    environment:
+      # Database Configuration (will need AWS RDS or external DB)
+      SUPABASE_DB_HOST: "${SUPABASE_DB_HOST}"
+      SUPABASE_DB_PORT: "${SUPABASE_DB_PORT}"
+      SUPABASE_DB_NAME: "${SUPABASE_DB_NAME}"
+      SUPABASE_DB_USERNAME: "${SUPABASE_DB_USERNAME}"
+      SUPABASE_DB_PASSWORD: "${SUPABASE_DB_PASSWORD}"
+      
+      # Spring Boot Configuration
+      SPRING_PROFILES_ACTIVE: "production"
+      SERVER_PORT: "8080"
+      
+      # Kafka Configuration (optional - can disable for cost savings)
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: "localhost:9092"
+      SPRING_KAFKA_ENABLED: "false"  # Disable for initial deployment
+      
+    healthCheck:
+      healthyThreshold: 2
+      unhealthyThreshold: 2
+      timeoutSeconds: 5
+      intervalSeconds: 30
+      path: "/api/health"  # Need to create health endpoint
+      successCodes: "200"
+
+# Public Endpoint Configuration
+publicEndpoint:
+  containerName: "app"
+  containerPort: 8080
+  healthCheck:
+    healthyThreshold: 2
+    unhealthyThreshold: 5
+    timeoutSeconds: 10
+    intervalSeconds: 30
+    path: "/"
+    successCodes: "200"
+
+# Tags for resource management
+tags:
+  - key: "Project"
+    value: "eBay-Marketplace"
+  - key: "Environment"
+    value: "Production"
+  - key: "CostCenter"
+    value: "Demo"
