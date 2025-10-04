@@ -62,9 +62,32 @@ Port summary:
 | 8082 | Notification Service | Microservice   |
 | 9092 | Kafka Broker         | Message Queue  |
 
+## Docker Commands
+- docker ps
+- docker ps -a
+- docker images
+
 ## Docker Maintenance
 - docker system prune -af
 
+## IAM
+-  aws iam list-users
+
+## Elastic Beanstalk
+- eb create ebay-medium --instance_type t3.medium
+- eb deploy
+- eb events
+- eb events --follow
+- eb health
+- eb health --refresh
+- eb logs
+- eb logs --all
+- eb printenv | grep AWS_DB
+- eb setenv
+- eb ssh --setup
+- eb status
+
+- https://eb-ebay-demo.us-east-1.elasticbeanstalk.com/
 ## Future Considerations
 
 - Security framework integration (Spring Security)

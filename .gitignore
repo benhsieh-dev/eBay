@@ -81,3 +81,12 @@ app.pid
 render-logs.txt
 
 .env.lightsail
+
+# AWS Elastic Beanstalk artifacts
+.elasticbeanstalk/app_versions/
+*.jar
+BOOT-INF/
+build.sh
+Buildfile
+*.save
+.ebignore

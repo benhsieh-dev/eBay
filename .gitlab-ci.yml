@@ -1,0 +1,69 @@
+# GitLab CI/CD Pipeline for eBay Marketplace
+# Deploys Spring Boot application to AWS Elastic Beanstalk
+
+image: openjdk:17-jdk
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+
+cache:
+  paths:
+    - .m2/repository/
+
+stages:
+  - build
+  - test
+  - package
+  - deploy
+
+before_script:
+  - apt-get update -qq && apt-get install -y -qq git curl python3 python3-pip
+  - pip3 install awseb-cli
+
+build:
+  stage: build
+  script:
+    - echo "Building Spring Boot application..."
+    - ./mvnw clean compile
+  artifacts:
+    paths:
+      - target/classes/
+    expire_in: 1 hour
+
+test:
+  stage: test
+  script:
+    - echo "Running unit tests..."
+    - ./mvnw test
+  artifacts:
+    reports:
+      junit: target/surefire-reports/TEST-*.xml
+    paths:
+      - target/surefire-reports/
+  coverage: '/Total.*?([0-9]{1,3})%/'
+
+package:
+  stage: package
+  script:
+    - echo "Packaging application JAR..."
+    - ./mvnw clean package -DskipTests
+  artifacts:
+    paths:
+      - target/*.jar
+    expire_in: 1 day
+  only:
+    - master
+
+deploy_to_aws:
+  stage: deploy
+  script:
+    - echo "Deploying to AWS Elastic Beanstalk..."
+    - eb --version
+    - eb deploy ebay-medium
+  environment:
+    name: production
+    url: https://ebay-medium.eba-e3jvit9g.us-east-2.elasticbeanstalk.com
+  only:
+    - master
+  when: manual  # Require manual approval for production deployment
+  allow_failure: false

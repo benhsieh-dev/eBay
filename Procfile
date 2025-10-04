@@ -1,0 +1,1 @@
+web: java -Xmx400m -Xms200m -jar application.jar --server.port=5000 --spring.profiles.active=production

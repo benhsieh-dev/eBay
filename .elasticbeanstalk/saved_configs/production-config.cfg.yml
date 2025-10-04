@@ -1,0 +1,45 @@
+EnvironmentConfigurationMetadata:
+  Description: Configuration created from the EB CLI using "eb config save".
+  DateCreated: '1759532049000'
+  DateModified: '1759532049000'
+Platform:
+  PlatformArn: arn:aws:elasticbeanstalk:us-east-2::platform/Corretto 17 running on
+    64bit Amazon Linux 2023/4.6.5
+OptionSettings:
+  aws:elasticbeanstalk:command:
+    BatchSize: '30'
+    BatchSizeType: Percentage
+  aws:elb:policies:
+    ConnectionDrainingEnabled: true
+  aws:ec2:instances:
+    InstanceTypes: t3.small
+  aws:elasticbeanstalk:application:environment:
+    SERVER_PORT: '5000'
+    SPRING_PROFILES_ACTIVE: production
+    AWS_DB_NAME: postgres
+    JAVA_OPTS: -Xmx768m -Xms512m
+    AWS_DB_HOST: ebay-postgres-db.cgzibuqw7bgx.us-east-2.rds.amazonaws.com
+    AWS_DB_PORT: '5432'
+    SPRING_JPA_PROPERTIES_HIBERNATE_JDBC_BATCH_SIZE: '5'
+    LOGGING_LEVEL_ORG_HIBERNATE: WARN
+    SPRING_JPA_SHOW_SQL: false
+    AWS_DB_USERNAME: ebayuser
+    SPRING_JPA_PROPERTIES_HIBERNATE_ORDER_INSERTS: true
+    SPRING_JPA_PROPERTIES_HIBERNATE_ORDER_UPDATES: true
+    AWS_DB_PASSWORD: ebaypassword123
+  aws:elb:loadbalancer:
+    CrossZone: true
+  aws:elasticbeanstalk:environment:
+    ServiceRole: aws-elasticbeanstalk-service-role
+    LoadBalancerType: application
+  aws:elasticbeanstalk:healthreporting:system:
+    SystemType: enhanced
+  aws:autoscaling:launchconfiguration:
+    IamInstanceProfile: aws-elasticbeanstalk-ec2-role
+  aws:autoscaling:updatepolicy:rollingupdate:
+    RollingUpdateType: Health
+    RollingUpdateEnabled: true
+EnvironmentTier:
+  Type: Standard
+  Name: WebServer
+AWSConfigurationTemplateVersion: 1.1.0.0

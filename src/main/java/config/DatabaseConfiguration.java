@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Profile;
 import javax.sql.DataSource;
 
 @Configuration
+@Profile("disabled-production")
 public class DatabaseConfiguration {
 
     @Bean
@@ -23,14 +24,14 @@ public class DatabaseConfiguration {
             dataSource.setUsername(DatabaseConfig.getDbUsername());
             dataSource.setPassword(DatabaseConfig.getDbPassword());
             
-            // Settings optimized for Supabase direct connection
-            dataSource.setMaximumPoolSize(5); // Small pool for direct connection
-            dataSource.setMinimumIdle(0); // Allow 0 connections initially
-            dataSource.setConnectionTimeout(30000); // 30 seconds
-            dataSource.setIdleTimeout(300000); // 5 minutes
+            // Settings optimized for AWS RDS with extended timeouts for schema creation
+            dataSource.setMaximumPoolSize(5); // Small pool for cloud connection
+            dataSource.setMinimumIdle(1); // Keep at least 1 connection
+            dataSource.setConnectionTimeout(300000); // 5 minutes for AWS RDS
+            dataSource.setIdleTimeout(600000); // 10 minutes
             dataSource.setMaxLifetime(1800000); // 30 minutes
-            dataSource.setValidationTimeout(5000); // 5 seconds
-            dataSource.setLeakDetectionThreshold(60000); // 1 minute
+            dataSource.setValidationTimeout(120000); // 2 minutes for AWS RDS
+            dataSource.setLeakDetectionThreshold(0); // Disable for initial schema creation
             dataSource.setInitializationFailTimeout(-1); // Don't fail on startup
             
             // Test the configuration
