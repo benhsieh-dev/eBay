@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import api from '../../services/api';
 
@@ -61,7 +61,7 @@ const ProductList: React.FC = () => {
     } else {
       fetchProducts();
     }
-  }, [currentPage, selectedCategory, sortBy, searchQuery]);
+  }, [currentPage, selectedCategory, sortBy, searchQuery, fetchProducts, handleSearchInternal]);
 
   const fetchCategories = async () => {
     try {
@@ -74,7 +74,7 @@ const ProductList: React.FC = () => {
     }
   };
 
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams({
@@ -103,9 +103,9 @@ const ProductList: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, selectedCategory, sortBy, pageSize]);
 
-  const handleSearchInternal = async () => {
+  const handleSearchInternal = useCallback(async () => {
     setLoading(true);
     try {
       const response = await api.get(`/products/search?query=${encodeURIComponent(searchQuery)}&page=${currentPage}&size=${pageSize}`);
@@ -122,7 +122,7 @@ const ProductList: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchQuery, currentPage, pageSize]);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
