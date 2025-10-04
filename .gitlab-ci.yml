@@ -32,7 +32,7 @@ build:
   stage: build
   script:
     - echo "Building Spring Boot application (backend only)..."
-    - mvn clean compile -Dfrontend.skip=true
+    - mvn clean compile -Dexec.skip=true
   artifacts:
     paths:
       - target/classes/
@@ -42,7 +42,7 @@ test:
   stage: test
   script:
     - echo "Running unit tests..."
-    - mvn test -Dfrontend.skip=true
+    - mvn test -Dexec.skip=true
   artifacts:
     reports:
       junit: target/surefire-reports/TEST-*.xml
@@ -54,7 +54,7 @@ package:
   stage: package
   script:
     - echo "Packaging application JAR (backend only)..."
-    - mvn clean package -DskipTests -Dfrontend.skip=true
+    - mvn clean package -DskipTests -Dexec.skip=true
   artifacts:
     paths:
       - target/*.jar
