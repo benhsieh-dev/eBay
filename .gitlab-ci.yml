@@ -9,6 +9,7 @@ variables:
 cache:
   paths:
     - .m2/repository/
+    - frontend/node_modules/
 
 stages:
   - build
@@ -22,6 +23,11 @@ before_script:
   # Install Node.js 18
   - curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
   - apt-get install -y nodejs
+  # Verify installations
+  - java -version
+  - mvn --version
+  - node --version
+  - npm --version
   # Install AWS CLI and EB CLI
   - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
   - unzip awscliv2.zip
@@ -31,8 +37,8 @@ before_script:
 build:
   stage: build
   script:
-    - echo "Building Spring Boot application (backend only)..."
-    - mvn clean compile -Dexec.skip=true
+    - echo "Building Spring Boot application with frontend..."
+    - mvn clean compile
   artifacts:
     paths:
       - target/classes/
@@ -42,7 +48,7 @@ test:
   stage: test
   script:
     - echo "Running unit tests..."
-    - mvn test -Dexec.skip=true
+    - mvn test
   artifacts:
     reports:
       junit: target/surefire-reports/TEST-*.xml
@@ -53,8 +59,8 @@ test:
 package:
   stage: package
   script:
-    - echo "Packaging application JAR (backend only)..."
-    - mvn clean package -DskipTests -Dexec.skip=true
+    - echo "Packaging application JAR with frontend..."
+    - mvn clean package -DskipTests
   artifacts:
     paths:
       - target/*.jar
