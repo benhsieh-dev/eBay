@@ -19,6 +19,10 @@ stages:
 before_script:
   - apt-get update -qq && apt-get install -y -qq git curl python3 python3-pip openjdk-17-jdk maven unzip
   - export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+  # Install Node.js 18
+  - curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+  - apt-get install -y nodejs
+  # Install AWS CLI and EB CLI
   - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
   - unzip awscliv2.zip
   - ./aws/install
