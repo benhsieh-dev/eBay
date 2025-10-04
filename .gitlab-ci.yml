@@ -1,7 +1,7 @@
 # GitLab CI/CD Pipeline for eBay Marketplace
 # Deploys Spring Boot application to AWS Elastic Beanstalk
 
-image: openjdk:17-jdk
+image: ubuntu:22.04
 
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
@@ -17,14 +17,15 @@ stages:
   - deploy
 
 before_script:
-  - apt-get update -qq && apt-get install -y -qq git curl python3 python3-pip
+  - apt-get update -qq && apt-get install -y -qq git curl python3 python3-pip openjdk-17-jdk maven
+  - export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
   - pip3 install awseb-cli
 
 build:
   stage: build
   script:
     - echo "Building Spring Boot application..."
-    - ./mvnw clean compile
+    - mvn clean compile
   artifacts:
     paths:
       - target/classes/
@@ -34,7 +35,7 @@ test:
   stage: test
   script:
     - echo "Running unit tests..."
-    - ./mvnw test
+    - mvn test
   artifacts:
     reports:
       junit: target/surefire-reports/TEST-*.xml
@@ -46,7 +47,7 @@ package:
   stage: package
   script:
     - echo "Packaging application JAR..."
-    - ./mvnw clean package -DskipTests
+    - mvn clean package -DskipTests
   artifacts:
     paths:
       - target/*.jar
