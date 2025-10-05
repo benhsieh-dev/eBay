@@ -27,7 +27,7 @@ public class BidService {
     @Autowired
     private ProductDAO productDAO;
     
-    @Autowired
+    @Autowired(required = false)
     private EventPublisherService eventPublisherService;
     
     public Bid placeBid(Integer productId, Integer bidderId, BigDecimal bidAmount, Bid.BidType bidType, BigDecimal maxProxyAmount) {
@@ -335,7 +335,9 @@ public class BidService {
                 auctionEndTime
             );
             
-            eventPublisherService.publishBidPlacedEvent(event);
+            if (eventPublisherService != null) {
+                eventPublisherService.publishBidPlacedEvent(event);
+            }
             
         } catch (Exception e) {
             // Log error but don't fail the bid placement
@@ -377,7 +379,9 @@ public class BidService {
                 event.setCurrentWinnerUsername(winningBid.getBidder().getUsername());
             }
             
-            eventPublisherService.publishAuctionEvent(event);
+            if (eventPublisherService != null) {
+                eventPublisherService.publishAuctionEvent(event);
+            }
             
         } catch (Exception e) {
             // Log error but don't fail the operation
