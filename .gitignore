@@ -90,3 +90,5 @@ build.sh
 Buildfile
 *.save
 .ebignore
+
+gitlab-build.log

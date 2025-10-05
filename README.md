@@ -87,6 +87,16 @@ Port summary:
 - eb ssh --setup
 - eb status
 
+## GitLab CI/CD
+- https://gitlab.com/benhsieh-dev/eBay/-/pipelines
+
+### Your new workflow:
+### Development (GitHub)
+git push 
+
+### Deploy to AWS (GitLab CI/CD)
+git push gitlab 
+
 - https://eb-ebay-demo.us-east-1.elasticbeanstalk.com/
 ## Future Considerations
 

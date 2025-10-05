@@ -1,1 +1,1 @@
-web: java -Xmx400m -Xms200m -jar target/ebay-0.0.1-SNAPSHOT.jar --server.port=5000 --spring.profiles.active=production
+web: java -Xmx400m -Xms200m -jar target/ebay-0.0.1-SNAPSHOT.jar --server.port=5000 --spring.profiles.active=production --logging.level.root=INFO --logging.level.com.ebay=DEBUG

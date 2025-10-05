@@ -79,8 +79,12 @@ deploy_to_aws:
         mvn clean package -DskipTests
       fi
     - ls -la target/
+    - echo "Checking current EB environment variables..."
+    - eb printenv ebay-medium || echo "Could not retrieve environment variables"
     - eb --version
     - eb deploy ebay-medium
+    - echo "Deployment completed, checking application health..."
+    - eb health ebay-medium || echo "Could not retrieve health status"
   environment:
     name: production
     url: https://ebay-medium.eba-e3jvit9g.us-east-2.elasticbeanstalk.com
