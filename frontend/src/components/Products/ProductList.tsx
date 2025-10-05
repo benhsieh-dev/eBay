@@ -42,38 +42,7 @@ const ProductList: React.FC = () => {
 
   const pageSize = 12;
 
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  // Handle search from URL parameters
-  useEffect(() => {
-    const searchFromUrl = searchParams.get('search');
-    if (searchFromUrl) {
-      setSearchQuery(searchFromUrl);
-      setCurrentPage(0); // Reset to first page when coming from URL
-    }
-  }, [searchParams]);
-
-  useEffect(() => {
-    if (searchQuery.trim()) {
-      handleSearchInternal();
-    } else {
-      fetchProducts();
-    }
-  }, [currentPage, selectedCategory, sortBy, searchQuery, fetchProducts, handleSearchInternal]);
-
-  const fetchCategories = async () => {
-    try {
-      const response = await api.get('/products/categories');
-      if (response.data.success) {
-        setCategories(response.data.categories);
-      }
-    } catch (err) {
-      console.error('Failed to fetch categories:', err);
-    }
-  };
-
+  // Define callback functions first
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
@@ -123,6 +92,39 @@ const ProductList: React.FC = () => {
       setLoading(false);
     }
   }, [searchQuery, currentPage, pageSize]);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await api.get('/products/categories');
+      if (response.data.success) {
+        setCategories(response.data.categories);
+      }
+    } catch (err) {
+      console.error('Failed to fetch categories:', err);
+    }
+  };
+
+  // Effects
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  // Handle search from URL parameters
+  useEffect(() => {
+    const searchFromUrl = searchParams.get('search');
+    if (searchFromUrl) {
+      setSearchQuery(searchFromUrl);
+      setCurrentPage(0); // Reset to first page when coming from URL
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      handleSearchInternal();
+    } else {
+      fetchProducts();
+    }
+  }, [currentPage, selectedCategory, sortBy, searchQuery, fetchProducts, handleSearchInternal]);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
