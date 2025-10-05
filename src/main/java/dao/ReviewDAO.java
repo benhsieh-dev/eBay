@@ -250,7 +250,7 @@ public class ReviewDAO {
         query.setParameter("reviewType", reviewType);
         query.setMaxResults(1);
         List<Review> results = query.getResultList();
-        return results.isEmpty() ? null : results.get(0);
+        return results.isEmpty() ? null : results.getFirst();
     }
     
     /**

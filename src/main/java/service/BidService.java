@@ -202,7 +202,7 @@ public class BidService {
             return new BidStatistics(0L, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
         }
         
-        Object[] result = stats.get(0);
+        Object[] result = stats.getFirst();
         return new BidStatistics(
             (Long) result[0],
             (BigDecimal) result[1],

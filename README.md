@@ -105,6 +105,28 @@ git push
 git push gitlab 
 
 - https://eb-ebay-demo.us-east-1.elasticbeanstalk.com/
+
+## Upgrading to Java 21
+
+- JAVA_HOME=/usr/local/Cellar/openjdk@21/21.0.8/libexec/openjdk.jdk/Contents/Home mvn rewrite:discover
+- JAVA_HOME=/usr/local/Cellar/openjdk@21/21.0.8/libexec/openjdk.jdk/Contents/Home mvn rewrite:dryRun -Drewrite.activeRecipes=RECIPE_NAME
+- JAVA_HOME=/usr/local/Cellar/openjdk@21/21.0.8/libexec/openjdk.jdk/Contents/Home mvn rewrite:run -Drewrite.activeRecipes=RECIPE_NAME
+- git status
+- git diff
+- JAVA_HOME=/usr/local/Cellar/openjdk@21/21.0.8/libexec/openjdk.jdk/Contents/Home mvn clean compile
+- git add .
+- git commit -m "Apply RECIPE_NAME - description of changes"
+- Test Application
+- JAVA_HOME=/usr/local/Cellar/openjdk@21/21.0.8/libexec/openjdk.jdk/Contents/Home mvn spring-boot:run
+
+### atomic approach
+1. Apply all changes: mvn rewrite:run
+2. Review changes: git diff
+3. Test compilation: mvn clean compile
+4. Test application: mvn spring-boot:run
+5. Commit everything: git add . && git commit -m "Migrate to Java 21 with OpenRewrite"
+
+
 ## Future Considerations
 
 - Security framework integration (Spring Security)

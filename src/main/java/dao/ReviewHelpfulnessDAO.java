@@ -56,7 +56,7 @@ public class ReviewHelpfulnessDAO {
         query.setParameter("reviewId", reviewId);
         query.setMaxResults(1);
         List<ReviewHelpfulness> results = query.getResultList();
-        return results.isEmpty() ? null : results.get(0);
+        return results.isEmpty() ? null : results.getFirst();
     }
     
     /**

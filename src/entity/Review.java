@@ -2,6 +2,7 @@ package entity;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -279,7 +280,7 @@ public class Review {
         }
         
         if (count == 0) return rating;
-        return total.divide(new BigDecimal(count), 1, BigDecimal.ROUND_HALF_UP);
+        return total.divide(new BigDecimal(count), 1, RoundingMode.HALF_UP);
     }
     
     public int getHelpfulnessScore() {

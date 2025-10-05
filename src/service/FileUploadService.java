@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +43,7 @@ public class FileUploadService {
         }
         
         // Create upload directory if it doesn't exist
-        Path uploadPath = Paths.get(UPLOAD_DIR);
+        Path uploadPath = Path.of(UPLOAD_DIR);
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
@@ -140,7 +139,7 @@ public class FileUploadService {
                 return false;
             }
             
-            Path filePath = Paths.get(UPLOAD_DIR, filename);
+            Path filePath = Path.of(UPLOAD_DIR, filename);
             return Files.deleteIfExists(filePath);
             
         } catch (IOException e) {
@@ -158,7 +157,7 @@ public class FileUploadService {
         }
         
         try {
-            Path filePath = Paths.get(UPLOAD_DIR, filename);
+            Path filePath = Path.of(UPLOAD_DIR, filename);
             return Files.exists(filePath);
         } catch (Exception e) {
             return false;
@@ -172,7 +171,7 @@ public class FileUploadService {
         Map<String, Object> info = new HashMap<>();
         
         try {
-            Path filePath = Paths.get(UPLOAD_DIR, filename);
+            Path filePath = Path.of(UPLOAD_DIR, filename);
             
             if (!Files.exists(filePath)) {
                 info.put("exists", false);
@@ -252,7 +251,7 @@ public class FileUploadService {
      */
     public void cleanupOldFiles(int daysOld) {
         try {
-            Path uploadPath = Paths.get(UPLOAD_DIR);
+            Path uploadPath = Path.of(UPLOAD_DIR);
             if (!Files.exists(uploadPath)) {
                 return;
             }

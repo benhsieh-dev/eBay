@@ -324,7 +324,7 @@ public class ProductService {
                 .filter(img -> Boolean.TRUE.equals(img.getIsPrimary()))
                 .findFirst()
                 .map(ProductImage::getEffectiveImageUrl)
-                .orElse(images.get(0).getEffectiveImageUrl());
+                .orElse(images.getFirst().getEffectiveImageUrl());
         }
         return null;
     }

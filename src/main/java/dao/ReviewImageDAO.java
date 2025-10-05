@@ -65,7 +65,7 @@ public class ReviewImageDAO {
         query.setParameter("reviewId", reviewId);
         query.setMaxResults(1);
         List<ReviewImage> results = query.getResultList();
-        return results.isEmpty() ? null : results.get(0);
+        return results.isEmpty() ? null : results.getFirst();
     }
     
     /**

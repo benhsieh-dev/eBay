@@ -15,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import jakarta.servlet.http.HttpSession;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
@@ -322,7 +323,7 @@ public class SellerController {
             .sum();
         
         BigDecimal averageOrderValue = totalOrders > 0 ? 
-            totalRevenue.divide(new BigDecimal(totalOrders), 2, BigDecimal.ROUND_HALF_UP) : 
+            totalRevenue.divide(new BigDecimal(totalOrders), 2, RoundingMode.HALF_UP) : 
             BigDecimal.ZERO;
         
         // Top selling products

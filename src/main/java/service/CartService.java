@@ -148,7 +148,7 @@ public class CartService {
             return new CartSummary(0L, 0L, BigDecimal.ZERO, BigDecimal.ZERO);
         }
         
-        Object[] data = summaryData.get(0);
+        Object[] data = summaryData.getFirst();
         Long itemCount = (Long) data[0];
         Long totalQuantity = (Long) data[1];
         BigDecimal subtotal = (BigDecimal) data[2];

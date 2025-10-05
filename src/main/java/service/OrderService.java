@@ -60,7 +60,7 @@ public class OrderService {
         cartService.clearCart(userId);
         
         // Return the first order (in a real system, you might return a list or summary)
-        return orders.get(0);
+        return orders.getFirst();
     }
     
     public Order createOrderFromBid(Bid winningBid, String shippingAddress, String billingAddress, String paymentMethod) {
@@ -329,7 +329,7 @@ public class OrderService {
             return new OrderStatistics(0L, BigDecimal.ZERO, BigDecimal.ZERO, 0L, 0L);
         }
         
-        Object[] data = stats.get(0);
+        Object[] data = stats.getFirst();
         return new OrderStatistics(
             (Long) data[0],
             (BigDecimal) data[1],
@@ -345,7 +345,7 @@ public class OrderService {
             return new OrderStatistics(0L, BigDecimal.ZERO, BigDecimal.ZERO, 0L, 0L);
         }
         
-        Object[] data = stats.get(0);
+        Object[] data = stats.getFirst();
         return new OrderStatistics(
             (Long) data[0],
             (BigDecimal) data[1],

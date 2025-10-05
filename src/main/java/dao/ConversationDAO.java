@@ -106,7 +106,7 @@ public class ConversationDAO {
         query.setParameter("user2Id", user2Id);
         query.setMaxResults(1);
         List<Conversation> results = query.getResultList();
-        return results.isEmpty() ? null : results.get(0);
+        return results.isEmpty() ? null : results.getFirst();
     }
     
     public List<Conversation> findByProduct(Integer productId) {

@@ -58,7 +58,7 @@ public class MessageDAO {
         query.setParameter("conversationId", conversationId);
         query.setMaxResults(1);
         List<Message> results = query.getResultList();
-        return results.isEmpty() ? null : results.get(0);
+        return results.isEmpty() ? null : results.getFirst();
     }
     
     public List<Message> findBySender(Integer senderId) {
