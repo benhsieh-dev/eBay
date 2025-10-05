@@ -24,25 +24,32 @@ Users can auction and purchase items online
 
 ## Run Locally
 
-**With Docker Compose:**
+**Prerequisites:**
+- PostgreSQL running locally (Postgres.app recommended)
+- Local database `ebay_marketplace` with user `ebayuser`/`ebaypassword123`
+
+**Quick Start:**
 ```bash
-# Terminal 1: Start Kafka & Redis
-docker-compose up
+# Start application (includes React frontend build)
+./start.sh
+```
+Application runs at http://localhost:8080
+
+**With Docker Services (Optional):**
+```bash
+# Terminal 1: Start Kafka & Redis (optional for full features)
+docker-compose up -d kafka redis kafka-ui
 
 # Terminal 2: Start Spring Boot
-mvn spring-boot:run
 ./start.sh
-
-## GraphQL Playground
-http://localhost:8080/graphql
-
-# Micro service statup
-cd notification-service
-source ../.env && mvn spring-boot:run
-
-# Terminal 3: Start React frontend
-npm start
 ```
+
+**Configuration Profiles:**
+- **Local Development**: Uses `LOCAL_DB_*` variables (default profile)
+- **Render Production**: Uses `SUPABASE_DB_*` variables (`render` profile)  
+- **AWS EB Production**: Uses `AWS_DB_*` variables (`production` profile)
+
+**GraphQL Playground:** http://localhost:8080/graphql
 
 **Stop services:**
 ```bash
