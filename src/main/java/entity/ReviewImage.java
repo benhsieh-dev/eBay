@@ -118,9 +118,9 @@ public class ReviewImage {
         
         long bytes = fileSize;
         if (bytes < 1024) return bytes + " B";
-        if (bytes < 1024 * 1024) return String.format("%.1f KB", bytes / 1024.0);
-        if (bytes < 1024 * 1024 * 1024) return String.format("%.1f MB", bytes / (1024.0 * 1024.0));
-        return String.format("%.1f GB", bytes / (1024.0 * 1024.0 * 1024.0));
+        if (bytes < 1024 * 1024) return "%.1f KB".formatted(bytes / 1024.0);
+        if (bytes < 1024 * 1024 * 1024) return "%.1f MB".formatted(bytes / (1024.0 * 1024.0));
+        return "%.1f GB".formatted(bytes / (1024.0 * 1024.0 * 1024.0));
     }
     
     public String getThumbnailUrl() {

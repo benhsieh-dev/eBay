@@ -215,7 +215,7 @@ public class FileUploadService {
         final String[] units = new String[]{"B", "KB", "MB", "GB", "TB"};
         int digitGroups = (int) (Math.log10(bytes) / Math.log10(1024));
         
-        return String.format("%.1f %s", bytes / Math.pow(1024, digitGroups), units[digitGroups]);
+        return "%.1f %s".formatted(bytes / Math.pow(1024, digitGroups), units[digitGroups]);
     }
     
     // Helper methods

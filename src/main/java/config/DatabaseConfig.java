@@ -23,7 +23,7 @@ public class DatabaseConfig {
             return "jdbc:mysql://localhost:3306/eBay?useSSL=false&serverTimezone=UTC";
         }
         
-        return String.format("jdbc:postgresql://%s:%s/%s?sslmode=require", host, port, database);
+        return "jdbc:postgresql://%s:%s/%s?sslmode=require".formatted(host, port, database);
     }
     
     public static String getDbUsername() {

@@ -206,12 +206,12 @@ public class PayPalPaymentProcessor implements PaymentProcessor {
         String cancelUrl = paymentDetails.get("cancel_url");
         
         // Simulate PayPal checkout URL
-        return String.format("https://www.%s.paypal.com/checkoutnow?token=EC-%s&amount=%s&return_url=%s&cancel_url=%s",
-                mode, 
-                UUID.randomUUID().toString().substring(0, 16).toUpperCase(),
-                payment.getPaymentAmount().toString(),
-                returnUrl != null ? returnUrl : baseUrl + "/checkout/paypal/return",
-                cancelUrl != null ? cancelUrl : baseUrl + "/checkout/paypal/cancel");
+        return "https://www.%s.paypal.com/checkoutnow?token=EC-%s&amount=%s&return_url=%s&cancel_url=%s".formatted(
+            mode,
+            UUID.randomUUID().toString().substring(0, 16).toUpperCase(),
+            payment.getPaymentAmount().toString(),
+            returnUrl != null ? returnUrl : baseUrl + "/checkout/paypal/return",
+            cancelUrl != null ? cancelUrl : baseUrl + "/checkout/paypal/cancel");
     }
     
     /**

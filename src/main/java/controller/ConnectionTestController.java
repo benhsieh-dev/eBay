@@ -33,14 +33,14 @@ public class ConnectionTestController {
             }
         }
 
-        String jdbcUrl = String.format("jdbc:postgresql://%s:%s/%s?sslmode=require", host, port, database);
+        String jdbcUrl = "jdbc:postgresql://%s:%s/%s?sslmode=require".formatted(host, port, database);
 
         try {
             // Test the connection with a short timeout
             Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
             connection.close();
             
-            return String.format("""
+            return """
                 <h1>✅ Database Connection Successful!</h1>
                 <p><strong>Host:</strong> %s</p>
                 <p><strong>Port:</strong> %s</p>
@@ -48,10 +48,10 @@ public class ConnectionTestController {
                 <p><strong>Username:</strong> %s</p>
                 <p><strong>URL:</strong> %s</p>
                 <p><em>Connection tested successfully!</em></p>
-                """, host, port, database, username, jdbcUrl);
+                """.formatted(host, port, database, username, jdbcUrl);
                 
         } catch (Exception e) {
-            return String.format("""
+            return """
                 <h1>❌ Database Connection Failed</h1>
                 <p><strong>Host:</strong> %s</p>
                 <p><strong>Port:</strong> %s</p>
@@ -68,7 +68,7 @@ public class ConnectionTestController {
                     <li>Make sure your IP is allowed in Supabase</li>
                     <li>Try the Direct Connection instead of Transaction Pooler</li>
                 </ul>
-                """, host, port, database, username, jdbcUrl, e.getClass().getSimpleName(), e.getMessage());
+                """.formatted(host, port, database, username, jdbcUrl, e.getClass().getSimpleName(), e.getMessage());
         }
     }
 }

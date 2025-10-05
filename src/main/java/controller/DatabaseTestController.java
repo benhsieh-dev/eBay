@@ -21,7 +21,7 @@ public class DatabaseTestController {
             String driver = DatabaseConfig.getDriverClassName();
             String dialect = DatabaseConfig.getHibernateDialect();
             
-            return String.format("""
+            return """
                 <h1>Database Configuration Test</h1>
                 <p><strong>URL:</strong> %s</p>
                 <p><strong>Username:</strong> %s</p>
@@ -29,14 +29,14 @@ public class DatabaseTestController {
                 <p><strong>Dialect:</strong> %s</p>
                 <p><strong>Status:</strong> Configuration loaded successfully</p>
                 <p><em>Note: This doesn't test the actual connection, just the config.</em></p>
-                """, dbUrl, username, driver, dialect);
+                """.formatted(dbUrl, username, driver, dialect);
                 
         } catch (Exception e) {
-            return String.format("""
+            return """
                 <h1>Database Configuration Error</h1>
                 <p><strong>Error:</strong> %s</p>
                 <p><strong>Message:</strong> %s</p>
-                """, e.getClass().getSimpleName(), e.getMessage());
+                """.formatted(e.getClass().getSimpleName(), e.getMessage());
         }
     }
 }
