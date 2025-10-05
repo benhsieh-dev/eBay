@@ -6,29 +6,50 @@ public class DatabaseConfig {
     private static final Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
     
     public static String getDbUrl() {
-        // Try AWS variables first, then fall back to Supabase, then localhost
-        String host = dotenv.get("AWS_DB_HOST", dotenv.get("SUPABASE_DB_HOST", "localhost"));
-        String port = dotenv.get("AWS_DB_PORT", dotenv.get("SUPABASE_DB_PORT", "5432"));
-        String database = dotenv.get("AWS_DB_NAME", dotenv.get("SUPABASE_DB_NAME", "postgres"));
+        // Check for AWS EB environment variables first
+        String host = System.getenv("AWS_DB_HOST");
+        String port = System.getenv("AWS_DB_PORT");
+        String database = System.getenv("AWS_DB_NAME");
+        
+        // Fall back to Supabase for local development
+        if (host == null) {
+            host = dotenv.get("SUPABASE_DB_HOST", "localhost");
+            port = dotenv.get("SUPABASE_DB_PORT", "5432");
+            database = dotenv.get("SUPABASE_DB_NAME", "postgres");
+        }
         
         // For local development, use MySQL if no cloud config
         if ("localhost".equals(host)) {
             return "jdbc:mysql://localhost:3306/eBay?useSSL=false&serverTimezone=UTC";
         }
         
-        return String.format("jdbc:postgresql://%s:%s/%s?sslmode=require&ApplicationName=ebay-marketplace", host, port, database);
+        return String.format("jdbc:postgresql://%s:%s/%s?sslmode=require", host, port, database);
     }
     
     public static String getDbUsername() {
-        return dotenv.get("AWS_DB_USERNAME", dotenv.get("SUPABASE_DB_USERNAME", "root"));
+        // Check for AWS EB environment variables first
+        String username = System.getenv("AWS_DB_USERNAME");
+        if (username != null) {
+            return username;
+        }
+        return dotenv.get("SUPABASE_DB_USERNAME", "root");
     }
     
     public static String getDbPassword() {
-        return dotenv.get("AWS_DB_PASSWORD", dotenv.get("SUPABASE_DB_PASSWORD", ""));
+        // Check for AWS EB environment variables first
+        String password = System.getenv("AWS_DB_PASSWORD");
+        if (password != null) {
+            return password;
+        }
+        return dotenv.get("SUPABASE_DB_PASSWORD", "");
     }
     
     public static String getDriverClassName() {
-        String host = dotenv.get("AWS_DB_HOST", dotenv.get("SUPABASE_DB_HOST", "localhost"));
+        String host = System.getenv("AWS_DB_HOST");
+        if (host == null) {
+            host = dotenv.get("SUPABASE_DB_HOST", "localhost");
+        }
+        
         if ("localhost".equals(host)) {
             return "com.mysql.cj.jdbc.Driver";
         }
@@ -36,7 +57,11 @@ public class DatabaseConfig {
     }
     
     public static String getHibernateDialect() {
-        String host = dotenv.get("AWS_DB_HOST", dotenv.get("SUPABASE_DB_HOST", "localhost"));
+        String host = System.getenv("AWS_DB_HOST");
+        if (host == null) {
+            host = dotenv.get("SUPABASE_DB_HOST", "localhost");
+        }
+        
         if ("localhost".equals(host)) {
             return "org.hibernate.dialect.MySQL8Dialect";
         }

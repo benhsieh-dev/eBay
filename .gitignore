@@ -56,10 +56,9 @@ WebContent/*.ico
 WebContent/*.png
 WebContent/*.txt
 
-# Build artifacts
- src/main/resources/static/static/
- src/main/resources/static/asset-manifest.json
- src/main/resources/static/index.html
+# Build artifacts - React build files
+src/main/resources/static/
+!src/main/resources/static/.gitkeep
 
 # Temporary files
 cookies.txt

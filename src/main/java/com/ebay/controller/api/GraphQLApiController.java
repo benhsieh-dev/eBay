@@ -27,7 +27,7 @@ public class GraphQLApiController {
     @Autowired
     private ProductService productService;
     
-    @Autowired
+    @Autowired(required = false)
     private BidService bidService;
     
     @Autowired
@@ -109,7 +109,11 @@ public class GraphQLApiController {
             .map(product -> {
                 ProductGraphQLDto dto = new ProductGraphQLDto(product);
                 // Populate bidCount using BidService
-                dto.setBidCount(bidService.getBidCount(product.getProductId()));
+                if (bidService != null) {
+                    dto.setBidCount(bidService.getBidCount(product.getProductId()));
+                } else {
+                    dto.setBidCount(0L); // Default when bidding is disabled
+                }
                 return dto;
             })
             .collect(Collectors.toList());
@@ -128,7 +132,11 @@ public class GraphQLApiController {
             ProductGraphQLDto productDto = null;
             if (product != null) {
                 productDto = new ProductGraphQLDto(product);
-                productDto.setBidCount(bidService.getBidCount(product.getProductId()));
+                if (bidService != null) {
+                    productDto.setBidCount(bidService.getBidCount(product.getProductId()));
+                } else {
+                    productDto.setBidCount(0L); // Default when bidding is disabled
+                }
             }
             
             return ResponseEntity.ok(Map.of("data", Map.of("product", productDto)));
@@ -165,6 +173,16 @@ public class GraphQLApiController {
             Integer productId = Integer.valueOf(productIdStr);
             BigDecimal bidAmount = BigDecimal.valueOf(Double.valueOf(priceStr));
             
+            // Check if bidding is available
+            if (bidService == null) {
+                Map<String, Object> bidResult = Map.of(
+                    "success", false,
+                    "message", "Bidding is not available in this environment",
+                    "bidId", null
+                );
+                return ResponseEntity.ok(Map.of("data", Map.of("placeBid", bidResult)));
+            }
+
             // Place the bid
             Bid placedBid = bidService.placeBid(productId, userId, bidAmount, Bid.BidType.REGULAR, null);
             
