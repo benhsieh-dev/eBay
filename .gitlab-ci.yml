@@ -72,6 +72,13 @@ deploy_to_aws:
   stage: deploy
   script:
     - echo "Deploying to AWS Elastic Beanstalk..."
+    # Ensure JAR file exists - rebuild if necessary
+    - |
+      if [ ! -f target/ebay-0.0.1-SNAPSHOT.jar ]; then
+        echo "JAR file not found, building application..."
+        mvn clean package -DskipTests
+      fi
+    - ls -la target/
     - eb --version
     - eb deploy ebay-medium
   environment:
