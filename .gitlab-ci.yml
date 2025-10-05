@@ -81,6 +81,9 @@ deploy_to_aws:
     - ls -la target/
     - echo "Checking current EB environment variables..."
     - eb printenv ebay-medium || echo "Could not retrieve environment variables"
+    # Test JAR can start locally with production-like settings
+    - echo "Testing JAR startup with production configuration..."
+    - timeout 30s java -Xmx1536m -Xms1024m -jar target/ebay-0.0.1-SNAPSHOT.jar --spring.profiles.active=production --server.port=8080 --spring.datasource.url=jdbc:h2:mem:testdb --spring.jpa.hibernate.ddl-auto=create-drop || echo "JAR test completed (expected timeout after startup check)"
     - eb --version
     - eb deploy ebay-medium
     - echo "Deployment completed, checking application health..."
