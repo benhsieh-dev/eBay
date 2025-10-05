@@ -1,5 +1,16 @@
 version: '3'
 services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: ebay_marketplace
+      POSTGRES_USER: ebayuser
+      POSTGRES_PASSWORD: ebaypassword123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
   kafka:
     image: apache/kafka
     ports:
@@ -9,6 +20,7 @@ services:
     image: redis:alpine
     ports:
       - "6379:6379"
+    
   kafka-ui:
     image: provectuslabs/kafka-ui
     ports:
@@ -16,3 +28,6 @@ services:
     environment:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+
+volumes:
+  postgres_data:

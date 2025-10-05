@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Profile;
 import javax.sql.DataSource;
 
 @Configuration
+@Profile("never-active-disable-completely") // Disabled to prevent conflicts with Spring Boot auto-configuration
 public class DatabaseConfiguration {
 
     @Bean
