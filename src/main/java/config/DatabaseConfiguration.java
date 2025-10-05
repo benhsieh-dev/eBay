@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Profile;
 import javax.sql.DataSource;
 
 @Configuration
-@Profile("disabled-production")
+@Profile("never-active-disable-completely")
 public class DatabaseConfiguration {
 
     @Bean
