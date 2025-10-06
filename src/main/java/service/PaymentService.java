@@ -3,16 +3,14 @@ package service;
 import dao.PaymentDAO;
 import entity.Order;
 import entity.Payment;
-import service.payment.PaymentProcessor;
+import service.client.PaymentServiceClient;
 import service.payment.PaymentProcessor.PaymentResult;
-import service.payment.PaymentProcessor.ValidationResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,10 +25,10 @@ public class PaymentService {
     private OrderService orderService;
     
     @Autowired
-    private List<PaymentProcessor> paymentProcessors;
+    private PaymentServiceClient paymentServiceClient;
     
     /**
-     * Process payment for an order
+     * Process payment for an order - delegates to payment microservice
      */
     public PaymentResult processOrderPayment(Integer orderId, Payment.PaymentMethod paymentMethod, 
                                            Map<String, String> paymentDetails) {
@@ -44,52 +42,32 @@ public class PaymentService {
                 return PaymentResult.failure("Order is already paid");
             }
             
-            // Create payment record
-            Payment payment = new Payment(order, order.getTotalAmount(), paymentMethod);
-            
-            // Find appropriate payment processor
-            PaymentProcessor processor = findProcessor(paymentMethod);
-            if (processor == null) {
-                return PaymentResult.failure("Payment method not supported");
+            // Check if payment service is healthy
+            if (!paymentServiceClient.isPaymentServiceHealthy()) {
+                return PaymentResult.failure("Payment service is currently unavailable");
             }
             
-            // Validate payment details
-            ValidationResult validation = processor.validatePaymentDetails(paymentDetails);
-            if (!validation.isValid()) {
-                StringBuilder errorMsg = new StringBuilder("Payment validation failed: ");
-                validation.getErrors().forEach((field, error) -> errorMsg.append(field).append(": ").append(error).append("; "));
-                return PaymentResult.failure(errorMsg.toString());
-            }
+            // Delegate to payment microservice
+            PaymentServiceClient.PaymentResult result = paymentServiceClient.processOrderPayment(
+                orderId, 
+                order.getBuyer().getUserId(),
+                order.getSeller().getUserId(),
+                order.getTotalAmount(),
+                paymentMethod,
+                paymentDetails
+            );
             
-            // Calculate and set processing fees
-            BigDecimal processingFee = processor.calculateProcessingFee(payment.getPaymentAmount());
-            payment.setProcessingFee(processingFee);
-            payment.setNetAmount(payment.getPaymentAmount().subtract(processingFee));
-            payment.setPaymentProcessor(processor.getProcessorName());
-            
-            // Save payment record
-            payment = paymentDAO.save(payment);
-            
-            // Process payment with external processor
-            PaymentResult result = processor.processPayment(payment, paymentDetails);
-            
-            // Update payment record based on result
-            updatePaymentFromResult(payment, result);
-            
-            // Update order status if payment successful
+            // Update order status based on payment result
             if (result.isSuccess()) {
                 orderService.updatePaymentStatus(orderId, Order.PaymentStatus.PAID);
-                payment.setPaymentDate(new Timestamp(System.currentTimeMillis()));
-                payment.setPaymentStatus(Payment.PaymentStatus.COMPLETED);
+                // Extract payment ID from result data
+                @SuppressWarnings("unchecked")
+                Map<String, Object> paymentData = (Map<String, Object>) result.getData();
+                String processorPaymentId = paymentData != null ? (String) paymentData.get("processorPaymentId") : null;
+                return PaymentResult.success(processorPaymentId, null, BigDecimal.ZERO);
             } else {
-                payment.setPaymentStatus(Payment.PaymentStatus.FAILED);
-                payment.setFailureReason(result.getMessage());
+                return PaymentResult.failure(result.getMessage());
             }
-            
-            payment.updateTimestamp();
-            paymentDAO.update(payment);
-            
-            return result;
             
         } catch (Exception e) {
             return PaymentResult.failure("Payment processing error: " + e.getMessage());

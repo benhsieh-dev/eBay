@@ -106,18 +106,30 @@ git push gitlab
 
 - https://eb-ebay-demo.us-east-1.elasticbeanstalk.com/
 
+## Microservices
+### Payments Service
+
+- https://eb-ebay-demo.us-east-1.elasticbeanstalk.com/api/payments/health
+1. Start all services:
+   ./start-microservices.sh
+2. Access points:
+   - Main App: http://localhost:8080
+   - Payment Service: http://localhost:8081
+   - Payment Health: http://localhost:8081/api/payments/health
+3. Test payment flow:
+
 ## Upgrading to Java 21
 
-- JAVA_HOME=/usr/local/Cellar/openjdk@21/21.0.8/libexec/openjdk.jdk/Contents/Home mvn rewrite:discover
-- JAVA_HOME=/usr/local/Cellar/openjdk@21/21.0.8/libexec/openjdk.jdk/Contents/Home mvn rewrite:dryRun -Drewrite.activeRecipes=RECIPE_NAME
-- JAVA_HOME=/usr/local/Cellar/openjdk@21/21.0.8/libexec/openjdk.jdk/Contents/Home mvn rewrite:run -Drewrite.activeRecipes=RECIPE_NAME
+- mvn rewrite:discover
+- mvn rewrite:dryRun -Drewrite.activeRecipes=RECIPE_NAME
+- mvn rewrite:run -Drewrite.activeRecipes=RECIPE_NAME
 - git status
 - git diff
-- JAVA_HOME=/usr/local/Cellar/openjdk@21/21.0.8/libexec/openjdk.jdk/Contents/Home mvn clean compile
+- mvn clean compile
 - git add .
 - git commit -m "Apply RECIPE_NAME - description of changes"
 - Test Application
-- JAVA_HOME=/usr/local/Cellar/openjdk@21/21.0.8/libexec/openjdk.jdk/Contents/Home mvn spring-boot:run
+- mvn spring-boot:run
 
 ### atomic approach
 1. Apply all changes: mvn rewrite:run
@@ -125,7 +137,6 @@ git push gitlab
 3. Test compilation: mvn clean compile
 4. Test application: mvn spring-boot:run
 5. Commit everything: git add . && git commit -m "Migrate to Java 21 with OpenRewrite"
-
 
 ## Future Considerations
 

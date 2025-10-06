@@ -1,0 +1,136 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: payment-service
+  
+  # Shared database configuration - same as main application
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:ebay_marketplace}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:password}
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+  
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      retries: 3
+      acks: 1
+    consumer:
+      group-id: payment-service
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest
+
+# Payment processor configurations
+stripe:
+  secret:
+    key: ${STRIPE_SECRET_KEY:sk_test_demo}
+  publishable:
+    key: ${STRIPE_PUBLISHABLE_KEY:pk_test_demo}
+  webhook:
+    secret: ${STRIPE_WEBHOOK_SECRET:whsec_demo}
+  processing:
+    fee:
+      percentage: 2.9
+      fixed: 0.30
+
+paypal:
+  client:
+    id: ${PAYPAL_CLIENT_ID:demo_paypal_client}
+    secret: ${PAYPAL_CLIENT_SECRET:demo_paypal_secret}
+  mode: ${PAYPAL_MODE:sandbox}
+  processing:
+    fee:
+      percentage: 2.9
+      fixed: 0.30
+
+# Kafka topics
+kafka:
+  topic:
+    payment-completed: payment-completed
+    payment-failed: payment-failed
+    refund-processed: refund-processed
+
+# Management and monitoring
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+# Logging
+logging:
+  level:
+    com.ebay.paymentservice: INFO
+    org.springframework.kafka: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+---
+# Production profile - uses same shared database
+spring:
+  config:
+    activate:
+      on-profile: production
+  
+  # Same database as main application (shared database approach)
+  datasource:
+    url: jdbc:postgresql://${SUPABASE_DB_HOST:render-db-host}:${SUPABASE_DB_PORT:5432}/${SUPABASE_DB_NAME:ebay_marketplace}
+    username: ${SUPABASE_DB_USERNAME}
+    password: ${SUPABASE_DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 2
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: validate
+
+# Production Kafka
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    producer:
+      retries: 5
+      acks: all
+      batch-size: 16384
+      linger-ms: 10
+
+# Production payment processors
+stripe:
+  secret:
+    key: ${STRIPE_SECRET_KEY}
+  publishable:
+    key: ${STRIPE_PUBLISHABLE_KEY}
+  webhook:
+    secret: ${STRIPE_WEBHOOK_SECRET}
+
+paypal:
+  client:
+    id: ${PAYPAL_CLIENT_ID}
+    secret: ${PAYPAL_CLIENT_SECRET}
+  mode: live
+
+logging:
+  level:
+    com.ebay.paymentservice: INFO
+    org.springframework.kafka: ERROR
