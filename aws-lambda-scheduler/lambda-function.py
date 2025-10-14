@@ -5,15 +5,40 @@ import os
 def lambda_handler(event, context):
     ec2 = boto3.client('ec2')
 
-    instance_ids_str = os.environ.get('INSTANCE_IDS', '')
-    if not instance_ids_str:
+    # Get action from event input or environment variable
+    action = event.get('ACTION', os.environ.get('ACTION', 'stop'))
+    
+    # Get instances by tag name instead of hardcoded IDs
+    tag_name = event.get('TAG_NAME', os.environ.get('TAG_NAME', 'ebay-medium'))
+    
+    try:
+        # Find instances by Name tag
+        response = ec2.describe_instances(
+            Filters=[
+                {'Name': 'tag:Name', 'Values': [tag_name]},
+                {'Name': 'instance-state-name', 'Values': ['running', 'stopped']}
+            ]
+        )
+        
+        instance_ids = []
+        for reservation in response['Reservations']:
+            for instance in reservation['Instances']:
+                instance_ids.append(instance['InstanceId'])
+        
+        if not instance_ids:
+            return {
+                'statusCode': 404,
+                'body': json.dumps(f'No instances found with tag Name={tag_name}')
+            }
+            
+        print(f"Found instances with tag '{tag_name}': {instance_ids}")
+        
+    except Exception as e:
+        print(f"Error finding instances: {str(e)}")
         return {
-            'statusCode': 400,
-            'body': json.dumps('NO INSTANCE_IDS environment variable set')
+            'statusCode': 500,
+            'body': json.dumps(f'Error finding instances: {str(e)}')
         }
-
-    instance_ids = [id.strip() for id in instance_ids_str.split(',')]
-    action = os.environ.get('ACTION', event.get('action', 'stop'))
 
     try:
         if action == 'stop':

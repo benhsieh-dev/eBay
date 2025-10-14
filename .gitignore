@@ -91,3 +91,10 @@ Buildfile
 .ebignore
 
 gitlab-build.log
+
+# AWS Lambda
+aws-lambda-scheduler/env*.json
+aws-lambda-scheduler/*.zip
+
+# Elastic Beanstalk saved configs
+.elasticbeanstalk/saved_configs/

@@ -118,25 +118,14 @@ git push gitlab
    - Payment Health: http://localhost:8081/api/payments/health
 3. Test payment flow:
 
-## Upgrading to Java 21
+## AWS Commands
+### Get EC2 Instance IDs
+- aws ec2 describe-instances --query 'Reservations[*].Instances[*].[InstanceId,State.Name,Tags[?Key==`Name`].Value|[0]]' --output table
 
-- mvn rewrite:discover
-- mvn rewrite:dryRun -Drewrite.activeRecipes=RECIPE_NAME
-- mvn rewrite:run -Drewrite.activeRecipes=RECIPE_NAME
-- git status
-- git diff
-- mvn clean compile
-- git add .
-- git commit -m "Apply RECIPE_NAME - description of changes"
-- Test Application
-- mvn spring-boot:run
-
-### atomic approach
-1. Apply all changes: mvn rewrite:run
-2. Review changes: git diff
-3. Test compilation: mvn clean compile
-4. Test application: mvn spring-boot:run
-5. Commit everything: git add . && git commit -m "Migrate to Java 21 with OpenRewrite"
+- aws events list-targets-by-rule --rule ebay-start-instances
+- aws events list-targets-by-rule --rule ebay-stop-instances
+- aws events list-targets-by-rule --rule ebay-start-instances
+- aws events list-targets-by-rule --rule ebay-stop-instances
 
 ## Future Considerations
 
