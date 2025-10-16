@@ -4,6 +4,7 @@ import dao.PaymentDAO;
 import entity.Order;
 import entity.Payment;
 import service.client.PaymentServiceClient;
+import service.payment.PaymentProcessor;
 import service.payment.PaymentProcessor.PaymentResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,9 @@ public class PaymentService {
     
     @Autowired
     private PaymentServiceClient paymentServiceClient;
+    
+    @Autowired(required = false)
+    private List<PaymentProcessor> paymentProcessors;
     
     /**
      * Process payment for an order - delegates to payment microservice
@@ -206,6 +210,9 @@ public class PaymentService {
      * Find appropriate payment processor for method
      */
     private PaymentProcessor findProcessor(Payment.PaymentMethod paymentMethod) {
+        if (paymentProcessors == null || paymentProcessors.isEmpty()) {
+            return null;
+        }
         return paymentProcessors.stream()
                 .filter(processor -> processor.supportsPaymentMethod(paymentMethod))
                 .findFirst()

@@ -96,5 +96,8 @@ gitlab-build.log
 aws-lambda-scheduler/env*.json
 aws-lambda-scheduler/*.zip
 
+# Environment variable backups (sensitive data)
+eb-env-backup.txt
+
 # Elastic Beanstalk saved configs
 .elasticbeanstalk/saved_configs/

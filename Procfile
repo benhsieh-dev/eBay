@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -jar target/ebay-0.0.1-SNAPSHOT.jar
+web: PORT=5000 java $JAVA_OPTS -jar application.jar
