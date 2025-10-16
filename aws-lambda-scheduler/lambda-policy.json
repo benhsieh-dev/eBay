@@ -9,6 +9,7 @@
           "ec2:DescribeInstances",
           "elasticbeanstalk:DescribeEnvironmentResources",
           "elasticbeanstalk:DescribeEnvironments",
+          "autoscaling:DescribeAutoScalingGroups",
           "logs:CreateLogGroup",
           "logs:CreateLogStream",
           "logs:PutLogEvents"

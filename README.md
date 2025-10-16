@@ -127,6 +127,9 @@ git push gitlab
 - aws events list-targets-by-rule --rule ebay-start-instances
 - aws events list-targets-by-rule --rule ebay-stop-instances
 
+## CloudWatch logs
+- https://us-east-2.console.aws.amazon.com/cloudwatch/home?region=us-east-2#logsV2:log-groups/log-group/$252Faws$252Flambda$252Febay-scheduler
+
 ## Future Considerations
 
 - Security framework integration (Spring Security)

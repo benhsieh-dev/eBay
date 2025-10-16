@@ -2,7 +2,8 @@ import boto3
 import json
 import os
 import time
-import requests
+import urllib.request
+import urllib.error
 
 def lambda_handler(event, context):
     ec2 = boto3.client('ec2')
@@ -88,11 +89,13 @@ def verify_app_health(app_url, max_retries=10, timeout=30):
     for attempt in range(max_retries):
         try:
             print(f"Health check attempt {attempt + 1}/{max_retries}: {app_url}")
-            response = requests.get(f"{app_url}api/products", timeout=timeout)
             
-            if response.status_code == 200:
-                return f"✅ HEALTHY (attempt {attempt + 1})"
-                
+            # Use urllib instead of requests (no external dependencies)
+            req = urllib.request.Request(f"{app_url}api/products")
+            with urllib.request.urlopen(req, timeout=timeout) as response:
+                if response.getcode() == 200:
+                    return f"✅ HEALTHY (attempt {attempt + 1})"
+                    
         except Exception as e:
             print(f"Health check failed: {e}")
             
