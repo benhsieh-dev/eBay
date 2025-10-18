@@ -101,3 +101,4 @@ eb-env-backup.txt
 
 # Elastic Beanstalk saved configs
 .elasticbeanstalk/saved_configs/
+response*.json
