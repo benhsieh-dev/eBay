@@ -15,7 +15,7 @@ COPY pom.xml .
 COPY src ./src
 COPY frontend ./frontend
 
-# Force cache bust - change this comment to rebuild: 2025-10-02-v4
+# Force cache bust - change this comment to rebuild: 2025-10-18-v5-fixed
 # Build the application - skip frontend build for now to isolate Java issues  
 RUN echo "Starting Maven build (Java only)..." && \
     mvn clean package -DskipTests -Dexec.skip=true && \
