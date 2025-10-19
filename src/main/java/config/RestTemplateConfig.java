@@ -1,8 +1,8 @@
 package config;
 
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
@@ -11,16 +11,10 @@ import java.time.Duration;
 public class RestTemplateConfig {
     
     @Bean
-    public RestTemplate restTemplate() {
-        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-        
-        // Configure timeouts for microservice communication
-        factory.setConnectTimeout((int) Duration.ofSeconds(5).toMillis());
-        factory.setConnectionRequestTimeout((int) Duration.ofSeconds(5).toMillis());
-        
-        RestTemplate restTemplate = new RestTemplate(factory);
-        
-        // Add error handling and logging interceptors if needed
-        return restTemplate;
+    public RestTemplate restTemplate(RestTemplateBuilder builder) {
+        return builder
+                .setConnectTimeout(Duration.ofSeconds(5))
+                .setReadTimeout(Duration.ofSeconds(5))
+                .build();
     }
 }
