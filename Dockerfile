@@ -16,15 +16,17 @@ COPY src ./src
 COPY frontend ./frontend
 
 # Force cache bust - change this comment to rebuild: 2025-10-18-v5-fixed
-# Build the application - skip frontend build for now to isolate Java issues  
-RUN echo "Starting Maven build (Java only)..." && \
-    mvn clean package -DskipTests -Dexec.skip=true && \
+# Build the application with frontend integration
+RUN echo "Starting Maven build with frontend..." && \
+    mvn clean package -DskipTests && \
     echo "Maven build completed. Checking JAR file..." && \
     ls -la target/*.jar && \
+    echo "Checking frontend integration..." && \
+    ls -la target/classes/static/ || echo "No static files found" && \
     echo "Build process finished."
 
 # Expose port
 EXPOSE 8080
 
-# Run Spring Boot application
-CMD ["java", "-jar", "target/ebay-0.0.1-SNAPSHOT.jar", "--server.port=8080"]
+# Run Spring Boot application (use PORT env var for Render)
+CMD ["java", "-jar", "target/ebay-0.0.1-SNAPSHOT.jar"]
