@@ -8,7 +8,8 @@ Users can auction and purchase items online
 - GraphQL
 - HTML
 - JavaScript
-- JDK 17
+- JDK 21
+- Jenkins CI/CD
 - Kafka
 - Maven
 - Node JS
@@ -131,14 +132,27 @@ git push gitlab
 - https://us-east-2.console.aws.amazon.com/cloudwatch/home?region=us-east-2#logsV2:log-groups/log-group/$252Faws$252Flambda$252Febay-scheduler
 
 ## SSH to EC2 Instance
-ssh -i ~/.ssh/ebay-debug-key.pem ec2-user@18.116.26.3
+ssh -i ~/.ssh/ebay-debug-key.pem ec2-user@18.222.224.79
 
 eBay application is now running at:
-http://18.116.26.3
-http://ec2-18-116-26-3.us-east-2.compute.amazonaws.com/
+http://18.222.224.79
+http://ec2-18-222-224-79.us-east-2.compute.amazonaws.com/
+
+## EC2 List Instances
+aws ec2 describe-instances --query "Reservations[*].Instances[*].InstanceId" --output text
+
+## EC2 List Security Groups
+aws ec2 describe-security-groups --query 'SecurityGroups[*].[GroupId,GroupName,Description]' --region us-east-2 --output table
 
 ## EC2 Deployment Script
 aws ec2 run-instances --cli-input-json file://ec2-config.json --region us-east-2
+
+## EC2 Public IP
+aws ec2 describe-instances --instance-ids i-021d853b40fb0faae --region us-east-2 --query "Reservations[0].Instances[0].State.Name" --output text
+
+## Jenkins
+http://18.222.224.79:8080
+eBay-CI-CD-Pipeline
 
 ## Future Considerations
 
