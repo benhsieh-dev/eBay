@@ -130,6 +130,16 @@ git push gitlab
 ## CloudWatch logs
 - https://us-east-2.console.aws.amazon.com/cloudwatch/home?region=us-east-2#logsV2:log-groups/log-group/$252Faws$252Flambda$252Febay-scheduler
 
+## SSH to EC2 Instance
+ssh -i ~/.ssh/ebay-debug-key.pem ec2-user@18.116.26.3
+
+eBay application is now running at:
+http://18.116.26.3
+http://ec2-18-116-26-3.us-east-2.compute.amazonaws.com/
+
+## EC2 Deployment Script
+aws ec2 run-instances --cli-input-json file://ec2-config.json --region us-east-2
+
 ## Future Considerations
 
 - Security framework integration (Spring Security)
