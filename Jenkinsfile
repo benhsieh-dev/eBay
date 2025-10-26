@@ -15,12 +15,18 @@ pipeline {
                   checkout scm
               }
           }
-
+          stage('Test') {
+               steps {
+                  echo 'Running tests...'
+                  sh 'mvn test'
+               }
+          }
           stage('Build Docker Image') {
               steps {
                   echo 'Building Docker image...'
                   script {
                       sh '''
+                          mvn clean package
                           if docker ps -a | grep -q ${CONTAINER_NAME}; then
                               echo "Stopping existing container..."
                               docker stop ${CONTAINER_NAME} || true
