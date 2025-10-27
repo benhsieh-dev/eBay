@@ -16,10 +16,17 @@ pipeline {
               }
           }
           stage('Test') {
-               steps {
-                  echo 'Running tests...'
-                  sh 'mvn test'
-               }
+                options {
+                        timeout(time: 20, unit: 'MINUTES')
+                }
+                steps {
+                    sh 'mvn test'
+                }
+                post {
+                    always {
+                        publishTestResults testResultsPattern: 'target/surefire-reports/*.xml'
+                    }
+                }
           }
           stage('Build Docker Image') {
               steps {
