@@ -6,6 +6,8 @@ pipeline {
           CONTAINER_NAME = 'ebay-container'
           APP_PORT = '80'
           INTERNAL_PORT = '5000'
+          JAVA_HOME = '/usr/lib/jvm/java-21-amazon-corretto'
+          PATH = "${JAVA_HOME}/bin:${env.PATH}"
       }
 
       stages {
