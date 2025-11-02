@@ -151,7 +151,8 @@ aws ec2 run-instances --cli-input-json file://ec2-config.json --region us-east-2
 aws ec2 describe-instances --instance-ids i-021d853b40fb0faae --region us-east-2 --query "Reservations[0].Instances[0].State.Name" --output text
 
 ## Jenkins
-http://18.222.224.79:8080
+http://3.23.98.160:8081/
+http://3.23.98.160:8081/job/eBay-CI-CD-Pipeline/
 eBay-CI-CD-Pipeline
 
 ## Future Considerations

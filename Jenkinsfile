@@ -8,6 +8,8 @@ pipeline {
           INTERNAL_PORT = '5000'
           JAVA_HOME = '/usr/lib/jvm/java-21-amazon-corretto'
           PATH = "${JAVA_HOME}/bin:${env.PATH}"
+          NODE_OPTIONS = '--max-old-space-size=1024'
+          GENERATE_SOURCEMAP = 'false'
       }
 
       stages {
@@ -31,6 +33,9 @@ pipeline {
               }
           }
           stage('Build Docker Image') {
+              options {
+                  timeout(time: 20, unit: 'MINUTES')
+              }
               steps {
                   echo 'Building Docker image...'
                   script {
