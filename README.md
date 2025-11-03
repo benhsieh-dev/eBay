@@ -3,6 +3,11 @@ Users can auction and purchase items online
 
 ## Technologies Used
 
+- AWS Certificate Manager
+- AWS CloudFront
+- AWS EC2
+- AWS RDS
+- AWS Route 53
 - CSS
 - Docker
 - GraphQL
@@ -66,6 +71,7 @@ Port summary:
 | 6379 | Redis                | Cache          |
 | 6543 | Supabase Pooler      | Alternative DB |
 | 8080 | Main Spring Boot     | Core App       |
+| 8081 | Jenkins              | CI / CD        |
 | 8081 | Kafka UI             | Monitoring     |
 | 8082 | Notification Service | Microservice   |
 | 9092 | Kafka Broker         | Message Queue  |
@@ -81,36 +87,8 @@ Port summary:
 ## IAM
 -  aws iam list-users
 
-## Elastic Beanstalk
-- eb create ebay-medium --instance_type t3.medium
-- eb deploy
-- eb events
-- eb events --follow
-- eb health
-- eb health --refresh
-- eb logs
-- eb logs --all
-- eb printenv | grep AWS_DB
-- eb setenv
-- eb ssh --setup
-- eb status
-
-## GitLab CI/CD
-- https://gitlab.com/benhsieh-dev/eBay/-/pipelines
-
-### Your new workflow:
-### Development (GitHub)
-git push 
-
-### Deploy to AWS (GitLab CI/CD)
-git push gitlab 
-
-- https://eb-ebay-demo.us-east-1.elasticbeanstalk.com/
-
 ## Microservices
 ### Payments Service
-
-- https://eb-ebay-demo.us-east-1.elasticbeanstalk.com/api/payments/health
 1. Start all services:
    ./start-microservices.sh
 2. Access points:
@@ -132,11 +110,12 @@ git push gitlab
 - https://us-east-2.console.aws.amazon.com/cloudwatch/home?region=us-east-2#logsV2:log-groups/log-group/$252Faws$252Flambda$252Febay-scheduler
 
 ## SSH to EC2 Instance
-ssh -i ~/.ssh/ebay-debug-key.pem ec2-user@18.222.224.79
+ssh -i ~/.ssh/ebay-debug-key.pem ec2-user@3.24.98.160
 
 eBay application is now running at:
-http://18.222.224.79
-http://ec2-18-222-224-79.us-east-2.compute.amazonaws.com/
+https://aws-cloud-app.com/
+http://3.23.98.160/
+http://ec2-3-23-98-160.us-east-2.compute.amazonaws.com
 
 ## EC2 List Instances
 aws ec2 describe-instances --query "Reservations[*].Instances[*].InstanceId" --output text
@@ -152,7 +131,7 @@ aws ec2 describe-instances --instance-ids i-021d853b40fb0faae --region us-east-2
 
 ## Jenkins
 http://3.23.98.160:8081/
-http://3.23.98.160:8081/job/eBay-CI-CD-Pipeline/
+http://3.23.98.160:8081/jogettb/eBay-CI-CD-Pipeline/
 eBay-CI-CD-Pipeline
 
 ## Future Considerations
