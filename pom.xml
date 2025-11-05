@@ -152,25 +152,6 @@
 						</configuration>
 					</execution>
 					<execution>
-						<id>npm-build-test</id>
-						<phase>test-compile</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<configuration>
-							<executable>npm</executable>
-							<arguments>
-								<argument>run</argument>
-								<argument>build</argument>
-							</arguments>
-							<workingDirectory>frontend</workingDirectory>
-                            <environmentVariables>
-                                <NODE_OPTIONS>--max-old-space-size=1024</NODE_OPTIONS>
-                                <GENERATE_SOURCEMAP>false</GENERATE_SOURCEMAP>
-                            </environmentVariables>
-						</configuration>
-					</execution>
-					<execution>
 						<id>npm-build</id>
 						<phase>process-resources</phase>
 						<goals>
