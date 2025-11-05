@@ -17,7 +17,11 @@ public class CorsConfiguration implements WebMvcConfigurer {
         registry.addMapping("/api/**")
                 .allowedOrigins(
                     "http://localhost:3000",
-                    "https://ebay-u3h1.onrender.com"
+                    "https://ebay-u3h1.onrender.com",
+                    "https://aws-cloud-app.com",
+                    "http://aws-cloud-app.com",
+                    "http://3.145.148.232",
+                    "http://ec2-3-145-148-232.us-east-2.compute.amazonaws.com"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
@@ -31,7 +35,11 @@ public class CorsConfiguration implements WebMvcConfigurer {
         
         configuration.setAllowedOrigins(Arrays.asList(
             "http://localhost:3000",
-            "https://ebay-u3h1.onrender.com"
+            "https://ebay-u3h1.onrender.com",
+            "https://aws-cloud-app.com",
+            "http://aws-cloud-app.com",
+            "http://3.145.148.232",
+            "http://ec2-3-145-148-232.us-east-2.compute.amazonaws.com"
         ));
         
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));

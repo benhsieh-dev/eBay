@@ -71,9 +71,9 @@ Port summary:
 | 6379 | Redis                | Cache          |
 | 6543 | Supabase Pooler      | Alternative DB |
 | 8080 | Main Spring Boot     | Core App       |
-| 8081 | Jenkins              | CI / CD        |
 | 8081 | Kafka UI             | Monitoring     |
 | 8082 | Notification Service | Microservice   |
+| 8083 | Jenkins CI/CD        | CI/CD          |
 | 9092 | Kafka Broker         | Message Queue  |
 
 ## Docker Commands
@@ -114,8 +114,8 @@ ssh -i ~/.ssh/ebay-debug-key.pem ec2-user@3.24.98.160
 
 eBay application is now running at:
 https://aws-cloud-app.com/
-http://3.23.98.160/
-http://ec2-3-23-98-160.us-east-2.compute.amazonaws.com
+http://3.145.148.232/
+http://ec2-3-145-148-232.us-east-2.compute.amazonaws.com
 
 ## EC2 List Instances
 aws ec2 describe-instances --query "Reservations[*].Instances[*].InstanceId" --output text
@@ -130,9 +130,7 @@ aws ec2 run-instances --cli-input-json file://ec2-config.json --region us-east-2
 aws ec2 describe-instances --instance-ids i-021d853b40fb0faae --region us-east-2 --query "Reservations[0].Instances[0].State.Name" --output text
 
 ## Jenkins
-http://3.23.98.160:8081/
-http://3.23.98.160:8081/jogettb/eBay-CI-CD-Pipeline/
-eBay-CI-CD-Pipeline
+http://3.145.148.232:8083/
 
 ## Future Considerations
 
