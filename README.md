@@ -132,6 +132,14 @@ aws ec2 describe-instances --instance-ids i-021d853b40fb0faae --region us-east-2
 ## Jenkins
 http://3.145.148.232:8083/
 
+## AWS Cost Tracker
+aws ce get-cost-and-usage \
+--time-period Start=2025-11-01,End=2025-11-06 \
+--granularity MONTHLY \
+--metrics BlendedCost \
+--group-by Type=DIMENSION,Key=SERVICE \
+--region us-east-1
+
 ## Future Considerations
 
 - Security framework integration (Spring Security)

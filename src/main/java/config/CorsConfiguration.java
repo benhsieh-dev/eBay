@@ -20,6 +20,8 @@ public class CorsConfiguration implements WebMvcConfigurer {
                     "https://ebay-u3h1.onrender.com",
                     "https://aws-cloud-app.com",
                     "http://aws-cloud-app.com",
+                    "https://www.aws-cloud-app.com",
+                    "http://www.aws-cloud-app.com",
                     "http://3.145.148.232",
                     "http://ec2-3-145-148-232.us-east-2.compute.amazonaws.com"
                 )
@@ -38,6 +40,8 @@ public class CorsConfiguration implements WebMvcConfigurer {
             "https://ebay-u3h1.onrender.com",
             "https://aws-cloud-app.com",
             "http://aws-cloud-app.com",
+            "https://www.aws-cloud-app.com",
+            "http://www.aws-cloud-app.com",
             "http://3.145.148.232",
             "http://ec2-3-145-148-232.us-east-2.compute.amazonaws.com"
         ));
