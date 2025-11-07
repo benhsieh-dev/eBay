@@ -1,0 +1,183 @@
+.login-container {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.login-container h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 30px;
+  font-size: 1.8rem;
+}
+
+/* Demo Section */
+.demo-section {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.demo-header {
+  margin-bottom: 15px;
+}
+
+.demo-header h4 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.demo-description {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.demo-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.demo-btn {
+  padding: 8px 16px;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  font-weight: 500;
+}
+
+.demo-btn:hover {
+  opacity: 0.9;
+}
+
+.demo-btn-alice {
+  background-color: #28a745;
+}
+
+.demo-btn-bob {
+  background-color: #007bff;
+}
+
+.demo-btn-charlie {
+  background-color: #6c757d;
+}
+
+.password-note {
+  font-size: 11px;
+  color: #999;
+  margin-top: 8px;
+}
+
+/* Error Message */
+.error-message {
+  color: #d32f2f;
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #ffe6e6;
+  border-radius: 4px;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* Form Styles */
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #333;
+  font-weight: 500;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #0066cc;
+}
+
+.form-input.ng-invalid.ng-touched {
+  border-color: #d32f2f;
+}
+
+/* Login Button */
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #0066cc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-btn:hover:not(:disabled) {
+  background-color: #0052a3;
+}
+
+.login-btn:disabled,
+.login-btn.loading {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Register Link */
+.register-link {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.register-link p {
+  color: #666;
+  font-size: 14px;
+}
+
+.register-link .link {
+  color: #0066cc;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.register-link .link:hover {
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .login-container {
+    margin: 20px;
+    padding: 15px;
+  }
+  
+  .demo-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .demo-btn {
+    width: 200px;
+    margin-bottom: 5px;
+  }
+}

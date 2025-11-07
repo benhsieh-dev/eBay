@@ -1,0 +1,365 @@
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <h1>My eBay</h1>
+    <button (click)="navigateToSell()" class="btn-primary">
+      + List New Item
+    </button>
+  </div>
+
+  <!-- Navigation Tabs -->
+  <div class="tabs-container">
+    <div class="tabs">
+      <button 
+        (click)="setActiveTab('selling')"
+        [class.active]="activeTab === 'selling'"
+        class="tab-button">
+        Selling
+      </button>
+      <button 
+        (click)="setActiveTab('buying')"
+        [class.active]="activeTab === 'buying'"
+        class="tab-button">
+        Buying
+      </button>
+      <button 
+        (click)="setActiveTab('watching')"
+        [class.active]="activeTab === 'watching'"
+        class="tab-button">
+        Watching
+      </button>
+      <button 
+        (click)="setActiveTab('bidding')"
+        [class.active]="activeTab === 'bidding'"
+        class="tab-button">
+        Bids & Offers
+      </button>
+    </div>
+  </div>
+
+  <!-- Selling Tab -->
+  <div *ngIf="activeTab === 'selling'">
+    <!-- Summary Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3>Total Listings</h3>
+        <p class="stat-number">{{ totalCount }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Active Listings</h3>
+        <p class="stat-number">{{ getActiveListingsCount() }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Sold Items</h3>
+        <p class="stat-number">{{ getSoldListingsCount() }}</p>
+      </div>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="error" class="error-message">
+      {{ error }}
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="loading">
+      <div class="loading-text">Loading your listings...</div>
+    </div>
+
+    <!-- Listings Table -->
+    <div *ngIf="!loading && myListings.length > 0" class="table-container">
+      <table class="listings-table">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Price</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Time Remaining</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let product of myListings; let i = index" 
+              (click)="navigateToProduct(product.productId)"
+              class="product-row"
+              [class.even]="i % 2 === 0">
+            <td class="item-cell">
+              <div class="item-info">
+                <div class="item-image">
+                  <img *ngIf="product.imageUrl" 
+                       [src]="product.imageUrl" 
+                       [alt]="product.title" />
+                  <span *ngIf="!product.imageUrl" class="no-image">No Image</span>
+                </div>
+                <div class="item-details">
+                  <div class="item-title">{{ product.title }}</div>
+                  <div class="item-condition">Condition: {{ product.condition }}</div>
+                </div>
+              </div>
+            </td>
+            <td class="price-cell">
+              <div class="current-price">{{ formatPrice(product.currentPrice) }}</div>
+              <div *ngIf="product.buyNowPrice && product.buyNowPrice !== product.currentPrice" 
+                   class="buy-now-price">
+                Buy Now: {{ formatPrice(product.buyNowPrice) }}
+              </div>
+            </td>
+            <td class="type-cell">
+              <span class="listing-type" 
+                    [class.auction]="product.listingType === 'AUCTION'"
+                    [class.buy-now]="product.listingType === 'BUY_NOW'">
+                {{ getListingTypeText(product.listingType) }}
+              </span>
+            </td>
+            <td class="status-cell">
+              <span class="status" [style.color]="getStatusColor(product.status)">
+                {{ product.status }}
+              </span>
+            </td>
+            <td class="time-cell">
+              <span *ngIf="product.listingType !== 'BUY_NOW' && product.endTime; else noTime"
+                    class="time-remaining"
+                    [class.active]="product.status === 'ACTIVE'">
+                {{ formatTimeRemaining(product.endTime) }}
+              </span>
+              <ng-template #noTime>
+                <span class="no-time">N/A</span>
+              </ng-template>
+            </td>
+            <td class="date-cell">
+              {{ formatDate(product.createdDate) }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- No Listings -->
+    <div *ngIf="!loading && myListings.length === 0 && !error" class="empty-state">
+      <div class="empty-icon">📦</div>
+      <h3>No listings yet</h3>
+      <p>You haven't listed any items for sale yet. Start selling by creating your first listing!</p>
+      <button (click)="navigateToSell()" class="btn-primary">
+        List Your First Item
+      </button>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="totalPages > 1" class="pagination">
+      <button (click)="previousPage()" 
+              [disabled]="currentPage === 0"
+              class="pagination-btn">
+        Previous
+      </button>
+      <span class="pagination-info">
+        Page {{ currentPage + 1 }} of {{ totalPages }}
+      </span>
+      <button (click)="nextPage()" 
+              [disabled]="currentPage === totalPages - 1"
+              class="pagination-btn">
+        Next
+      </button>
+    </div>
+  </div>
+
+  <!-- Buying Tab -->
+  <div *ngIf="activeTab === 'buying'" class="empty-state">
+    <div class="empty-icon">🛒</div>
+    <h3>Buying Features Coming Soon</h3>
+    <p>Track your purchases, bids, and order history here.</p>
+  </div>
+
+  <!-- Watching Tab -->
+  <div *ngIf="activeTab === 'watching'">
+    <!-- Watchlist Summary -->
+    <div class="summary-card">
+      <h3>My Watchlist</h3>
+      <p class="summary-count">{{ totalCount }} items</p>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="error" class="error-message">
+      {{ error }}
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="loading">
+      <div class="loading-text">Loading your watchlist...</div>
+    </div>
+
+    <!-- Watchlist Table -->
+    <div *ngIf="!loading && watchlist.length > 0" class="table-container">
+      <table class="watchlist-table">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Current Price</th>
+            <th>Seller</th>
+            <th>Status</th>
+            <th>Time Remaining</th>
+            <th>Added</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of watchlist; let i = index" 
+              [class.even]="i % 2 === 0">
+            <td class="item-cell">
+              <div class="item-info">
+                <div class="item-image">
+                  <span class="no-image">No Image</span>
+                </div>
+                <div class="item-details">
+                  <div class="item-title clickable" 
+                       (click)="navigateToProduct(item.product.productId)">
+                    {{ item.product.name }}
+                  </div>
+                  <div class="item-description">
+                    {{ (item.product.description || '').substring(0, 60) }}...
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="price-cell">
+              <div class="current-price">{{ formatPrice(item.product.currentPrice) }}</div>
+              <div *ngIf="item.product.buyItNowPrice && item.product.buyItNowPrice !== item.product.currentPrice" 
+                   class="buy-now-price">
+                Buy Now: {{ formatPrice(item.product.buyItNowPrice) }}
+              </div>
+            </td>
+            <td class="seller-cell">
+              {{ getSellerName(item.product.seller) }}
+            </td>
+            <td class="status-cell">
+              <span class="status" [style.color]="getStatusColor(item.product.status)">
+                {{ item.product.status }}
+              </span>
+            </td>
+            <td class="time-cell">
+              <span *ngIf="item.product.endTime; else noTime"
+                    class="time-remaining"
+                    [class.active]="item.product.status === 'ACTIVE'">
+                {{ formatTimeRemaining(item.product.endTime) }}
+              </span>
+              <ng-template #noTime>
+                <span class="no-time">N/A</span>
+              </ng-template>
+            </td>
+            <td class="date-cell">
+              {{ formatDate(item.addedDate) }}
+            </td>
+            <td class="actions-cell">
+              <button (click)="removeFromWatchlist(item.product.productId)"
+                      class="btn-danger">
+                Remove
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- No Watchlist Items -->
+    <div *ngIf="!loading && watchlist.length === 0 && !error" class="empty-state">
+      <div class="empty-icon">👀</div>
+      <h3>Your watchlist is empty</h3>
+      <p>Start adding items you're interested in by clicking "Add to Watchlist" on product pages.</p>
+      <button (click)="navigateToProducts()" class="btn-primary">
+        Browse Products
+      </button>
+    </div>
+  </div>
+
+  <!-- Bidding Tab -->
+  <div *ngIf="activeTab === 'bidding'">
+    <!-- Bidding Summary -->
+    <div class="summary-card">
+      <h3>My Bids & Offers</h3>
+      <p class="summary-count">{{ totalCount }} bids placed</p>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="error" class="error-message">
+      {{ error }}
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="loading">
+      <div class="loading-text">Loading your bids...</div>
+    </div>
+
+    <!-- Bids Table -->
+    <div *ngIf="!loading && myBids.length > 0" class="table-container">
+      <table class="bids-table">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Your Bid</th>
+            <th>Current Price</th>
+            <th>Status</th>
+            <th>Time Remaining</th>
+            <th>Bid Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let bid of myBids; let i = index" 
+              [class.even]="i % 2 === 0">
+            <td class="item-cell">
+              <div class="item-info">
+                <div class="item-image">
+                  <span class="no-image">No Image</span>
+                </div>
+                <div class="item-details">
+                  <div class="item-title clickable" 
+                       (click)="navigateToProduct(bid.product.productId)">
+                    {{ bid.product.title }}
+                  </div>
+                  <div class="bid-details">
+                    Bid Type: {{ bid.bidType }}
+                    <span *ngIf="bid.maxProxyAmount"> (Max: {{ formatPrice(bid.maxProxyAmount) }})</span>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="price-cell">
+              <div class="bid-amount">{{ formatPrice(bid.bidAmount) }}</div>
+            </td>
+            <td class="price-cell">
+              <div class="current-price">{{ formatPrice(bid.product.currentPrice) }}</div>
+            </td>
+            <td class="status-cell">
+              <span class="bid-status" 
+                    [style.color]="getBidStatusColor(bid.bidStatus, bid.isWinningBid)">
+                {{ getBidStatusText(bid.bidStatus, bid.isWinningBid) }}
+              </span>
+            </td>
+            <td class="time-cell">
+              <span *ngIf="bid.product.isAuctionActive; else endedTime"
+                    class="time-remaining active">
+                {{ bid.product.timeRemaining }}
+              </span>
+              <ng-template #endedTime>
+                <span class="no-time">
+                  {{ bid.product.status === 'SOLD' ? 'Ended' : 'N/A' }}
+                </span>
+              </ng-template>
+            </td>
+            <td class="date-cell">
+              {{ formatDate(bid.bidTime) }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- No Bids -->
+    <div *ngIf="!loading && myBids.length === 0 && !error" class="empty-state">
+      <div class="empty-icon">🏷️</div>
+      <h3>No bids yet</h3>
+      <p>You haven't placed any bids yet. Start bidding on items you're interested in!</p>
+      <button (click)="navigateToProducts()" class="btn-primary">
+        Browse Auctions
+      </button>
+    </div>
+  </div>
+</div>

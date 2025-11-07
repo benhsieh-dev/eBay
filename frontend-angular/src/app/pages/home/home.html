@@ -1,0 +1,67 @@
+<div class="home-container">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Find it. Love it. Buy it.</h1>
+      <p>Discover amazing deals on millions of items</p>
+      <div class="hero-actions">
+        <a routerLink="/products" class="btn btn-primary">Start Shopping</a>
+        <a routerLink="/sell" class="btn btn-secondary">Start Selling</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories Section -->
+  <section class="categories">
+    <h2>Shop by Category</h2>
+    <div class="category-grid">
+      <a routerLink="/products" [queryParams]="{category: 'electronics'}" class="category-card">
+        <div class="category-icon">📱</div>
+        <h3>Electronics</h3>
+      </a>
+      <a routerLink="/products" [queryParams]="{category: 'fashion'}" class="category-card">
+        <div class="category-icon">👕</div>
+        <h3>Fashion</h3>
+      </a>
+      <a routerLink="/products" [queryParams]="{category: 'home'}" class="category-card">
+        <div class="category-icon">🏠</div>
+        <h3>Home & Garden</h3>
+      </a>
+      <a routerLink="/products" [queryParams]="{category: 'sports'}" class="category-card">
+        <div class="category-icon">⚽</div>
+        <h3>Sports</h3>
+      </a>
+    </div>
+  </section>
+
+  <!-- Featured Products -->
+  <section class="featured-products">
+    <h2>Featured Products</h2>
+    
+    <div *ngIf="error" class="error-message">{{ error }}</div>
+    
+    <div *ngIf="loading" class="loading">Loading featured products...</div>
+    
+    <div *ngIf="!loading" class="products-grid">
+      <a 
+        *ngFor="let product of featuredProducts" 
+        [routerLink]="['/products', product.productId]" 
+        class="product-card">
+        <div class="product-image">
+          <img *ngIf="product.imageUrl" 
+               [src]="product.imageUrl" 
+               [alt]="product.title" />
+          <div *ngIf="!product.imageUrl" class="placeholder-image">📦</div>
+        </div>
+        <div class="product-info">
+          <h3>{{ product.title }}</h3>
+          <p class="product-price">{{ formatPrice(product.currentPrice) }}</p>
+          <p class="product-description">{{ product.description }}</p>
+          <span class="product-category">
+            {{ product.category?.categoryName || 'Uncategorized' }}
+          </span>
+        </div>
+      </a>
+    </div>
+  </section>
+</div>

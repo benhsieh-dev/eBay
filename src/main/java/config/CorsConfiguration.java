@@ -17,6 +17,7 @@ public class CorsConfiguration implements WebMvcConfigurer {
         registry.addMapping("/api/**")
                 .allowedOrigins(
                     "http://localhost:3000",
+                    "http://localhost:4200",
                     "https://ebay-u3h1.onrender.com",
                     "https://aws-cloud-app.com",
                     "http://aws-cloud-app.com",
@@ -37,6 +38,7 @@ public class CorsConfiguration implements WebMvcConfigurer {
         
         configuration.setAllowedOrigins(Arrays.asList(
             "http://localhost:3000",
+            "http://localhost:4200",
             "https://ebay-u3h1.onrender.com",
             "https://aws-cloud-app.com",
             "http://aws-cloud-app.com",

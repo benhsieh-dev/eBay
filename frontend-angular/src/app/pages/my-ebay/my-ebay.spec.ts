@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AdminPanel } from './admin-panel';
+import { MyEbay } from './my-ebay';
 
-describe('AdminPanel', () => {
-  let component: AdminPanel;
-  let fixture: ComponentFixture<AdminPanel>;
+describe('MyEbay', () => {
+  let component: MyEbay;
+  let fixture: ComponentFixture<MyEbay>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AdminPanel]
+      imports: [MyEbay]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AdminPanel);
+    fixture = TestBed.createComponent(MyEbay);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

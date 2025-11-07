@@ -1,0 +1,401 @@
+.container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  margin: 0;
+  color: #333;
+}
+
+.btn-primary {
+  padding: 12px 24px;
+  background-color: #0066cc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-primary:hover {
+  background-color: #0052a3;
+}
+
+.btn-danger {
+  padding: 6px 12px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+}
+
+/* Tabs */
+.tabs-container {
+  margin-bottom: 30px;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.tabs {
+  display: flex;
+  gap: 0;
+}
+
+.tab-button {
+  padding: 12px 24px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: normal;
+  color: #666;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+}
+
+.tab-button.active {
+  font-weight: bold;
+  color: #0066cc;
+  border-bottom: 2px solid #0066cc;
+}
+
+.tab-button:hover {
+  color: #0066cc;
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  border: 1px solid #dee2e6;
+}
+
+.stat-card h3 {
+  margin: 0 0 10px 0;
+  color: #0066cc;
+}
+
+.stat-number {
+  margin: 0;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* Summary Card */
+.summary-card {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  border: 1px solid #dee2e6;
+  margin-bottom: 30px;
+}
+
+.summary-card h3 {
+  margin: 0 0 10px 0;
+  color: #0066cc;
+}
+
+.summary-count {
+  margin: 0;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* Error and Loading */
+.error-message {
+  color: red;
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #ffe6e6;
+  border-radius: 4px;
+  border: 1px solid #ffcccc;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+}
+
+.loading-text {
+  font-size: 18px;
+  color: #666;
+}
+
+/* Tables */
+.table-container {
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  overflow-x: auto;
+}
+
+.listings-table,
+.watchlist-table,
+.bids-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.listings-table thead tr,
+.watchlist-table thead tr,
+.bids-table thead tr {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.listings-table th,
+.watchlist-table th,
+.bids-table th {
+  padding: 15px;
+  text-align: left;
+  font-weight: bold;
+  color: #495057;
+}
+
+.listings-table tbody tr,
+.watchlist-table tbody tr,
+.bids-table tbody tr {
+  border-bottom: 1px solid #dee2e6;
+  cursor: pointer;
+}
+
+.product-row:hover {
+  background-color: #e3f2fd !important;
+}
+
+.listings-table tbody tr.even,
+.watchlist-table tbody tr.even,
+.bids-table tbody tr.even {
+  background-color: #ffffff;
+}
+
+.listings-table tbody tr:not(.even),
+.watchlist-table tbody tr:not(.even),
+.bids-table tbody tr:not(.even) {
+  background-color: #f8f9fa;
+}
+
+.listings-table td,
+.watchlist-table td,
+.bids-table td {
+  padding: 15px;
+}
+
+/* Table Cells */
+.item-cell {
+  min-width: 250px;
+}
+
+.item-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.item-image {
+  width: 60px;
+  height: 60px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.item-image img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.no-image {
+  color: #666;
+  font-size: 12px;
+}
+
+.item-details {
+  flex: 1;
+}
+
+.item-title {
+  font-weight: bold;
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+.item-title.clickable {
+  color: #0066cc;
+  cursor: pointer;
+}
+
+.item-title.clickable:hover {
+  text-decoration: underline;
+}
+
+.item-condition,
+.item-description,
+.bid-details {
+  font-size: 12px;
+  color: #666;
+}
+
+.price-cell {
+  min-width: 100px;
+}
+
+.current-price,
+.bid-amount {
+  font-weight: bold;
+  color: #0066cc;
+}
+
+.buy-now-price {
+  font-size: 12px;
+  color: #666;
+}
+
+.type-cell {
+  min-width: 120px;
+}
+
+.listing-type {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 12px;
+}
+
+.listing-type.auction {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.listing-type.buy-now {
+  background-color: #e8f5e8;
+  color: #2e7d32;
+}
+
+.status-cell {
+  min-width: 80px;
+}
+
+.status,
+.bid-status {
+  font-weight: bold;
+}
+
+.time-cell {
+  min-width: 120px;
+}
+
+.time-remaining {
+  font-size: 14px;
+}
+
+.time-remaining.active {
+  color: #d32f2f;
+}
+
+.no-time {
+  font-size: 14px;
+  color: #666;
+}
+
+.date-cell {
+  font-size: 14px;
+  color: #666;
+  min-width: 140px;
+}
+
+.seller-cell {
+  font-size: 14px;
+  min-width: 120px;
+}
+
+.actions-cell {
+  text-align: center;
+  min-width: 100px;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.empty-icon {
+  font-size: 24px;
+  margin-bottom: 16px;
+}
+
+.empty-state h3 {
+  color: #666;
+  margin-bottom: 16px;
+}
+
+.empty-state p {
+  color: #666;
+  margin-bottom: 24px;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 30px;
+}
+
+.pagination-btn {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  background-color: white;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.pagination-btn:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.pagination-btn:not(:disabled):hover {
+  background-color: #e3f2fd;
+}
+
+.pagination-info {
+  padding: 0 15px;
+  font-size: 14px;
+  color: #666;
+}

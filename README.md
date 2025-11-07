@@ -67,6 +67,7 @@ Port summary:
 | Port | Service              | Status         |
 |------|----------------------|----------------|
 | 3000 | React Dev            | Optional       |
+| 4200 | Angular              | Optional       |
 | 5432 | PostgreSQL           | Production DB  |
 | 6379 | Redis                | Cache          |
 | 6543 | Supabase Pooler      | Alternative DB |
