@@ -34,22 +34,26 @@
     </div>
   </section>
 
+  <!-- Search Section -->
+<!--  <section class="search">-->
+<!--    <app-search></app-search>-->
+<!--  </section>-->
   <!-- Featured Products -->
   <section class="featured-products">
     <h2>Featured Products</h2>
-    
+
     <div *ngIf="error" class="error-message">{{ error }}</div>
-    
+
     <div *ngIf="loading" class="loading">Loading featured products...</div>
-    
+
     <div *ngIf="!loading" class="products-grid">
-      <a 
-        *ngFor="let product of featuredProducts" 
-        [routerLink]="['/products', product.productId]" 
+      <a
+        *ngFor="let product of featuredProducts"
+        [routerLink]="['/products', product.productId]"
         class="product-card">
         <div class="product-image">
-          <img *ngIf="product.imageUrl" 
-               [src]="product.imageUrl" 
+          <img *ngIf="product.imageUrl"
+               [src]="product.imageUrl"
                [alt]="product.title" />
           <div *ngIf="!product.imageUrl" class="placeholder-image">📦</div>
         </div>

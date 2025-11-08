@@ -11,6 +11,9 @@ interface ApiResponse<T = any> {
   watchlist?: T;
   count?: number;
   userBids?: T;
+  user?: any;
+  authenticated?: boolean;
+  message?: string;
 }
 
 @Injectable({
@@ -122,7 +125,7 @@ export class Api {
   }
 
   getCurrentUser(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.baseUrl}/user/me`, {
+    return this.http.get<ApiResponse>(`${this.baseUrl}/user/current`, {
       withCredentials: true
     });
   }

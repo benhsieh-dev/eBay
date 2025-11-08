@@ -33,7 +33,7 @@ import java.time.format.DateTimeFormatter;
 
 @RestController
 @RequestMapping("/api/products")
-@CrossOrigin(origins = {"http://localhost:3000", "https://ebay-u3h1.onrender.com"})
+@CrossOrigin(origins = {"http://localhost:3000",  "http://localhost:4200", "https://ebay-u3h1.onrender.com"})
 public class ProductApiController {
 
     @Autowired

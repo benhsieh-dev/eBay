@@ -36,12 +36,17 @@ body {
   color: inherit;
 }
 
-.logo h1 {
-  color: #0066cc;
-  font-size: 1.8rem;
-  font-weight: bold;
-}
+/*.logo h1 {*/
+/*  color: #0066cc;*/
+/*  font-size: 1.8rem;*/
+/*  font-weight: bold;*/
+/*}*/
 
+.logo-img {
+  height: 40px; /* adjust as needed */
+  width: auto;
+  display: block;
+}
 
 .main-nav {
   display: flex;
@@ -108,19 +113,19 @@ main {
     height: auto;
     padding: 15px 20px;
   }
-  
+
   .main-nav {
     margin-top: 15px;
     gap: 20px;
     flex-wrap: wrap;
     justify-content: center;
   }
-  
+
   .nav-link {
     padding: 8px 12px;
     font-size: 14px;
   }
-  
+
   .logo h1 {
     font-size: 1.5rem;
   }

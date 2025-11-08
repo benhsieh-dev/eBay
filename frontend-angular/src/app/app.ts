@@ -1,18 +1,19 @@
 import { Component, signal, OnInit } from '@angular/core';
 import { RouterOutlet, RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import {CommonModule} from '@angular/common';
 import { UserService } from './services/user.service';
 import { Observable } from 'rxjs';
+import {Search} from './components/search/search';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, CommonModule],
+  imports: [RouterOutlet, RouterLink, CommonModule, Search],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App implements OnInit {
   protected readonly title = signal('frontend-angular');
-  
+
   isLoggedIn$: Observable<boolean>;
   currentUser$: Observable<any>;
 

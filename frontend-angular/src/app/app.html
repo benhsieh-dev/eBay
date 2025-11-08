@@ -2,12 +2,16 @@
   <div class="header-container">
     <div class="logo">
       <a routerLink="/home" class="logo-link">
-        <h1>eBay</h1>
+        <img src="assets/images/logo.png" alt="eBay Logo" class="logo-image">
       </a>
     </div>
+    <!-- Search Section -->
+    <section class="search">
+      <app-search></app-search>
+    </section>
     <nav class="main-nav">
       <a routerLink="/home" routerLinkActive="active" class="nav-link">Home</a>
-      
+
       <!-- Show when logged in -->
       <ng-container *ngIf="isLoggedIn$ | async">
         <a routerLink="/my-ebay" routerLinkActive="active" class="nav-link">My eBay</a>
@@ -18,7 +22,7 @@
         </span>
         <button (click)="logout()" class="nav-link logout-btn">Logout</button>
       </ng-container>
-      
+
       <!-- Show when not logged in -->
       <ng-container *ngIf="!(isLoggedIn$ | async)">
         <a href="/products" class="nav-link">Products</a>
