@@ -1,5 +1,5 @@
 .home-container {
-  max-width: 1200px;
+  max-width: 80%;
   margin: 0 auto;
   padding: 20px;
 }
@@ -218,25 +218,25 @@
   .hero-content h1 {
     font-size: 2rem;
   }
-  
+
   .hero-content p {
     font-size: 1rem;
   }
-  
+
   .hero-actions {
     flex-direction: column;
     align-items: center;
   }
-  
+
   .btn {
     width: 200px;
   }
-  
+
   .category-grid {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 20px;
   }
-  
+
   .products-grid {
     grid-template-columns: 1fr;
   }

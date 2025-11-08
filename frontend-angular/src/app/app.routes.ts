@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { MyEbay } from './pages/my-ebay/my-ebay';
 import { Home } from './pages/home/home';
+import { Products} from './pages/products/products';
 import { Login } from './pages/login/login';
 
 export const routes: Routes = [
@@ -9,6 +10,7 @@ export const routes: Routes = [
   { path: 'login', component: Login },
   { path: 'angular/my-ebay', component: MyEbay },
   { path: 'angular/home', component: Home },
+  { path: 'products', component: Products },
   { path: 'angular/login', component: Login },
   { path: '', redirectTo: '/home', pathMatch: 'full' }
 ];

@@ -4,10 +4,11 @@ import {CommonModule} from '@angular/common';
 import { UserService } from './services/user.service';
 import { Observable } from 'rxjs';
 import {Search} from './components/search/search';
+import {NavbarComponent} from './components/navbar/navbar';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, CommonModule, Search],
+  imports: [RouterOutlet, RouterLink, CommonModule, Search, NavbarComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

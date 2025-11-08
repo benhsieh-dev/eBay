@@ -1,10 +1,11 @@
-<input [(ngModel)]="searchTerm" placeholder="Search products..." />
-<button (click)="onSearch()">Search</button>
-
-@for (p of results; track p.id) {
-  <div>
-    <img [src]="p.imageUrl" width="120" />
-    <h3>{{ p.title }}</h3>
-    <p>{{ p.currentPrice | currency }}</p>
-  </div>
-}
+<div class="search-container">
+  <input
+    [(ngModel)]="searchTerm"
+    placeholder="Search for anything..."
+    class="search-input"
+    (keyup.enter)="onSearch()"
+  />
+  <button class="search-btn" (click)="onSearch()">
+    🔍
+  </button>
+</div>

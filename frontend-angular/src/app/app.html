@@ -9,26 +9,28 @@
     <section class="search">
       <app-search></app-search>
     </section>
-    <nav class="main-nav">
-      <a routerLink="/home" routerLinkActive="active" class="nav-link">Home</a>
+<!--    <nav class="main-nav">-->
+<!--      <a routerLink="/home" routerLinkActive="active" class="nav-link">Home</a>-->
 
-      <!-- Show when logged in -->
-      <ng-container *ngIf="isLoggedIn$ | async">
-        <a routerLink="/my-ebay" routerLinkActive="active" class="nav-link">My eBay</a>
-        <a href="/products" class="nav-link">Products</a>
-        <a href="/sell" class="nav-link">Sell</a>
-        <span class="user-info">
-          Welcome, {{ (currentUser$ | async)?.firstName || (currentUser$ | async)?.username }}!
-        </span>
-        <button (click)="logout()" class="nav-link logout-btn">Logout</button>
-      </ng-container>
+<!--      &lt;!&ndash; Show when logged in &ndash;&gt;-->
+<!--      <ng-container *ngIf="isLoggedIn$ | async">-->
+<!--        <a routerLink="/my-ebay" routerLinkActive="active" class="nav-link">My eBay</a>-->
+<!--        <a href="/products" class="nav-link">Products</a>-->
+<!--        <a href="/sell" class="nav-link">Sell</a>-->
+<!--        <span class="user-info">-->
+<!--          Welcome, {{ (currentUser$ | async)?.firstName || (currentUser$ | async)?.username }}!-->
+<!--        </span>-->
+<!--        <button (click)="logout()" class="nav-link logout-btn">Logout</button>-->
+<!--      </ng-container>-->
 
-      <!-- Show when not logged in -->
-      <ng-container *ngIf="!(isLoggedIn$ | async)">
-        <a href="/products" class="nav-link">Products</a>
-        <a routerLink="/login" routerLinkActive="active" class="nav-link">Login</a>
-      </ng-container>
-    </nav>
+<!--      &lt;!&ndash; Show when not logged in &ndash;&gt;-->
+<!--      <ng-container *ngIf="!(isLoggedIn$ | async)">-->
+<!--        <a href="/products" class="nav-link">Products</a>-->
+<!--        <a routerLink="/login" routerLinkActive="active" class="nav-link">Login</a>-->
+<!--      </ng-container>-->
+<!--    </nav>-->
+    <app-navbar></app-navbar>
+
   </div>
 </header>
 

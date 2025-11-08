@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CommonModule, CurrencyPipe } from '@angular/common';
+import { CommonModule} from '@angular/common';
 import { ProductService } from '../../services/product';
 import { FormsModule } from '@angular/forms';
 
@@ -7,8 +7,7 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-search',
   imports: [
     CommonModule,
-    FormsModule,
-    CurrencyPipe
+    FormsModule
   ],
   templateUrl: './search.html',
   styleUrl: './search.css',
