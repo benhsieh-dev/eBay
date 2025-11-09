@@ -141,6 +141,13 @@ aws ce get-cost-and-usage \
 --group-by Type=DIMENSION,Key=SERVICE \
 --region us-east-1
 
+## Lambda
+- lambda-ebay-scheduler-role
+- lambda function will stop instance from 11PM to 8AM
+
+### Check if instance was interrupted vs scheduled stop
+aws ec2 describe-instances --instance-ids i-021d853b40fb0faae --query 'Reservations[0].Instances[0].StateReason'
+
 ## Future Considerations
 
 - Security framework integration (Spring Security)

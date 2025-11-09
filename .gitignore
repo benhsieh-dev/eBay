@@ -104,3 +104,4 @@ eb-env-backup.txt
 response*.json
 ec2-config.json
 ec2-userdata.sh
+lambda-scheduler.zip
