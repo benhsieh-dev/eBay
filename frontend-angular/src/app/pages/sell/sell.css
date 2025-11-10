@@ -1,0 +1,94 @@
+/* Page Container */
+form {
+  max-width: 850px;
+  margin: 30px auto;
+  background: #fff;
+  padding: 28px 32px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  font-family: Arial, sans-serif;
+}
+
+/* Labels */
+label {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+/* Required star */
+label::after {
+  content: attr(data-required);
+  color: #e60023; /* eBay red */
+}
+
+/* Inputs + textarea */
+input[type="text"],
+input[type="number"],
+textarea,
+select {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 15px;
+  border: 1px solid #d1d1d1;
+  border-radius: 6px;
+  background: #fafafa;
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Focus Glow */
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #3665f3; /* eBay blue */
+  box-shadow: 0 0 4px rgba(54, 101, 243, 0.3);
+  background: #fff;
+  outline: none;
+}
+
+/* Submit Button */
+button[type="submit"] {
+  align-self: flex-end;
+  background: #3665f3;
+  color: white;
+  border: none;
+  padding: 14px 20px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  width: auto;
+  transition: background 0.2s ease;
+}
+
+button[type="submit"]:hover {
+  background: #1a49d6;
+}
+
+/* Image Input */
+input[type="file"] {
+  border: none;
+  background: none;
+  padding: 0;
+}
+
+/* Form Spacing */
+form > * {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Adjust spacing between grouped sections */
+label + input,
+label + textarea,
+label + select {
+  margin-top: -6px;
+}

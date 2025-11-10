@@ -1,0 +1,42 @@
+<form (ngSubmit)="onSubmit()" enctype="multipart/form-data">
+
+  <label>Product Title *</label>
+  <input type="text" [(ngModel)]="item.title" name="title" required />
+
+  <label>Description *</label>
+  <textarea [(ngModel)]="item.description" name="description" required></textarea>
+
+  <label>Category *</label>
+  <select [(ngModel)]="item.category" name="category" required>
+    <option value="">Select category</option>
+
+    @for (cat of categories; track cat) {
+      <option [value]="cat">{{ cat }}</option>
+    }
+  </select>
+
+  <label>Condition *</label>
+  <select [(ngModel)]="item.condition" name="condition" required>
+    @for (cond of conditions; track cond) {
+      <option [value]="cond">{{ cond }}</option>
+    }
+  </select>
+
+  <label>Starting Price *</label>
+  <input type="number" [(ngModel)]="item.startPrice" min="0" name="startPrice" required />
+
+  <label>Buy It Now Price (optional)</label>
+  <input type="number" [(ngModel)]="item.buyNowPrice" min="0" name="buyNowPrice" />
+
+  <label>Auction Duration *</label>
+  <select [(ngModel)]="item.duration" name="duration" required>
+    @for (d of durations; track d) {
+      <option [value]="d">{{ d }} Days</option>
+    }
+  </select>
+
+  <label>Upload Images</label>
+  <input type="file" multiple (change)="onFileSelected($event)" />
+
+  <button type="submit">Create Listing</button>
+</form>

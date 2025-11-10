@@ -3,9 +3,11 @@ import { MyEbay } from './pages/my-ebay/my-ebay';
 import { Home } from './pages/home/home';
 import { Products} from './pages/products/products';
 import { Login } from './pages/login/login';
+import { Sell } from './pages/sell/sell';
 
 export const routes: Routes = [
   { path: 'home', component: Home },
+  { path: 'sell', component: Sell },
   { path: 'my-ebay', component: MyEbay },
   { path: 'login', component: Login },
   { path: 'angular/my-ebay', component: MyEbay },

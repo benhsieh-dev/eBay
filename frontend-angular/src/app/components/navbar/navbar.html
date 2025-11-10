@@ -1,10 +1,10 @@
 <nav class="main-nav">
-  <a routerLink="/home" routerLinkActive="active" class="nav-link">Home</a>
+<!--  <a routerLink="/home" routerLinkActive="active" class="nav-link">Home</a>-->
 
   <ng-container *ngIf="isLoggedIn$ | async">
-    <a routerLink="/my-ebay" routerLinkActive="active" class="nav-link">My eBay</a>
-    <a routerLink="/products" routerLinkActive="active" class="nav-link">Products</a>
+<!--    <a routerLink="/products" routerLinkActive="active" class="nav-link">Products</a>-->
     <a routerLink="/sell" routerLinkActive="active" class="nav-link">Sell</a>
+    <a routerLink="/my-ebay" routerLinkActive="active" class="nav-link">My eBay</a>
 
     <span class="user-info">
       Welcome, {{ (currentUser$ | async)?.firstName || (currentUser$ | async)?.username }}!
