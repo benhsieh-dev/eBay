@@ -7,19 +7,18 @@
   <textarea [(ngModel)]="item.description" name="description" required></textarea>
 
   <label>Category *</label>
-  <select [(ngModel)]="item.category" name="category" required>
+  <select [(ngModel)]="item.categoryId" name="categoryId" required>
     <option value="">Select category</option>
-
-    @for (cat of categories; track cat) {
-      <option [value]="cat">{{ cat }}</option>
-    }
+    <option *ngFor="let cat of categories" [value]="cat.categoryId">{{ cat.name }}</option>
   </select>
 
   <label>Condition *</label>
   <select [(ngModel)]="item.condition" name="condition" required>
-    @for (cond of conditions; track cond) {
-      <option [value]="cond">{{ cond }}</option>
-    }
+<!--    @for (cond of conditions; track cond) {-->
+<!--      <option [value]="cond">{{ cond }}</option>-->
+<!--    }-->
+    <option *ngFor="let cond of conditions" [value]="cond">{{ cond }}</option>
+
   </select>
 
   <label>Starting Price *</label>
@@ -30,9 +29,15 @@
 
   <label>Auction Duration *</label>
   <select [(ngModel)]="item.duration" name="duration" required>
-    @for (d of durations; track d) {
-      <option [value]="d">{{ d }} Days</option>
-    }
+<!--    @for (d of durations; track d) {-->
+<!--      <option [value]="d">{{ d }} Days</option>-->
+<!--    }-->
+    <option *ngFor="let d of durations" [value]="d">{{ d }} Days</option>
+  </select>
+
+  <label>Listing Type *</label>
+  <select [(ngModel)]="item.listingType" name="listingType" required>
+    <option *ngFor="let type of listingTypes" [value]="type.value">{{ type.label }}</option>
   </select>
 
   <label>Upload Images</label>

@@ -38,10 +38,10 @@ public class ProductApiController {
 
     @Autowired
     private ProductService productService;
-    
+
     @Autowired
     private CategoryService categoryService;
-    
+
     @Autowired
     private UserService userService;
 
@@ -51,11 +51,11 @@ public class ProductApiController {
             @RequestParam(defaultValue = "12") int size,
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String sort) {
-        
+
         try {
             List<Product> products;
             long totalCount;
-            
+
             if (category != null && !category.isEmpty()) {
                 Category categoryEntity = categoryService.getCategoryByName(category);
                 if (categoryEntity != null) {
@@ -66,29 +66,29 @@ public class ProductApiController {
             } else {
                 products = productService.getAllProducts();
             }
-            
+
             // Apply sorting if specified
             if (sort != null && !sort.isEmpty()) {
                 products = applySorting(products, sort);
             }
-            
+
             totalCount = products.size();
-            
+
             // Apply pagination
             int startIndex = page * size;
             int endIndex = Math.min(startIndex + size, products.size());
             List<Product> paginatedProducts = products.subList(startIndex, endIndex);
-            
+
             // Convert to safe DTOs
             List<Map<String, Object>> productDTOs = paginatedProducts.stream()
                 .map(this::convertToSafeDTO)
                 .toList();
-            
+
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("products", productDTOs);
             response.put("totalCount", totalCount);
-            
+
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
@@ -102,12 +102,12 @@ public class ProductApiController {
     public ResponseEntity<Map<String, Object>> getFeaturedProducts() {
         try {
             List<Product> products = productService.getFeaturedProducts(12);
-            
+
             // Convert to safe DTOs
             List<Map<String, Object>> productDTOs = products.stream()
                 .map(this::convertToSafeDTO)
                 .toList();
-            
+
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("products", productDTOs);
@@ -160,24 +160,24 @@ public class ProductApiController {
             @RequestParam(defaultValue = "20") int size) {
         try {
             List<Product> products = productService.searchProducts(query);
-            
+
             long totalCount = products.size();
-            
+
             // Apply pagination
             int startIndex = page * size;
             int endIndex = Math.min(startIndex + size, products.size());
             List<Product> paginatedProducts = products.subList(startIndex, endIndex);
-            
+
             // Convert to safe DTOs
             List<Map<String, Object>> productDTOs = paginatedProducts.stream()
                 .map(this::convertToSafeDTO)
                 .toList();
-            
+
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("products", productDTOs);
             response.put("totalCount", totalCount);
-            
+
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
@@ -201,26 +201,26 @@ public class ProductApiController {
                 errorResponse.put("error", "User not logged in");
                 return ResponseEntity.status(401).body(errorResponse);
             }
-            
+
             List<Product> userProducts = productService.getProductsBySeller(userId);
-            
+
             long totalCount = userProducts.size();
-            
+
             // Apply pagination
             int startIndex = page * size;
             int endIndex = Math.min(startIndex + size, userProducts.size());
             List<Product> paginatedProducts = userProducts.subList(startIndex, endIndex);
-            
+
             // Convert to safe DTOs
             List<Map<String, Object>> productDTOs = paginatedProducts.stream()
                 .map(this::convertToSafeDTO)
                 .toList();
-            
+
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("products", productDTOs);
             response.put("totalCount", totalCount);
-            
+
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
@@ -229,12 +229,12 @@ public class ProductApiController {
             return ResponseEntity.ok(errorResponse);
         }
     }
-    
+
     @GetMapping("/categories")
     public ResponseEntity<Map<String, Object>> getCategories() {
         try {
             List<Category> categories = categoryService.getActiveCategories();
-            
+
             // Transform categories to match frontend expectations
             List<Map<String, Object>> categoryList = categories.stream()
                 .map(category -> {
@@ -245,7 +245,7 @@ public class ProductApiController {
                     return categoryMap;
                 })
                 .toList();
-            
+
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("categories", categoryList);
@@ -257,19 +257,19 @@ public class ProductApiController {
             return ResponseEntity.ok(errorResponse);
         }
     }
-    
+
     // Debug endpoint to check and initialize categories
     @GetMapping("/debug/categories")
     public ResponseEntity<Map<String, Object>> debugCategories() {
         try {
             List<Category> allCategories = categoryService.getAllCategories();
-            
+
             // If no categories exist, initialize them
             if (allCategories.isEmpty()) {
                 categoryService.initializeDefaultCategories();
                 allCategories = categoryService.getAllCategories();
             }
-            
+
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("totalCategories", allCategories.size());
@@ -283,7 +283,7 @@ public class ProductApiController {
                     return categoryMap;
                 })
                 .toList());
-            
+
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
@@ -292,7 +292,7 @@ public class ProductApiController {
             return ResponseEntity.ok(errorResponse);
         }
     }
-    
+
     // Debug endpoint to add missing categories
     @PostMapping("/debug/add-missing-categories")
     public ResponseEntity<Map<String, Object>> addMissingCategories() {
@@ -302,16 +302,16 @@ public class ProductApiController {
                 entity.Category collectibles = new entity.Category("Collectibles", "Antiques, coins, stamps, trading cards, and vintage items");
                 categoryService.createCategory(collectibles);
             }
-            
-            // Check if Toys & Hobbies category exists  
+
+            // Check if Toys & Hobbies category exists
             if (categoryService.getCategoryByName("Toys & Hobbies") == null) {
                 entity.Category toys = new entity.Category("Toys & Hobbies", "Action figures, dolls, plush toys, model kits, and hobby supplies");
                 categoryService.createCategory(toys);
             }
-            
+
             // Return updated list
             List<entity.Category> allCategories = categoryService.getAllCategories();
-            
+
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("message", "Missing categories added successfully");
@@ -326,7 +326,7 @@ public class ProductApiController {
                     return categoryMap;
                 })
                 .toList());
-            
+
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
@@ -335,7 +335,7 @@ public class ProductApiController {
             return ResponseEntity.ok(errorResponse);
         }
     }
-    
+
     @PostMapping
     public ResponseEntity<Map<String, Object>> createProduct(@RequestBody Map<String, Object> productData, HttpSession session) {
         try {
@@ -347,7 +347,7 @@ public class ProductApiController {
                 errorResponse.put("error", "User not logged in");
                 return ResponseEntity.status(401).body(errorResponse);
             }
-            
+
             // Get the seller user
             User seller = userService.getUserById(userId);
             if (seller == null) {
@@ -356,13 +356,13 @@ public class ProductApiController {
                 errorResponse.put("error", "User not found");
                 return ResponseEntity.status(404).body(errorResponse);
             }
-            
+
             // Create product from the request data
             Product product = createProductFromRequestData(productData);
-            
+
             // Create the product
             Product createdProduct = productService.createProduct(product, seller);
-            
+
             // Create a safe response DTO to avoid circular references
             Map<String, Object> productResponse = new HashMap<>();
             productResponse.put("productId", createdProduct.getProductId());
@@ -379,7 +379,7 @@ public class ProductApiController {
             productResponse.put("auctionStartTime", createdProduct.getAuctionStartTime());
             productResponse.put("auctionEndTime", createdProduct.getAuctionEndTime());
             productResponse.put("createdDate", createdProduct.getCreatedDate());
-            
+
             // Add category info safely
             if (createdProduct.getCategory() != null) {
                 Map<String, Object> categoryInfo = new HashMap<>();
@@ -388,7 +388,7 @@ public class ProductApiController {
                 categoryInfo.put("description", createdProduct.getCategory().getDescription());
                 productResponse.put("category", categoryInfo);
             }
-            
+
             // Add seller info safely
             if (createdProduct.getSeller() != null) {
                 Map<String, Object> sellerInfo = new HashMap<>();
@@ -396,12 +396,12 @@ public class ProductApiController {
                 sellerInfo.put("username", createdProduct.getSeller().getUsername());
                 productResponse.put("seller", sellerInfo);
             }
-            
+
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("product", productResponse);
             response.put("message", "Product created successfully");
-            
+
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
@@ -410,7 +410,7 @@ public class ProductApiController {
             return ResponseEntity.ok(errorResponse);
         }
     }
-    
+
     @PutMapping("/{id}")
     public ResponseEntity<Map<String, Object>> updateProduct(@PathVariable Integer id, @RequestBody Product product, HttpSession session) {
         try {
@@ -422,7 +422,7 @@ public class ProductApiController {
                 errorResponse.put("error", "User not logged in");
                 return ResponseEntity.status(401).body(errorResponse);
             }
-            
+
             // Check if product exists and user owns it
             Product existingProduct = productService.getProductById(id);
             if (existingProduct == null) {
@@ -431,24 +431,24 @@ public class ProductApiController {
                 errorResponse.put("error", "Product not found");
                 return ResponseEntity.status(404).body(errorResponse);
             }
-            
+
             if (!existingProduct.getSeller().getUserId().equals(userId)) {
                 Map<String, Object> errorResponse = new HashMap<>();
                 errorResponse.put("success", false);
                 errorResponse.put("error", "Not authorized to update this product");
                 return ResponseEntity.status(403).body(errorResponse);
             }
-            
+
             // Update the product
             product.setProductId(id);
             product.setSeller(existingProduct.getSeller());
             Product updatedProduct = productService.updateProduct(product);
-            
+
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("product", updatedProduct);
             response.put("message", "Product updated successfully");
-            
+
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
@@ -457,13 +457,13 @@ public class ProductApiController {
             return ResponseEntity.ok(errorResponse);
         }
     }
-    
+
     @PostMapping("/{productId}/images")
     public ResponseEntity<Map<String, Object>> uploadProductImages(
             @PathVariable Integer productId,
             @RequestParam("images") MultipartFile[] files,
             HttpSession session) {
-        
+
         try {
             // Check authentication
             Integer userId = (Integer) session.getAttribute("userId");
@@ -473,7 +473,7 @@ public class ProductApiController {
                 errorResponse.put("error", "User not logged in");
                 return ResponseEntity.status(401).body(errorResponse);
             }
-            
+
             // Check if product exists and user owns it
             Product product = productService.getProductById(productId);
             if (product == null) {
@@ -482,16 +482,16 @@ public class ProductApiController {
                 errorResponse.put("error", "Product not found");
                 return ResponseEntity.status(404).body(errorResponse);
             }
-            
+
             if (!product.getSeller().getUserId().equals(userId)) {
                 Map<String, Object> errorResponse = new HashMap<>();
                 errorResponse.put("success", false);
                 errorResponse.put("error", "Not authorized to upload images for this product");
                 return ResponseEntity.status(403).body(errorResponse);
             }
-            
+
             List<String> imageUrls = new ArrayList<>();
-            
+
             // Process each uploaded file
             for (MultipartFile file : files) {
                 if (!file.isEmpty()) {
@@ -503,7 +503,7 @@ public class ProductApiController {
                         errorResponse.put("error", "Only image files are allowed");
                         return ResponseEntity.badRequest().body(errorResponse);
                     }
-                    
+
                     // Validate file size (max 10MB)
                     if (file.getSize() > 10 * 1024 * 1024) {
                         Map<String, Object> errorResponse = new HashMap<>();
@@ -511,35 +511,35 @@ public class ProductApiController {
                         errorResponse.put("error", "File size must be less than 10MB");
                         return ResponseEntity.badRequest().body(errorResponse);
                     }
-                    
+
                     // Get image data as byte array
                     byte[] imageData = file.getBytes();
                     String originalFilename = file.getOriginalFilename();
-                    
+
                     // Save ProductImage to database as BLOB (for render deployment)
                     Boolean isPrimary = imageUrls.size() == 0; // First image is primary
                     ProductImage savedImage = productService.addProductImageBlob(
-                        productId, 
+                        productId,
                         imageData,
                         contentType,
                         originalFilename,
-                        product.getTitle(), 
+                        product.getTitle(),
                         isPrimary
                     );
-                    
+
                     // Add the API endpoint URL to response
                     String imageUrl = "/api/images/" + savedImage.getImageId();
                     imageUrls.add(imageUrl);
                 }
             }
-            
+
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("imageUrls", imageUrls);
             response.put("message", "Images uploaded successfully");
-            
+
             return ResponseEntity.ok(response);
-            
+
         } catch (IOException e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
@@ -552,7 +552,7 @@ public class ProductApiController {
             return ResponseEntity.internalServerError().body(errorResponse);
         }
     }
-    
+
     private List<Product> applySorting(List<Product> products, String sort) {
         switch (sort) {
             case "price_asc":
@@ -576,14 +576,14 @@ public class ProductApiController {
                 return products;
         }
     }
-    
+
     private Product createProductFromRequestData(Map<String, Object> productData) {
         Product product = new Product();
-        
+
         // Basic information
         product.setTitle((String) productData.get("title"));
         product.setDescription((String) productData.get("description"));
-        
+
         // Category - resolve from categoryId
         Object categoryIdObj = productData.get("categoryId");
         if (categoryIdObj != null) {
@@ -594,19 +594,19 @@ public class ProductApiController {
             }
             product.setCategory(category);
         }
-        
+
         // Condition
         String condition = (String) productData.get("condition");
         if (condition != null) {
-            product.setConditionType(Product.ConditionType.valueOf(condition));
+            product.setConditionType(Product.ConditionType.fromString(condition));
         }
-        
+
         // Listing type
         String listingType = (String) productData.get("listingType");
         if (listingType != null) {
             product.setListingType(Product.ListingType.valueOf(listingType));
         }
-        
+
         // Prices
         Object startingPriceObj = productData.get("startingPrice");
         if (startingPriceObj != null) {
@@ -614,34 +614,34 @@ public class ProductApiController {
             product.setStartingPrice(startingPrice);
             product.setCurrentPrice(startingPrice);
         }
-        
+
         Object buyNowPriceObj = productData.get("buyNowPrice");
         if (buyNowPriceObj != null) {
             product.setBuyNowPrice(new BigDecimal(buyNowPriceObj.toString()));
         }
-        
+
         Object reservePriceObj = productData.get("reservePrice");
         if (reservePriceObj != null) {
             product.setReservePrice(new BigDecimal(reservePriceObj.toString()));
         }
-        
+
         Object shippingCostObj = productData.get("shippingCost");
         if (shippingCostObj != null) {
             product.setShippingCost(new BigDecimal(shippingCostObj.toString()));
         }
-        
+
         // Quantity
         Object quantityObj = productData.get("quantity");
         if (quantityObj != null) {
             product.setQuantityAvailable(Integer.valueOf(quantityObj.toString()));
         }
-        
+
         // Location
         String location = (String) productData.get("location");
         if (location != null) {
             product.setItemLocation(location);
         }
-        
+
         // Auction timing
         Object startTimeObj = productData.get("startTime");
         if (startTimeObj != null && !startTimeObj.toString().equals("null")) {
@@ -658,12 +658,12 @@ public class ProductApiController {
                 product.setAuctionStartTime(new Timestamp(System.currentTimeMillis()));
             }
         }
-        
+
         Object endTimeObj = productData.get("endTime");
         if (endTimeObj != null && !endTimeObj.toString().equals("null")) {
             try {
                 String timeStr = endTimeObj.toString();
-                // Handle ISO format: 2024-09-27T16:12:34.123Z  
+                // Handle ISO format: 2024-09-27T16:12:34.123Z
                 timeStr = timeStr.replace("T", " ").replace("Z", "");
                 if (timeStr.contains(".")) {
                     timeStr = timeStr.substring(0, timeStr.indexOf("."));
@@ -674,19 +674,19 @@ public class ProductApiController {
                 product.setAuctionEndTime(new Timestamp(System.currentTimeMillis() + (7 * 24 * 60 * 60 * 1000L)));
             }
         }
-        
+
         // Status
         String status = (String) productData.get("status");
         if (status != null) {
             product.setStatus(Product.ProductStatus.valueOf(status));
         }
-        
+
         return product;
     }
-    
+
     private Map<String, Object> convertToSafeDTO(Product product) {
         Map<String, Object> productDTO = new HashMap<>();
-        
+
         // Basic product information
         productDTO.put("productId", product.getProductId());
         productDTO.put("title", product.getTitle());
@@ -701,7 +701,7 @@ public class ProductApiController {
         productDTO.put("shippingCost", product.getShippingCost());
         productDTO.put("itemLocation", product.getItemLocation());
         productDTO.put("createdDate", product.getCreatedDate());
-        
+
         // Auction timing
         if (product.getAuctionStartTime() != null) {
             productDTO.put("startTime", product.getAuctionStartTime().toString());
@@ -709,7 +709,7 @@ public class ProductApiController {
         if (product.getAuctionEndTime() != null) {
             productDTO.put("endTime", product.getAuctionEndTime().toString());
         }
-        
+
         // Category info safely
         if (product.getCategory() != null) {
             Map<String, Object> categoryInfo = new HashMap<>();
@@ -717,7 +717,7 @@ public class ProductApiController {
             categoryInfo.put("categoryName", product.getCategory().getCategoryName());
             productDTO.put("category", categoryInfo);
         }
-        
+
         // Seller info safely (minimal)
         if (product.getSeller() != null) {
             productDTO.put("sellerId", product.getSeller().getUserId());
@@ -728,11 +728,11 @@ public class ProductApiController {
             sellerInfo.put("lastName", product.getSeller().getLastName());
             productDTO.put("seller", sellerInfo);
         }
-        
+
         // Add primary image URL if available
         String primaryImageUrl = productService.getPrimaryImageUrl(product.getProductId());
         productDTO.put("imageUrl", primaryImageUrl);
-        
+
         return productDTO;
     }
 }

@@ -103,7 +103,20 @@ public class Product {
     
     // Enums
     public enum ConditionType {
-        NEW, LIKE_NEW, VERY_GOOD, GOOD, ACCEPTABLE, FOR_PARTS
+        NEW, LIKE_NEW, VERY_GOOD, GOOD, ACCEPTABLE, FOR_PARTS;
+
+        @com.fasterxml.jackson.annotation.JsonCreator
+        public static ConditionType fromString(String value) {
+            if (value == null) {
+                return null;
+            }
+            for (ConditionType conditionType : ConditionType.values()) {
+                if (conditionType.name().equalsIgnoreCase(value)) {
+                    return conditionType;
+                }
+            }
+            throw new IllegalArgumentException("Invalid ConditionType: " + value);
+        }
     }
     
     public enum ListingType {

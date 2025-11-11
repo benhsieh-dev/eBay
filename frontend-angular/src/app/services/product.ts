@@ -6,7 +6,7 @@ import {Observable} from 'rxjs';
   providedIn: 'root'
 })
 export class ProductService {
-  // how not to hardcode baseUrl
+
   private baseUrl = 'http://localhost:8080/api/products';
 
   constructor(private http: HttpClient) {}
@@ -18,8 +18,8 @@ export class ProductService {
   }
 
   getMyListings(page: number = 0, size: number = 20) {
-    return this.http.get<any>(`${this.baseUrl}/my-listings?page=${page}&size=${size}`),
-      {withCredentials: true};
+    return this.http.get<any>(`${this.baseUrl}/my-listings?page=${page}&size=${size}`,
+      {withCredentials: true});
   }
 
   getProductById(productId: number): Observable<any> {
@@ -37,9 +37,14 @@ export class ProductService {
   }
 
   uploadProductImages(productId: number, formData: FormData){
-    return this.http.put<any>(
-      `${this.baseUrl}/${productId}/image`, formData, {
+    return this.http.post<any>(
+      `${this.baseUrl}/${productId}/images`, formData, {
       withCredentials: true
     });
   }
+
+  getCategories(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/categories`);
+  }
+
 }
