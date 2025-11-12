@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Api } from '../../services/api';
+import { ProductService } from '../../services/product';
 
 interface Product {
   productId: number;
@@ -76,7 +77,8 @@ export class MyEbay implements OnInit {
 
   constructor(
     private api: Api,
-    private router: Router
+    private router: Router,
+    private productService: ProductService
   ) {}
 
   ngOnInit() {
@@ -310,5 +312,9 @@ export class MyEbay implements OnInit {
       return `${seller.firstName} ${seller.lastName}`;
     }
     return seller.username;
+  }
+
+  getFullImageUrl(imageUrl: string): string {
+    return this.productService.getFullImageUrl(imageUrl);
   }
 }

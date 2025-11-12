@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/images")
-@CrossOrigin(origins = {"http://localhost:3000", "https://ebay-u3h1.onrender.com"})
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:4200", "https://ebay-u3h1.onrender.com"})
 public class ImageApiController {
 
     @Autowired

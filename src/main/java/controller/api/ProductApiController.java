@@ -458,6 +458,7 @@ public class ProductApiController {
         }
     }
 
+    @CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
     @PostMapping("/{productId}/images")
     public ResponseEntity<Map<String, Object>> uploadProductImages(
             @PathVariable Integer productId,

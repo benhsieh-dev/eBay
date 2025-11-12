@@ -87,7 +87,7 @@
               <div class="item-info">
                 <div class="item-image">
                   <img *ngIf="product.imageUrl" 
-                       [src]="product.imageUrl" 
+                       [src]="getFullImageUrl(product.imageUrl)" 
                        [alt]="product.title" />
                   <span *ngIf="!product.imageUrl" class="no-image">No Image</span>
                 </div>

@@ -4,6 +4,7 @@ import { Home } from './pages/home/home';
 import { Products} from './pages/products/products';
 import { Login } from './pages/login/login';
 import { Sell } from './pages/sell/sell';
+import {ProductDetail} from './pages/product-detail/product-detail';
 
 export const routes: Routes = [
   { path: 'home', component: Home },
@@ -13,6 +14,7 @@ export const routes: Routes = [
   { path: 'angular/my-ebay', component: MyEbay },
   { path: 'angular/home', component: Home },
   { path: 'products', component: Products },
+  { path: 'products/:id', component: ProductDetail },
   { path: 'angular/login', component: Login },
   { path: '', redirectTo: '/home', pathMatch: 'full' }
 ];

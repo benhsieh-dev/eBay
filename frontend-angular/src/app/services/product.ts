@@ -8,6 +8,7 @@ import {Observable} from 'rxjs';
 export class ProductService {
 
   private baseUrl = 'http://localhost:8080/api/products';
+  private backendBaseUrl = 'http://localhost:8080';
 
   constructor(private http: HttpClient) {}
 
@@ -45,6 +46,13 @@ export class ProductService {
 
   getCategories(): Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/categories`);
+  }
+
+  getFullImageUrl(relativeUrl: string): string {
+    if (relativeUrl && relativeUrl.startsWith('/api/')) {
+      return this.backendBaseUrl + relativeUrl;
+    }
+    return relativeUrl;
   }
 
 }

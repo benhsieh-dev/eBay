@@ -102,17 +102,15 @@ export class Sell implements OnInit {
           return;
         }
 
-        // Skip image upload for now due to CORS issue
-        console.log('Product created successfully! Product ID:', productId);
-        alert('Listing created successfully!');
-        this.router.navigate(['/my-ebay']);
-        
-        // TODO: Fix CORS issue for image upload
-        // if (this.selectedFiles.length) {
-        //   this.uploadImage(productId);
-        // } else {
-        //   this.router.navigate(['/my-ebay']);
-        // }
+        // console.log('Product created successfully! Product ID:', productId);
+        // alert('Listing created successfully!');
+        // this.router.navigate(['/my-ebay']);
+
+        if (this.selectedFiles.length) {
+          this.uploadImage(productId);
+        } else {
+          this.router.navigate(['/my-ebay']);
+        }
       },
       error: (err) => console.error('Error creating product:', err)
     })
@@ -127,7 +125,7 @@ export class Sell implements OnInit {
     this.api.uploadProductImages(productId, formData).subscribe({
       next: (response: any) => {
         console.log('Images uploaded:', response);
-
+        console.log('Image URLs returned:', response.imageUrls);
         // ✅ Redirect after successful upload
         this.router.navigate(['/my-ebay']);
       },
