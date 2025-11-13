@@ -18,7 +18,7 @@ export class Sell implements OnInit {
     description: '',
     categoryId: null,
     condition: '',
-    startPrice: 1,
+    startPrice: 1 as number | null,
     buyNowPrice: null,
     duration: 7,
     listingType: 'AUCTION'
@@ -36,9 +36,13 @@ export class Sell implements OnInit {
 
   selectedFiles: File[] = [];
 
+  displayValue: string = '';
+
   constructor(private api: ProductService, private router: Router) {}
 
   ngOnInit() {
+    this.displayValue = this.item.startPrice?.toFixed(2) || '';
+
     console.log('Loading categories...');
     this.api.getCategories().subscribe({
       next: (response: { success: any; categories: any[]; }) => {
@@ -102,10 +106,6 @@ export class Sell implements OnInit {
           return;
         }
 
-        // console.log('Product created successfully! Product ID:', productId);
-        // alert('Listing created successfully!');
-        // this.router.navigate(['/my-ebay']);
-
         if (this.selectedFiles.length) {
           this.uploadImage(productId);
         } else {
@@ -126,13 +126,25 @@ export class Sell implements OnInit {
       next: (response: any) => {
         console.log('Images uploaded:', response);
         console.log('Image URLs returned:', response.imageUrls);
-        // ✅ Redirect after successful upload
         this.router.navigate(['/my-ebay']);
       },
       error: (err: any) => {
         console.error('Error uploading images:', err);
       }
     });
+  }
+
+  onPriceChange(event: any) {
+    this.item.startPrice = parseFloat(event.target.value) || null;
+  }
+  formatPrice() {
+    if (this.item.startPrice != null) {
+      const rounded = Math.round(this.item.startPrice * 100) / 100;
+      // const formatted = rounded.toFixed(2);
+
+      this.item.startPrice = rounded;
+      this.displayValue = rounded.toFixed(2);
+    }
   }
 
 }

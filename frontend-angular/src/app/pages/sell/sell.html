@@ -22,7 +22,13 @@
   </select>
 
   <label>Starting Price *</label>
-  <input type="number" [(ngModel)]="item.startPrice" min="0" name="startPrice" required />
+  <input type="number"
+         [value] = "displayValue"
+         (input) = "onPriceChange($event)"
+         (blur) = "formatPrice()"
+         name="startPrice"
+         step="0.01"
+         required />
 
   <label>Buy It Now Price (optional)</label>
   <input type="number" [(ngModel)]="item.buyNowPrice" min="0" name="buyNowPrice" />
