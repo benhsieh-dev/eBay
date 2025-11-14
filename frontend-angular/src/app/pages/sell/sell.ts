@@ -19,7 +19,7 @@ export class Sell implements OnInit {
     categoryId: null,
     condition: '',
     startPrice: 1 as number | null,
-    buyNowPrice: null,
+    buyNowPrice: 0 as number | null,
     duration: 7,
     listingType: 'AUCTION'
   };
@@ -37,11 +37,13 @@ export class Sell implements OnInit {
   selectedFiles: File[] = [];
 
   displayValue: string = '';
+  displayBuyNowValue: string = '';
 
   constructor(private api: ProductService, private router: Router) {}
 
   ngOnInit() {
     this.displayValue = this.item.startPrice?.toFixed(2) || '';
+    this.displayBuyNowValue = this.item.buyNowPrice?.toFixed(2) || '';
 
     console.log('Loading categories...');
     this.api.getCategories().subscribe({
@@ -137,13 +139,25 @@ export class Sell implements OnInit {
   onPriceChange(event: any) {
     this.item.startPrice = parseFloat(event.target.value) || null;
   }
+
+  onBuyNowPriceChange(event: any) {
+    this.item.buyNowPrice = parseFloat(event.target.value) || null;
+  }
   formatPrice() {
     if (this.item.startPrice != null) {
       const rounded = Math.round(this.item.startPrice * 100) / 100;
-      // const formatted = rounded.toFixed(2);
 
       this.item.startPrice = rounded;
       this.displayValue = rounded.toFixed(2);
+    }
+  }
+
+  formatBuyNowPrice() {
+    if (this.item.buyNowPrice != null) {
+      const rounded = Math.round(this.item.buyNowPrice * 100) / 100;
+
+      this.item.buyNowPrice = rounded;
+      this.displayBuyNowValue = rounded.toFixed(2);
     }
   }
 

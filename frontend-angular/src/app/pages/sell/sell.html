@@ -31,7 +31,12 @@
          required />
 
   <label>Buy It Now Price (optional)</label>
-  <input type="number" [(ngModel)]="item.buyNowPrice" min="0" name="buyNowPrice" />
+  <input type="number"
+         [value]="displayBuyNowValue"
+         (input) = "onBuyNowPriceChange($event)"
+         (blur) = "formatBuyNowPrice()"
+         step="0.01"
+         name="buyNowPrice" />
 
   <label>Auction Duration *</label>
   <select [(ngModel)]="item.duration" name="duration" required>
