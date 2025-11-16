@@ -30,7 +30,7 @@ public class HomeController {
     @ResponseBody
     public String home(HttpServletResponse response) throws IOException {
         response.setContentType(MediaType.TEXT_HTML_VALUE);
-        ClassPathResource resource = new ClassPathResource("static/index.html");
+        ClassPathResource resource = new ClassPathResource("static/browser/index.html");
         if (resource.exists()) {
             return StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
         } else {
@@ -49,7 +49,7 @@ public class HomeController {
     @ResponseBody
     public String serveReactApp(HttpServletResponse response) throws IOException {
         response.setContentType(MediaType.TEXT_HTML_VALUE);
-        ClassPathResource resource = new ClassPathResource("static/index.html");
+        ClassPathResource resource = new ClassPathResource("static/browser/index.html");
         return StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
     }
     
@@ -58,7 +58,7 @@ public class HomeController {
     @ResponseBody
     public String redirect(HttpServletResponse response) throws IOException {
         response.setContentType(MediaType.TEXT_HTML_VALUE);
-        ClassPathResource resource = new ClassPathResource("static/index.html");
+        ClassPathResource resource = new ClassPathResource("static/browser/index.html");
         return StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
     }
 }

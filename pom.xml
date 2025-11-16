@@ -148,7 +148,7 @@
 							<arguments>
 								<argument>install</argument>
 							</arguments>
-							<workingDirectory>frontend</workingDirectory>
+							<workingDirectory>frontend-angular</workingDirectory>
 						</configuration>
 					</execution>
 					<execution>
@@ -161,9 +161,9 @@
 							<executable>npm</executable>
 							<arguments>
 								<argument>run</argument>
-								<argument>build</argument>
+								<argument>build:prod</argument>
 							</arguments>
-							<workingDirectory>frontend</workingDirectory>
+							<workingDirectory>frontend-angular</workingDirectory>
                             <environmentVariables>
                                 <NODE_OPTIONS>--max-old-space-size=1024</NODE_OPTIONS>
                                 <GENERATE_SOURCEMAP>false</GENERATE_SOURCEMAP>
@@ -173,29 +173,6 @@
 				</executions>
 			</plugin>
 			
-			<!-- Copy React build to Spring Boot static resources -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>copy-react-build</id>
-						<phase>compile</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
-							<resources>
-								<resource>
-									<directory>frontend/build</directory>
-									<filtering>false</filtering>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

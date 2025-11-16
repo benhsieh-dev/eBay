@@ -107,3 +107,7 @@ ec2-userdata.sh
 lambda-scheduler.zip
 lambda-code.zip
 lambda-scheduler-updated.zip
+
+src/main/resources/browser/
+src/main/resources/3rdpartylicenses.txt
+src/main/resources/prerendered-routes.json
