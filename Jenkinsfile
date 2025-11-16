@@ -7,7 +7,8 @@ pipeline {
           APP_PORT = '80'
           INTERNAL_PORT = '5000'
           JAVA_HOME = '/usr/lib/jvm/java-21-amazon-corretto'
-          PATH = "${JAVA_HOME}/bin:${env.PATH}"
+          NVM_DIR = '/var/lib/jenkins/.nvm'
+          PATH = "${JAVA_HOME}/bin:${env.NVM_DIR}/versions/node/v22.14.0/bin:${env.PATH}"
           NODE_OPTIONS = '--max-old-space-size=1024'
           GENERATE_SOURCEMAP = 'false'
       }

@@ -65,18 +65,20 @@ docker-compose down
 
 Port summary:
 
-| Port | Service              | Status         |
-|------|----------------------|----------------|
-| 3000 | React Dev            | Optional       |
-| 4200 | Angular              | Optional       |
-| 5432 | PostgreSQL           | Production DB  |
-| 6379 | Redis                | Cache          |
-| 6543 | Supabase Pooler      | Alternative DB |
-| 8080 | Main Spring Boot     | Core App       |
-| 8081 | Kafka UI             | Monitoring     |
-| 8082 | Notification Service | Microservice   |
-| 8083 | Jenkins CI/CD        | CI/CD          |
-| 9092 | Kafka Broker         | Message Queue  |
+| Port | Service              | Role / Purpose        |
+| ---- | -------------------- | --------------------- |
+| 3000 | React Dev            | Dev frontend          |
+| 4200 | Angular              | Dev frontend          |
+| 5432 | PostgreSQL           | Main DB               |
+| 6379 | Redis                | Cache / Session       |
+| 6543 | Supabase Pooler      | Alternative DB        |
+| 8080 | Main Spring Boot     | Core backend          |
+| 8081 | Kafka UI             | Monitoring / UI       |
+| 8082 | Notification Service | Microservice          |
+| 8083 | Jenkins CI/CD        | CI/CD Server          |
+| 8084 | Nginx                | Reverse Proxy / CI/CD |
+| 9092 | Kafka Broker         | Message Queue         |
+
 
 ## Docker Commands
 - docker ps
@@ -132,7 +134,8 @@ aws ec2 run-instances --cli-input-json file://ec2-config.json --region us-east-2
 aws ec2 describe-instances --instance-ids i-021d853b40fb0faae --region us-east-2 --query "Reservations[0].Instances[0].State.Name" --output text
 
 ## Jenkins
-http://3.145.148.232:8083/
+http://3.150.223.34:8083/
+https://3.150.223.34:8083/
 
 ## AWS Cost Tracker
 aws ce get-cost-and-usage \
