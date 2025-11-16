@@ -1,8 +1,8 @@
 FROM eclipse-temurin:21-jdk-jammy
 
-# Install Maven and Node.js
+# Install Maven and Node.js 22
 RUN apt-get update && apt-get install -y maven curl && \
-    curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     apt-get install -y nodejs
 
 # Set working directory
@@ -11,9 +11,9 @@ WORKDIR /app
 # Copy pom.xml first for dependency caching
 COPY pom.xml .
 
-# Copy source code and frontend
+# Copy source code and Angular frontend
 COPY src ./src
-COPY frontend ./frontend
+COPY frontend-angular ./frontend-angular
 
 # Force cache bust - change this comment to rebuild: 2025-10-18-v5-fixed
 # Build the application with frontend integration
