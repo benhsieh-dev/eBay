@@ -1,1 +1,72 @@
-<p>product-detail works!</p>
+@if (loading) {
+  <div class="loading">Loading product...</div>
+}
+
+@if (error) {
+  <div class="error">{{ error }}</div>
+}
+
+@if (product && !loading) {
+  <div class="product-container">
+    <div class="image-section">
+      @if (product.images && product.images.length > 0) {
+        <img
+          class="main-image"
+          [src]="getImageUrl(product.images[selectedImageIndex])"
+          alt="Product Image"
+        />
+
+        <div class="thumbnail-row">
+          @for (image of product.images; let i = $index; track image) {
+            <img
+              class="thumbnail-image"
+              [src]="getImageUrl(image)"
+              alt="Thumbnail Image"
+              (click)="selectImage(i)"
+              [class.active]="i === selectedImageIndex"
+            />
+          }
+        </div>
+      } @else {
+        <div class="no-image">
+          <p>No images available</p>
+        </div>
+      }
+    </div>
+
+          <!-- DETAILS -->
+          <div class="details-section">
+
+            <h2>{{ product.title }}</h2>
+            <p class="description">{{ product.description }}</p>
+
+            <p><strong>Current Price:</strong> ${{ product.currentPrice }}</p>
+            <p><strong>Buy It Now:</strong> ${{ product.buyNowPrice }}</p>
+
+            <!-- BID FORM -->
+            <div class="bid-box">
+              <input
+                type="number"
+                [(ngModel)]="bidAmount"
+                placeholder="Enter bid amount"
+              />
+              <button (click)="placeBid()">Place Bid</button>
+            </div>
+
+            <button class="buy-now-btn" (click)="buyItNow()">
+              Buy It Now
+            </button>
+
+            <!-- BID HISTORY -->
+            <div class="bid-history">
+              <h3>Bid History</h3>
+              <div *ngFor="let bid of bidHistory">
+                <p>{{ bid.amount }} — {{ bid.timestamp | date:'short' }}</p>
+              </div>
+            </div>
+
+          </div>
+
+          </div>
+}
+

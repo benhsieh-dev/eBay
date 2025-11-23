@@ -23,9 +23,9 @@ export class ProductService {
       {withCredentials: true});
   }
 
-  getProductById(productId: number): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/${productId}`, {withCredentials: true});
-  }
+  // getProductById(productId: number): Observable<any> {
+  //   return this.http.get<any>(`${this.baseUrl}/${productId}`, {withCredentials: true});
+  // }
 
   createProduct(product: any) {
     return this.http.post<any>(`${this.baseUrl}`, product, {withCredentials: true});
@@ -55,4 +55,18 @@ export class ProductService {
     return relativeUrl;
   }
 
+  getProductById(id: string) {
+    return this.http.get(`${this.baseUrl}/${id}`);
+  }
+
+  buyProduct(productId: number) {
+    return this.http.post(`${this.baseUrl}/${productId}/buy`, {}, {withCredentials: true});
+  }
+
+  placeBid(productId: number, bidAmount: number) {
+    return this.http.post('/api/bids/place', {
+      productId: productId,
+      amount: bidAmount
+    }, { withCredentials: true });
+  }
 }

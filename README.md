@@ -3,6 +3,7 @@ Users can auction and purchase items online
 
 ## Technologies Used
 
+- Angular 
 - AWS Certificate Manager
 - AWS CloudFront
 - AWS EC2
@@ -19,7 +20,7 @@ Users can auction and purchase items online
 - Maven
 - Node JS
 - PostgreSQL
-- React JS
+- React JS (Reserved)
 - Render
 - Spring Boot
 
@@ -76,7 +77,6 @@ Port summary:
 | 8081 | Kafka UI             | Monitoring / UI       |
 | 8082 | Notification Service | Microservice          |
 | 8083 | Jenkins CI/CD        | CI/CD Server          |
-| 8084 | Nginx                | Reverse Proxy / CI/CD |
 | 9092 | Kafka Broker         | Message Queue         |
 
 
@@ -117,9 +117,12 @@ Port summary:
 ssh -i ~/.ssh/ebay-debug-key.pem ec2-user@3.24.98.160
 
 eBay application is now running at:
-https://aws-cloud-app.com/
-http://3.145.148.232/
-http://ec2-3-145-148-232.us-east-2.compute.amazonaws.com
+https://aws-cloud-app.com/ 
+https://www.aws-cloud-app.com/
+http://3.150.223.34
+https://3.150.223.34 (not added to Route 53)
+http://ec2-3-150-223-34.us-east-2.compute.amazonaws.com 
+https://ec2-3-150-223-34.us-east-2.compute.amazonaws.com (not added to Route 53)
 
 ## EC2 List Instances
 aws ec2 describe-instances --query "Reservations[*].Instances[*].InstanceId" --output text
