@@ -30,6 +30,11 @@
       } @else {
         <div class="no-image">
           <p>No images available</p>
+          @if (isOwner && product.status === 'ACTIVE') {
+            <button (click)="openImageUpload()" class="btn-secondary btn-small add-images-btn">
+              📷 Add Images
+            </button>
+          }
         </div>
       }
     </div>
@@ -68,5 +73,69 @@
           </div>
 
           </div>
+}
+
+<!-- Image Upload Modal -->
+@if (showImageUpload) {
+  <div class="modal-overlay" (click)="closeImageUpload()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Add Images to Your Listing</h3>
+        <button (click)="closeImageUpload()" class="close-button">&times;</button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="upload-section">
+          <input type="file" 
+                 #fileInput 
+                 (change)="onFileSelected($event)" 
+                 multiple 
+                 accept="image/*"
+                 class="file-input" />
+          
+          <div class="upload-area" 
+               (click)="fileInput.click()"
+               [class.dragover]="isDragOver"
+               (dragover)="onDragOver($event)"
+               (dragleave)="onDragLeave($event)"
+               (drop)="onDrop($event)">
+            <div class="upload-icon">📷</div>
+            <p>Click to select images or drag and drop</p>
+            <p class="upload-hint">You can upload multiple images (JPG, PNG, GIF)</p>
+          </div>
+        </div>
+        
+        @if (selectedFiles.length > 0) {
+          <div class="file-preview">
+            <h4>Selected Images ({{ selectedFiles.length }})</h4>
+            <div class="preview-grid">
+              @for (file of selectedFiles; let i = $index; track file) {
+                <div class="preview-item">
+                  <img [src]="getFilePreview(file)" [alt]="file.name" />
+                  <button (click)="removeFile(i)" class="remove-file-btn">&times;</button>
+                  <p class="file-name">{{ file.name }}</p>
+                </div>
+              }
+            </div>
+          </div>
+        }
+        
+        @if (uploadError) {
+          <div class="error-message">
+            {{ uploadError }}
+          </div>
+        }
+      </div>
+      
+      <div class="modal-footer">
+        <button (click)="closeImageUpload()" class="btn-secondary">Cancel</button>
+        <button (click)="uploadImages()" 
+                [disabled]="selectedFiles.length === 0 || isUploading"
+                class="btn-primary">
+          {{ isUploading ? 'Uploading...' : 'Upload Images' }}
+        </button>
+      </div>
+    </div>
+  </div>
 }
 

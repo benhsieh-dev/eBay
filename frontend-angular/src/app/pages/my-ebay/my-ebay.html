@@ -76,6 +76,7 @@
             <th>Status</th>
             <th>Time Remaining</th>
             <th>Created</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -128,6 +129,15 @@
             </td>
             <td class="date-cell">
               {{ formatDate(product.createdDate) }}
+            </td>
+            <td class="actions-cell" (click)="$event.stopPropagation()">
+              <button *ngIf="!product.imageUrl && product.status === 'ACTIVE'" 
+                      (click)="openImageUpload(product.productId)"
+                      class="btn-secondary btn-small">
+                📷 Add Images
+              </button>
+              <span *ngIf="product.imageUrl" class="text-muted">Has Images</span>
+              <span *ngIf="product.status !== 'ACTIVE'" class="text-muted">{{ product.status }}</span>
             </td>
           </tr>
         </tbody>
@@ -359,6 +369,62 @@
       <p>You haven't placed any bids yet. Start bidding on items you're interested in!</p>
       <button (click)="navigateToProducts()" class="btn-primary">
         Browse Auctions
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Image Upload Modal -->
+<div *ngIf="showImageUpload" class="modal-overlay" (click)="closeImageUpload()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Add Images to Your Listing</h3>
+      <button (click)="closeImageUpload()" class="close-button">&times;</button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="upload-section">
+        <input type="file" 
+               #fileInput 
+               (change)="onFileSelected($event)" 
+               multiple 
+               accept="image/*"
+               class="file-input" />
+        
+        <div class="upload-area" 
+             (click)="fileInput.click()"
+             [class.dragover]="isDragOver"
+             (dragover)="onDragOver($event)"
+             (dragleave)="onDragLeave($event)"
+             (drop)="onDrop($event)">
+          <div class="upload-icon">📷</div>
+          <p>Click to select images or drag and drop</p>
+          <p class="upload-hint">You can upload multiple images (JPG, PNG, GIF)</p>
+        </div>
+      </div>
+      
+      <div *ngIf="selectedFiles.length > 0" class="file-preview">
+        <h4>Selected Images ({{ selectedFiles.length }})</h4>
+        <div class="preview-grid">
+          <div *ngFor="let file of selectedFiles; let i = index" class="preview-item">
+            <img [src]="getFilePreview(file)" [alt]="file.name" />
+            <button (click)="removeFile(i)" class="remove-file-btn">&times;</button>
+            <p class="file-name">{{ file.name }}</p>
+          </div>
+        </div>
+      </div>
+      
+      <div *ngIf="uploadError" class="error-message">
+        {{ uploadError }}
+      </div>
+    </div>
+    
+    <div class="modal-footer">
+      <button (click)="closeImageUpload()" class="btn-secondary">Cancel</button>
+      <button (click)="uploadImages()" 
+              [disabled]="selectedFiles.length === 0 || isUploading"
+              class="btn-primary">
+        {{ isUploading ? 'Uploading...' : 'Upload Images' }}
       </button>
     </div>
   </div>

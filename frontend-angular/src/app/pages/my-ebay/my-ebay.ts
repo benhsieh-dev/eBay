@@ -75,6 +75,14 @@ export class MyEbay implements OnInit {
   
   pageSize = 10;
 
+  // Image upload properties
+  showImageUpload = false;
+  selectedProductId: number | null = null;
+  selectedFiles: File[] = [];
+  isUploading = false;
+  uploadError = '';
+  isDragOver = false;
+
   constructor(
     private api: Api,
     private router: Router,
@@ -316,5 +324,85 @@ export class MyEbay implements OnInit {
 
   getFullImageUrl(imageUrl: string): string {
     return this.productService.getFullImageUrl(imageUrl);
+  }
+
+  // Image Upload Methods
+  openImageUpload(productId: number) {
+    this.selectedProductId = productId;
+    this.showImageUpload = true;
+    this.selectedFiles = [];
+    this.uploadError = '';
+  }
+
+  closeImageUpload() {
+    this.showImageUpload = false;
+    this.selectedProductId = null;
+    this.selectedFiles = [];
+    this.uploadError = '';
+    this.isUploading = false;
+  }
+
+  onFileSelected(event: any) {
+    const files = Array.from(event.target.files) as File[];
+    this.addFiles(files);
+  }
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    this.isDragOver = true;
+  }
+
+  onDragLeave(event: DragEvent) {
+    event.preventDefault();
+    this.isDragOver = false;
+  }
+
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    this.isDragOver = false;
+    const files = Array.from(event.dataTransfer?.files || []) as File[];
+    this.addFiles(files);
+  }
+
+  addFiles(files: File[]) {
+    const imageFiles = files.filter(file => file.type.startsWith('image/'));
+    if (imageFiles.length !== files.length) {
+      this.uploadError = 'Only image files are allowed';
+    } else {
+      this.uploadError = '';
+    }
+    this.selectedFiles = [...this.selectedFiles, ...imageFiles];
+  }
+
+  removeFile(index: number) {
+    this.selectedFiles.splice(index, 1);
+  }
+
+  getFilePreview(file: File): string {
+    return URL.createObjectURL(file);
+  }
+
+  uploadImages() {
+    if (!this.selectedProductId || this.selectedFiles.length === 0) return;
+
+    this.isUploading = true;
+    this.uploadError = '';
+
+    const formData = new FormData();
+    this.selectedFiles.forEach((file, index) => {
+      formData.append(`images`, file);
+    });
+
+    this.productService.uploadProductImages(this.selectedProductId, formData).subscribe({
+      next: (response) => {
+        alert('Images uploaded successfully!');
+        this.closeImageUpload();
+        this.fetchMyListings(); // Refresh listings to show new images
+      },
+      error: (error) => {
+        this.uploadError = error.error?.message || 'Failed to upload images. Please try again.';
+        this.isUploading = false;
+      }
+    });
   }
 }

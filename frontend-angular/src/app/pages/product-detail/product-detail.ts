@@ -21,6 +21,14 @@ export class ProductDetail implements OnInit {
 
   bidAmount: number | null = null;
   selectedImageIndex = 0;
+  
+  // Owner and image upload properties
+  isOwner = false;
+  showImageUpload = false;
+  selectedFiles: File[] = [];
+  isUploading = false;
+  uploadError = '';
+  isDragOver = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -43,6 +51,7 @@ export class ProductDetail implements OnInit {
       next: (data: any) => {
         this.product = data;
         this.bidHistory = data.bids || data.bidHistory || [];
+        this.checkIfOwner();
         this.loading = false;
       },
       error: (err: any) => {
@@ -102,5 +111,91 @@ export class ProductDetail implements OnInit {
 
   getImageUrl(imageUrl: string): string {
     return this.productService.getFullImageUrl(imageUrl);
+  }
+
+  checkIfOwner() {
+    // For now, we'll assume the user is logged in and can upload images
+    // In a real app, you'd check if the current user's ID matches the product's sellerId
+    // this.isOwner = currentUser.id === this.product.sellerId;
+    this.isOwner = true; // Temporarily allowing all users to upload
+  }
+
+  // Image Upload Methods
+  openImageUpload() {
+    this.showImageUpload = true;
+    this.selectedFiles = [];
+    this.uploadError = '';
+  }
+
+  closeImageUpload() {
+    this.showImageUpload = false;
+    this.selectedFiles = [];
+    this.uploadError = '';
+    this.isUploading = false;
+  }
+
+  onFileSelected(event: any) {
+    const files = Array.from(event.target.files) as File[];
+    this.addFiles(files);
+  }
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    this.isDragOver = true;
+  }
+
+  onDragLeave(event: DragEvent) {
+    event.preventDefault();
+    this.isDragOver = false;
+  }
+
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    this.isDragOver = false;
+    const files = Array.from(event.dataTransfer?.files || []) as File[];
+    this.addFiles(files);
+  }
+
+  addFiles(files: File[]) {
+    const imageFiles = files.filter(file => file.type.startsWith('image/'));
+    if (imageFiles.length !== files.length) {
+      this.uploadError = 'Only image files are allowed';
+    } else {
+      this.uploadError = '';
+    }
+    this.selectedFiles = [...this.selectedFiles, ...imageFiles];
+  }
+
+  removeFile(index: number) {
+    this.selectedFiles.splice(index, 1);
+  }
+
+  getFilePreview(file: File): string {
+    return URL.createObjectURL(file);
+  }
+
+  uploadImages() {
+    if (!this.product || this.selectedFiles.length === 0) return;
+
+    this.isUploading = true;
+    this.uploadError = '';
+
+    const formData = new FormData();
+    this.selectedFiles.forEach((file) => {
+      formData.append(`images`, file);
+    });
+
+    const productId = this.product.id || this.product.productId;
+    this.productService.uploadProductImages(productId, formData).subscribe({
+      next: (response) => {
+        alert('Images uploaded successfully!');
+        this.closeImageUpload();
+        this.loadProduct(); // Refresh product to show new images
+      },
+      error: (error) => {
+        this.uploadError = error.error?.message || 'Failed to upload images. Please try again.';
+        this.isUploading = false;
+      }
+    });
   }
 }
