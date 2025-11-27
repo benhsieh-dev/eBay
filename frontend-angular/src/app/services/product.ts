@@ -56,7 +56,7 @@ export class ProductService {
   }
 
   getProductById(id: string) {
-    return this.http.get(`${this.baseUrl}/${id}`);
+    return this.http.get(`${this.baseUrl}/${id}`, {withCredentials: true});
   }
 
   buyProduct(productId: number) {

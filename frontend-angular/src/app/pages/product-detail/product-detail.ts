@@ -49,8 +49,17 @@ export class ProductDetail implements OnInit {
     this.loading = true;
     this.productService.getProductById(productId).subscribe({
       next: (data: any) => {
-        this.product = data;
-        this.bidHistory = data.bids || data.bidHistory || [];
+        console.log('Product loaded:', data); // Debug log
+        
+        // Handle nested response structure
+        const productData = data.product || data;
+        console.log('Actual product data:', productData); // Debug the actual product
+        console.log('Product images:', productData.images); // Debug log
+        console.log('Product imageUrls:', productData.imageUrls); // Check alternative field name
+        console.log('Product imageUrl:', productData.imageUrl); // Check singular field name
+        
+        this.product = productData;
+        this.bidHistory = productData.bids || productData.bidHistory || [];
         this.checkIfOwner();
         this.loading = false;
       },
@@ -110,14 +119,34 @@ export class ProductDetail implements OnInit {
   }
 
   getImageUrl(imageUrl: string): string {
-    return this.productService.getFullImageUrl(imageUrl);
+    const fullUrl = this.productService.getFullImageUrl(imageUrl);
+    console.log('Image URL conversion:', imageUrl, '->', fullUrl); // Debug log
+    return fullUrl;
   }
 
   checkIfOwner() {
-    // For now, we'll assume the user is logged in and can upload images
-    // In a real app, you'd check if the current user's ID matches the product's sellerId
-    // this.isOwner = currentUser.id === this.product.sellerId;
-    this.isOwner = true; // Temporarily allowing all users to upload
+    // Show upload option only if product has no images or very few images
+    // In a real app, you'd also check if the current user's ID matches the product's sellerId
+    const images = this.getProductImages();
+    const hasLimitedImages = !images || images.length === 0;
+    this.isOwner = hasLimitedImages; // Show for products with no images
+  }
+
+  getProductImages(): string[] {
+    if (!this.product) return [];
+    
+    // Try different possible field names for images
+    if (this.product.images && this.product.images.length > 0) {
+      return this.product.images;
+    }
+    if (this.product.imageUrls && this.product.imageUrls.length > 0) {
+      return this.product.imageUrls;
+    }
+    if (this.product.imageUrl) {
+      return [this.product.imageUrl];
+    }
+    
+    return [];
   }
 
   // Image Upload Methods
@@ -171,7 +200,11 @@ export class ProductDetail implements OnInit {
   }
 
   getFilePreview(file: File): string {
-    return URL.createObjectURL(file);
+    // Create stable blob URLs to avoid change detection issues
+    if (!(file as any)._blobUrl) {
+      (file as any)._blobUrl = URL.createObjectURL(file);
+    }
+    return (file as any)._blobUrl;
   }
 
   uploadImages() {
@@ -185,12 +218,33 @@ export class ProductDetail implements OnInit {
       formData.append(`images`, file);
     });
 
-    const productId = this.product.id || this.product.productId;
-    this.productService.uploadProductImages(productId, formData).subscribe({
+    // Try different possible product ID field names
+    const productId = this.product.productId || this.product.id || 
+                     this.route.snapshot.paramMap.get('id');
+    
+    if (!productId) {
+      this.uploadError = 'Product ID not found';
+      this.isUploading = false;
+      return;
+    }
+
+    this.productService.uploadProductImages(Number(productId), formData).subscribe({
       next: (response) => {
+        console.log('Upload response:', response); // Debug log
+        console.log('Upload response keys:', Object.keys(response)); // Debug response structure
+        if (response) {
+          Object.keys(response).forEach(key => {
+            console.log(`  upload ${key}:`, response[key]);
+          });
+        }
         alert('Images uploaded successfully!');
         this.closeImageUpload();
-        this.loadProduct(); // Refresh product to show new images
+        
+        // Add a small delay to ensure backend has processed the upload
+        setTimeout(() => {
+          console.log('Reloading product after upload...'); // Debug log
+          this.loadProduct(); // Refresh product to show new images
+        }, 1000);
       },
       error: (error) => {
         this.uploadError = error.error?.message || 'Failed to upload images. Please try again.';

@@ -9,15 +9,15 @@
 @if (product && !loading) {
   <div class="product-container">
     <div class="image-section">
-      @if (product.images && product.images.length > 0) {
+      @if (getProductImages().length > 0) {
         <img
           class="main-image"
-          [src]="getImageUrl(product.images[selectedImageIndex])"
+          [src]="getImageUrl(getProductImages()[selectedImageIndex])"
           alt="Product Image"
         />
 
         <div class="thumbnail-row">
-          @for (image of product.images; let i = $index; track image) {
+          @for (image of getProductImages(); let i = $index; track image) {
             <img
               class="thumbnail-image"
               [src]="getImageUrl(image)"
@@ -30,7 +30,7 @@
       } @else {
         <div class="no-image">
           <p>No images available</p>
-          @if (isOwner && product.status === 'ACTIVE') {
+          @if (isOwner) {
             <button (click)="openImageUpload()" class="btn-secondary btn-small add-images-btn">
               📷 Add Images
             </button>
