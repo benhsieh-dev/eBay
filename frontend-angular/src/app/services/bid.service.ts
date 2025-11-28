@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class BidService {
-  private baseUrl = 'http://localhost:8080/api/bids';
+  private baseUrl = '/api/bids';
 
   constructor(private http: HttpClient) {}
 

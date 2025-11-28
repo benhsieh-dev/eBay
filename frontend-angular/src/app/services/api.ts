@@ -20,7 +20,7 @@ interface ApiResponse<T = any> {
   providedIn: 'root'
 })
 export class Api {
-  private readonly baseUrl = 'http://localhost:8080/api';
+  private readonly baseUrl = '/api';
 
   constructor(private http: HttpClient) {}
 
@@ -34,9 +34,9 @@ export class Api {
         }
       });
     }
-    return this.http.get<ApiResponse>(`${this.baseUrl}/products`, { 
+    return this.http.get<ApiResponse>(`${this.baseUrl}/products`, {
       params: httpParams,
-      withCredentials: true 
+      withCredentials: true
     });
   }
 
@@ -56,17 +56,17 @@ export class Api {
     const httpParams = new HttpParams()
       .set('page', params.page.toString())
       .set('size', params.size.toString());
-    
-    return this.http.get<ApiResponse>(`${this.baseUrl}/products/my-listings`, { 
+
+    return this.http.get<ApiResponse>(`${this.baseUrl}/products/my-listings`, {
       params: httpParams,
-      withCredentials: true 
+      withCredentials: true
     });
   }
 
   // Watchlist
   getWatchlist(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.baseUrl}/watchlist/user`, { 
-      withCredentials: true 
+    return this.http.get<ApiResponse>(`${this.baseUrl}/watchlist/user`, {
+      withCredentials: true
     });
   }
 
@@ -80,8 +80,8 @@ export class Api {
 
   // Bids
   getMyBids(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${this.baseUrl}/bids/my-bids`, { 
-      withCredentials: true 
+    return this.http.get<ApiResponse>(`${this.baseUrl}/bids/my-bids`, {
+      withCredentials: true
     });
   }
 
