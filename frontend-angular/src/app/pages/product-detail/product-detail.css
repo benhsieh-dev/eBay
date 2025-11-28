@@ -83,10 +83,11 @@
 }
 
 .bid-box input {
-  flex: 1;
+  flex: none;
   padding: 8px 12px;
   border: 1px solid #ddd;
   border-radius: 4px;
+  width: 100px;
 }
 
 .bid-box button {
@@ -295,7 +296,7 @@
   .product-container {
     flex-direction: column;
   }
-  
+
   .image-section, .details-section {
     width: 100%;
   }
@@ -304,13 +305,13 @@
     width: 95%;
     margin: 10px;
   }
-  
+
   .modal-header,
   .modal-body,
   .modal-footer {
     padding: 16px;
   }
-  
+
   .preview-grid {
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 12px;

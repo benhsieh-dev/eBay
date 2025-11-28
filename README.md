@@ -48,7 +48,7 @@ Application runs at http://localhost:8080
 docker-compose up -d kafka redis kafka-ui
 
 # Terminal 2: Start Spring Boot
-z-boot:run -Dspring-boot.run.profiles=local
+mvn spring-boot:run -Dspring-boot.run.profiles=local
 ./start.sh
 ```
 
