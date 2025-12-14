@@ -45,8 +45,8 @@
             <h2>{{ product.title }}</h2>
             <p class="description">{{ product.description }}</p>
 
-            <p><strong>Current Price:</strong> ${{ product.currentPrice }}</p>
-            <p><strong>Buy It Now:</strong> ${{ product.buyNowPrice }}</p>
+            <p><strong>Current Price:</strong> ${{ product.currentPrice | number:'1.2-2' }}</p>
+            <p><strong>Buy It Now:</strong> ${{ product.buyNowPrice | number:'1.2-2' }}</p>
 
             <!-- BID FORM -->
             <div class="bid-box">
@@ -83,17 +83,17 @@
         <h3>Add Images to Your Listing</h3>
         <button (click)="closeImageUpload()" class="close-button">&times;</button>
       </div>
-      
+
       <div class="modal-body">
         <div class="upload-section">
-          <input type="file" 
-                 #fileInput 
-                 (change)="onFileSelected($event)" 
-                 multiple 
+          <input type="file"
+                 #fileInput
+                 (change)="onFileSelected($event)"
+                 multiple
                  accept="image/*"
                  class="file-input" />
-          
-          <div class="upload-area" 
+
+          <div class="upload-area"
                (click)="fileInput.click()"
                [class.dragover]="isDragOver"
                (dragover)="onDragOver($event)"
@@ -104,7 +104,7 @@
             <p class="upload-hint">You can upload multiple images (JPG, PNG, GIF)</p>
           </div>
         </div>
-        
+
         @if (selectedFiles.length > 0) {
           <div class="file-preview">
             <h4>Selected Images ({{ selectedFiles.length }})</h4>
@@ -119,17 +119,17 @@
             </div>
           </div>
         }
-        
+
         @if (uploadError) {
           <div class="error-message">
             {{ uploadError }}
           </div>
         }
       </div>
-      
+
       <div class="modal-footer">
         <button (click)="closeImageUpload()" class="btn-secondary">Cancel</button>
-        <button (click)="uploadImages()" 
+        <button (click)="uploadImages()"
                 [disabled]="selectedFiles.length === 0 || isUploading"
                 class="btn-primary">
           {{ isUploading ? 'Uploading...' : 'Upload Images' }}
